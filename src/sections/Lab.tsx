@@ -225,28 +225,14 @@ function SignalGame({ lang }: { lang: Lang }) {
   </article>;
 }
 
-const visualCards = [
-  ['visual-brainwaves.svg', 'brain'],
-  ['visual-neuron.svg', 'neuron'],
-  ['visual-memory.svg', 'memory'],
-  ['visual-attention.svg', 'attention'],
-  ['visual-reaction.svg', 'reaction'],
-  ['visual-network.svg', 'network'],
-] as const;
-
 export default function Lab({ lang }: { lang: Lang }) {
   const ru = lang === 'ru';
   const [glow, setGlow] = useState(false);
-  const labels = ru
-    ? { brain: 'Ритмы мозга', neuron: 'Нейрон', memory: 'Контур памяти', attention: 'Фокус внимания', reaction: 'Импульс реакции', network: 'Нейронная сеть' }
-    : { brain: 'Ajurütmid', neuron: 'Neuron', memory: 'Mäluring', attention: 'Tähelepanu fookus', reaction: 'Reaktsiooniimpulss', network: 'Närvivõrk' };
 
   return <Section id="labor" number={ru ? '04 / ИГРОВАЯ ЛАБОРАТОРИЯ' : '04 / MÄNGULABOR'} title={ru ? 'Три коротких игры для мозга' : 'Kolm lühikest ajumängu'} intro={ru ? 'Измерь реакцию, попробуй не читать слово и повтори цепочку сигналов. Это игровые задания, а не тест трезвости и не медицинская оценка.' : 'Mõõda reaktsiooni, proovi sõna mitte lugeda ja korda signaalijada. Need on mängulised ülesanded, mitte kainuse test ega tervisehinnang.'} className={`lab-section ${glow ? 'glow-mode' : ''}`}>
     <div className="lab-toolbar"><div><span className="pill">{ru ? 'ИНТЕРАКТИВ' : 'INTERAKTIIVNE'}</span><p>{ru ? 'Все результаты остаются только в браузере и исчезают после обновления страницы.' : 'Kõik tulemused jäävad ainult brauserisse ja kaovad lehe värskendamisel.'}</p></div><button className="glow-toggle" aria-pressed={glow} onClick={() => setGlow(v => !v)}><span aria-hidden="true">✦</span>{glow ? (ru ? 'Выключить нейросвечение' : 'Lülita neurohelendus välja') : (ru ? 'Включить нейросвечение' : 'Lülita neurohelendus sisse')}</button></div>
     <ExerciseNote lang={lang} />
     <div className="lab-grid"><ReactionGame lang={lang} /><StroopGame lang={lang} /><SignalGame lang={lang} /></div>
-    <div className="visual-gallery-heading"><div><span className="eyebrow">{ru ? 'НЕЙРОВИЗУАЛЫ' : 'NEUROVISUAALID'}</span><h3>{ru ? 'Посмотри, как «говорит» мозг' : 'Vaata, kuidas aju „räägib“'}</h3></div><p>{ru ? 'Шесть визуальных сцен превращают память, внимание, реакцию и нейронные сигналы в понятные образы — не как каталог, а как маленькое путешествие внутри мозга.' : 'Kuus visuaalset stseeni muudavad mälu, tähelepanu, reaktsiooni ja närvisignaalid nähtavaks — mitte kataloogina, vaid väikese teekonnana aju sees.'}</p></div>
-    <div className="visual-gallery">{visualCards.map(([src, key], i) => <figure key={src} className={`visual-card visual-card-${i + 1}`}><img src={src} alt={labels[key]} loading="lazy" /><figcaption><span>0{i + 1}</span>{labels[key]}</figcaption></figure>)}</div>
     <div className="neuro-marquee" aria-hidden="true"><span>MEMORY · FOCUS · REACTION · SIGNAL · MEMORY · FOCUS · REACTION · SIGNAL · </span></div>
   </Section>;
 }
