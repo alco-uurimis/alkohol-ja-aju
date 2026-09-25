@@ -1,4 +1,5 @@
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
+import type { FormEvent } from 'react';
 
 type Lang='et'|'ru';
 const endpoint=''; // Set to a deployed HTTPS proxy. Never put the Telegram bot token in client-side code.
