@@ -45,4 +45,4 @@ export const takeaways = [
 // not a fabricated reference and is deliberately not displayed as a fact.
 export const pendingClaims = [{claim:'Eraldi hinnang alkoholi mõjule ülesannete vahetamisel.',status:'[ALLIKAS VAJALIK]'}];
 // Editable project metadata; never invent personal names.
-export const project = {author:'[Autori nimi]',school:'[Kooli nimi]',supervisor:'[Juhendaja nimi]',year:'[Aasta]'};
+export const project = {author:'Sofija Tsaika',school:'Tallinna Laagna Gümnaasium',supervisor:'[Juhendaja nimi]',year:'2026'};
