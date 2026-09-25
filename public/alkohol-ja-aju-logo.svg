@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 120" role="img" aria-labelledby="title desc">
+  <title id="title">Alkohol ja aju</title>
+  <desc id="desc">Alkohol ja aju õppeveebi logo</desc>
+  <rect x="4" y="4" width="112" height="112" rx="32" fill="#171b37"/>
+  <path d="M40 77V45c0-12 9-20 20-20s20 8 20 20v32" fill="none" stroke="#c9f574" stroke-linecap="round" stroke-width="9"/>
+  <path d="M40 59h40" fill="none" stroke="#c9f574" stroke-linecap="round" stroke-width="9"/>
+  <circle cx="40" cy="77" r="8" fill="#c9f574"/><circle cx="80" cy="77" r="8" fill="#c9f574"/><circle cx="60" cy="25" r="6" fill="#c9f574"/>
+  <text x="144" y="72" fill="#171b37" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" letter-spacing="-1.8">alkohol ja aju</text>
+  <circle cx="518" cy="60" r="6" fill="#6150c8"/>
+</svg>
