@@ -5,4 +5,5 @@ import './styles.css';
 import './features.css';
 import './visuals.css';
 import './polish.css';
+import './lab.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
