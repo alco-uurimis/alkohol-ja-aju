@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 type Lang='et'|'ru';
-const endpoint=''; // Set to a deployed HTTPS proxy. Never put the Telegram bot token in client-side code.
+const endpoint='https://alkohol-ja-aju.vercel.app/api/feedback';
 
 export default function FeedbackSurvey({lang}:{lang:Lang}){
   const ru=lang==='ru';
@@ -11,15 +11,14 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
   const [recommend,setRecommend]=useState('');
   const [comment,setComment]=useState('');
   const [consent,setConsent]=useState(false);
-  const [status,setStatus]=useState<'idle'|'sending'|'sent'|'error'|'unconfigured'>('idle');
+  const [status,setStatus]=useState<'idle'|'sending'|'sent'|'error'>('idle');
 
   async function submit(e:FormEvent){
     e.preventDefault();
     if(!consent)return;
-    if(!endpoint){setStatus('unconfigured');return;}
     setStatus('sending');
     try{
-      const res=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({clarity,useful,recommend,comment,language:lang,submittedAt:new Date().toISOString()})});
+      const res=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({clarity,useful,recommend,comment,language:lang})});
       if(!res.ok)throw new Error('submit failed');
       setStatus('sent');setClarity('');setUseful('');setRecommend('');setComment('');setConsent(false);
     }catch{setStatus('error');}
@@ -34,6 +33,5 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
     <button className="button primary" disabled={status==='sending'}>{status==='sending'?(ru?'Отправка…':'Saadan…'):(ru?'Отправить ответы':'Saada vastused')}</button>
     {status==='sent'&&<p className="survey-status success" role="status">{ru?'Спасибо. Ответы отправлены.':'Aitäh. Vastused on saadetud.'}</p>}
     {status==='error'&&<p className="survey-status error" role="status">{ru?'Не удалось отправить ответы. Попробуй позже.':'Vastuste saatmine ebaõnnestus. Proovi hiljem uuesti.'}</p>}
-    {status==='unconfigured'&&<p className="survey-status error" role="status">{ru?'Форма готова, но защищённый Telegram-шлюз ещё не подключён.':'Vorm on valmis, kuid turvaline Telegrami vaheserver pole veel ühendatud.'}</p>}
   </form>;
 }
