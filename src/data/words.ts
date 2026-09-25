@@ -1,0 +1,1 @@
+export const words = ['aken','raamat','mets','pilv','kivi','lill','tool','jõgi','pliiats','sild','kell','leht','päike','müts','pael','karp','lumi','paat','võti','ratas','aed','uks','sulg','meri','lamp','õun','tass','padi','liiv','vihm','puu','sall'];

@@ -1,0 +1,7 @@
+import type { ReactNode } from 'react';
+export function Section({id,number,title,intro,children,className=''}:{id:string;number:string;title:string;intro?:string;children:ReactNode;className?:string}){return <section id={id} aria-labelledby={id+'-title'} className={'section '+className}><div className="section-heading"><p className="eyebrow">{number}</p><h2 id={id+'-title'}>{title}</h2>{intro&&<p>{intro}</p>}</div>{children}</section>;}
+export function InfoCard({title,children}:{title:string;children:ReactNode}){return <article className="info-card"><h3>{title}</h3>{children}</article>;}
+export function SourceReference({ids}:{ids:number[]}){return <span className="source-refs">{ids.map(id=><a key={id} href={'#allikas-'+id} aria-label={'Allikas '+id}>[{id}]</a>)}</span>;}
+export function ProgressBar({value,max,label}:{value:number;max:number;label:string}){return <div className="progress-wrap"><label>{label}<progress aria-label={label} max={max} value={value}/></label></div>;}
+export function ResultCard({title,score,total,children}:{title:string;score:number;total:number;children:ReactNode}){return <div className="result-card"><div className="result-score" aria-label={`${score} punkti ${total}-st`}><strong>{score}</strong><span>/ {total}</span></div><div><h3>{title}</h3>{children}</div></div>;}
+export function ExerciseNote(){return <p className="exercise-note"><span aria-hidden="true">ⓘ</span> See on õppeharjutus, mitte joobe simulatsioon ega tervise hindamine. Ära tarvita alkoholi selle katsetamiseks.</p>;}
