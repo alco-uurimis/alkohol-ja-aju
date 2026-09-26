@@ -43,6 +43,42 @@ function optionLabel(value, language, type) {
   return maps[type]?.[value] ?? value;
 }
 
+function finiteNumber(value,min,max){
+  const n=Number(value);
+  return Number.isFinite(n)&&n>=min&&n<=max?n:null;
+}
+
+function readGameMetrics(value){
+  if(!value||typeof value!=='object'||Array.isArray(value))return {};
+  const result={};
+
+  if(value.reaction&&typeof value.reaction==='object'){
+    const latestMs=finiteNumber(value.reaction.latestMs,50,10000);
+    const bestMs=finiteNumber(value.reaction.bestMs,50,10000);
+    const attempts=finiteNumber(value.reaction.attempts,1,100);
+    if(latestMs!==null&&bestMs!==null&&attempts!==null)result.reaction={latestMs,bestMs,attempts};
+  }
+
+  if(value.stroop&&typeof value.stroop==='object'){
+    const score=finiteNumber(value.stroop.score,0,8);
+    const rounds=finiteNumber(value.stroop.rounds,1,8);
+    const averageMs=finiteNumber(value.stroop.averageMs,50,60000);
+    const totalMs=finiteNumber(value.stroop.totalMs,100,300000);
+    const attempts=finiteNumber(value.stroop.attempts,1,100);
+    if(score!==null&&rounds!==null&&averageMs!==null&&totalMs!==null&&attempts!==null)result.stroop={score,rounds,averageMs,totalMs,attempts};
+  }
+
+  if(value.signal&&typeof value.signal==='object'){
+    const reachedLength=finiteNumber(value.signal.reachedLength,1,20);
+    const durationMs=finiteNumber(value.signal.durationMs,100,300000);
+    const attempts=finiteNumber(value.signal.attempts,1,100);
+    const completed=value.signal.completed===true;
+    if(reachedLength!==null&&durationMs!==null&&attempts!==null)result.signal={reachedLength,durationMs,attempts,completed};
+  }
+
+  return result;
+}
+
 export default async function handler(req, res) {
   applyCors(req, res);
   if (req.method === 'OPTIONS') return res.status(204).end();
@@ -76,6 +112,7 @@ export default async function handler(req, res) {
   const learned=String(body.learned??'');
   const recommend=String(body.recommend??'');
   const comment=typeof body.comment==='string'?body.comment.trim():'';
+  const gameMetrics=readGameMetrics(body.gameMetrics);
 
   if(!SECTION_VALUES.has(useful))return res.status(400).json({ok:false,error:'invalid_useful_section'});
   if(!LEAST_CLEAR_VALUES.has(leastClear))return res.status(400).json({ok:false,error:'invalid_least_clear'});
@@ -108,6 +145,19 @@ export default async function handler(req, res) {
     `pace=${pace}`,
     `learned=${learned}`,
     `recommend=${recommend}`,
+  ];
+
+  if(gameMetrics.reaction){
+    lines.push(`reaction_latest_ms=${gameMetrics.reaction.latestMs}`,`reaction_best_ms=${gameMetrics.reaction.bestMs}`,`reaction_attempts=${gameMetrics.reaction.attempts}`);
+  }
+  if(gameMetrics.stroop){
+    lines.push(`stroop_score=${gameMetrics.stroop.score}`,`stroop_rounds=${gameMetrics.stroop.rounds}`,`stroop_avg_ms=${gameMetrics.stroop.averageMs}`,`stroop_total_ms=${gameMetrics.stroop.totalMs}`,`stroop_attempts=${gameMetrics.stroop.attempts}`);
+  }
+  if(gameMetrics.signal){
+    lines.push(`signal_level=${gameMetrics.signal.reachedLength}`,`signal_completed=${gameMetrics.signal.completed?'yes':'no'}`,`signal_duration_ms=${gameMetrics.signal.durationMs}`,`signal_attempts=${gameMetrics.signal.attempts}`);
+  }
+
+  lines.push(
     '',
     isRu?'📝 Ответы':'📝 Vastused',
     `${isRu?'Знания до':'Teadmised enne'}: ${scales.knowledgeBefore}/5`,
@@ -125,9 +175,16 @@ export default async function handler(req, res) {
     `${isRu?'Темп':'Tempo'}: ${optionLabel(pace,language,'pace')}`,
     `${isRu?'Узнал новое':'Sai uut teada'}: ${optionLabel(learned,language,'learned')}`,
     `${isRu?'Рекомендует':'Soovitaks'}: ${optionLabel(recommend,language,'recommend')}`,
-  ];
+  );
 
-  if(comment)lines.push('',isRu?'Комментарий:':'Kommentaar:',comment);
+  if(gameMetrics.reaction||gameMetrics.stroop||gameMetrics.signal){
+    lines.push('',isRu?'🎮 Мини-игры':'🎮 Minimängud');
+    if(gameMetrics.reaction)lines.push(`${isRu?'Реакция':'Reaktsioon'}: ${gameMetrics.reaction.latestMs} ms · ${isRu?'лучшее':'parim'} ${gameMetrics.reaction.bestMs} ms · ${isRu?'попыток':'katseid'} ${gameMetrics.reaction.attempts}`);
+    if(gameMetrics.stroop)lines.push(`Stroop: ${gameMetrics.stroop.score}/${gameMetrics.stroop.rounds} · ${isRu?'среднее':'keskmine'} ${gameMetrics.stroop.averageMs} ms · ${isRu?'общее время':'koguaeg'} ${(gameMetrics.stroop.totalMs/1000).toFixed(1)} s · ${isRu?'попыток':'katseid'} ${gameMetrics.stroop.attempts}`);
+    if(gameMetrics.signal)lines.push(`${isRu?'Цепочка':'Signaalirada'}: ${isRu?'уровень':'tase'} ${gameMetrics.signal.reachedLength} · ${gameMetrics.signal.completed?(isRu?'пройдено':'läbitud'):(isRu?'не завершено':'pooleli')} · ${(gameMetrics.signal.durationMs/1000).toFixed(1)} s · ${isRu?'попыток':'katseid'} ${gameMetrics.signal.attempts}`);
+  }
+
+  if(comment)lines.push('',isRu?'Комментарий / структурированные данные:':'Kommentaar / struktureeritud andmed:',comment);
   lines.push('',`Aeg / Время: ${new Date().toISOString()}`);
 
   try{
