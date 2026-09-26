@@ -33,14 +33,29 @@ async function checkTelegram(){
   }
 }
 
+function inspectSheetUrl(raw){
+  try{
+    const parsed=new URL(String(raw).trim());
+    const appsScriptExec=parsed.protocol==='https:'&&parsed.hostname==='script.google.com'&&/^\/macros\/s\/[^/]+\/exec\/?$/.test(parsed.pathname);
+    return {valid:true,host:parsed.hostname,appsScriptExec};
+  }catch{
+    return {valid:false,host:null,appsScriptExec:false};
+  }
+}
+
 async function checkSheet(){
   const url=process.env.SHEET_WEBHOOK_URL;
   const secret=process.env.SHEET_WEBHOOK_SECRET;
   if(!url||!secret){
     return {ok:false,configured:false,reason:!url&&!secret?'missing_sheet_url_and_secret':!url?'missing_sheet_url':'missing_sheet_secret'};
   }
+
+  const urlInfo=inspectSheetUrl(url);
+  if(!urlInfo.valid)return {ok:false,configured:true,reason:'sheet_url_invalid',urlInfo};
+  if(!urlInfo.appsScriptExec)return {ok:false,configured:true,reason:'sheet_url_not_apps_script_exec',urlInfo};
+
   try{
-    const response=await fetch(url,{
+    const response=await fetch(String(url).trim(),{
       method:'POST',
       headers:{'content-type':'application/json'},
       body:JSON.stringify({secret,health:true}),
@@ -48,13 +63,13 @@ async function checkSheet(){
     const text=await response.text();
     let data={};
     try{data=JSON.parse(text);}catch{}
-    if(data.ok===true&&data.health===true)return {ok:true,configured:true,reason:'ok'};
-    if(data.error==='forbidden')return {ok:false,configured:true,reason:'sheet_secret_mismatch'};
-    if(data.error==='missing_secret')return {ok:false,configured:true,reason:'apps_script_missing_webhook_secret'};
-    if(data.error==='missing_response_id')return {ok:false,configured:true,reason:'apps_script_outdated_redeploy_required'};
-    return {ok:false,configured:true,reason:'sheet_webhook_error'};
+    if(data.ok===true&&data.health===true)return {ok:true,configured:true,reason:'ok',urlInfo};
+    if(data.error==='forbidden')return {ok:false,configured:true,reason:'sheet_secret_mismatch',urlInfo};
+    if(data.error==='missing_secret')return {ok:false,configured:true,reason:'apps_script_missing_webhook_secret',urlInfo};
+    if(data.error==='missing_response_id')return {ok:false,configured:true,reason:'apps_script_outdated_redeploy_required',urlInfo};
+    return {ok:false,configured:true,reason:'sheet_webhook_error',urlInfo};
   }catch{
-    return {ok:false,configured:true,reason:'sheet_unreachable'};
+    return {ok:false,configured:true,reason:'sheet_unreachable',urlInfo};
   }
 }
 
