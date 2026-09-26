@@ -1,8 +1,9 @@
 import { Section, SourceReference } from '../components/Shared';
 
 type Lang='et'|'ru';
+type IconType='clock'|'eye'|'balance'|'control'|'memory'|'tolerance'|'link'|'sleep';
 
-const Icon=({type}:{type:'clock'|'eye'|'balance'|'control'|'memory'|'tolerance'|'link'|'sleep'|'bolt'|'focus'})=>{
+const Icon=({type}:{type:IconType})=>{
   const paths={
     clock:<><circle cx="24" cy="24" r="16"/><path d="M24 14v11l7 4"/></>,
     eye:<><path d="M5 24s7-10 19-10 19 10 19 10-7 10-19 10S5 24 5 24Z"/><circle cx="24" cy="24" r="4"/></>,
@@ -12,72 +13,33 @@ const Icon=({type}:{type:'clock'|'eye'|'balance'|'control'|'memory'|'tolerance'|
     tolerance:<><path d="M7 37h8V25H7v12Zm13 0h8V18h-8v19Zm13 0h8V10h-8v27Z"/><path d="m10 17 8-6 7 3 12-8"/></>,
     link:<><path d="M19 29 14 34a7 7 0 0 1-10-10l7-7a7 7 0 0 1 10 0M29 19l5-5a7 7 0 0 1 10 10l-7 7a7 7 0 0 1-10 0M16 32l16-16"/></>,
     sleep:<><path d="M31 36A16 16 0 1 1 19 8a13 13 0 0 0 12 28Z"/><path d="M33 12h8l-8 8h8"/></>,
-    bolt:<path d="m27 4-13 22h10l-3 18 14-24H25l2-16Z"/>,
-    focus:<><circle cx="24" cy="24" r="12"/><circle cx="24" cy="24" r="3"/><path d="M24 3v7M24 38v7M3 24h7M38 24h7"/></>,
   };
   return <svg className="info-icon" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">{paths[type]}</svg>;
 };
 
 export default function Infographics({lang}:{lang:Lang}){
   const ru=lang==='ru';
-  const zones=ru?[
-    ['01','Префронтальная кора','планирование · контроль · решения'],
-    ['02','Гиппокамп','память · обучение'],
-    ['03','Система вознаграждения','мотивация · подкрепление'],
-    ['04','Мозжечок','координация · равновесие'],
-    ['05','Ствол мозга','жизненно важные функции'],
-  ]:[
-    ['01','Prefrontaalne ajukoor','planeerimine · kontroll · otsused'],
-    ['02','Hipokampus','mälu · õppimine'],
-    ['03','Tasustamissüsteem','motivatsioon · kinnistamine'],
-    ['04','Väikeaju','koordinatsioon · tasakaal'],
-    ['05','Ajutüvi','elutähtsad funktsioonid'],
-  ];
-  const short=ru?[
+  const short:[IconType,string][]=ru?[
     ['clock','Замедление реакции'],['eye','Снижение внимания'],['balance','Нарушение координации'],['control','Ослабление самоконтроля'],
   ]:[['clock','Reaktsiooni aeglustumine'],['eye','Tähelepanu vähenemine'],['balance','Koordinatsiooni häirumine'],['control','Enesekontrolli nõrgenemine']];
-  const long=ru?[
+  const long:[IconType,string][]=ru?[
     ['memory','Проблемы с памятью'],['tolerance','Толерантность'],['link','Риск зависимости'],['sleep','Нарушение сна и настроения'],
   ]:[['memory','Mäluprobleemid'],['tolerance','Tolerants'],['link','Sõltuvusrisk'],['sleep','Une ja meeleolu häired']];
 
-  return <Section id="infograafika" number={ru?'01B / ВИЗУАЛЬНО':'01B / VISUAALSELT'} title={ru?'Тема в инфографике':'Teema infograafikas'} intro={ru?'Четыре схемы собирают основные идеи страницы в визуальную форму. Это учебные модели: они упрощают сложную нейробиологию и не являются медицинской диагностикой.':'Neli skeemi võtavad lehe põhiideed visuaalselt kokku. Need on õppemudelid: keerukas neurobioloogia on lihtsustatud ning need ei ole meditsiiniline diagnostika.'} className="infographics-section">
-    <div className="infographic-grid">
-      <article className="infographic-card infographic-brain">
-        <div className="infographic-kicker"><span>{ru?'КАРТА МОЗГА':'AJUKAART'}</span><span>01</span></div>
-        <h3>{ru?'5 зон, которые помогают понять общую картину':'5 piirkonda, mis aitavad tervikpilti mõista'}</h3>
-        <div className="brain-zone-visual">
-          <div className="brain-zone-shape" aria-hidden="true"><span className="brain-lobe lobe-a"/><span className="brain-lobe lobe-b"/><span className="brain-lobe lobe-c"/><span className="brain-lobe lobe-d"/><span className="brain-stem-mini"/></div>
-          <ol className="brain-zone-list">{zones.map(([n,title,text])=><li key={n}><span>{n}</span><div><strong>{title}</strong><small>{text}</small></div></li>)}</ol>
-        </div>
-        <p className="infographic-note">{ru?'Функции распределены по сетям мозга — это упрощённая карта.':'Ajufunktsioonid jaotuvad võrgustikesse — see kaart on lihtsustatud.'} <SourceReference ids={[1,2,6,9]} lang={lang}/></p>
-      </article>
-
+  return <Section id="infograafika" number={ru?'02 / ИНФОГРАФИКА':'02 / INFOGRAAFIKA'} title={ru?'Две схемы, которые помогают увидеть главное':'Kaks skeemi, mis aitavad põhilist näha'} intro={ru?'Здесь оставлены только две визуализации, которые добавляют новую информацию: возможные эффекты алкоголя и упрощённая схема нейрохимии.':'Siia on jäetud ainult kaks visualiseeringut, mis lisavad uut infot: alkoholi võimalikud mõjud ja lihtsustatud neurokeemia skeem.'} className="infographics-section">
+    <div className="infographic-grid infographic-grid-compact">
       <article className="infographic-card infographic-effects">
-        <div className="infographic-kicker"><span>{ru?'ЭФФЕКТЫ':'MÕJUD'}</span><span>02</span></div>
+        <div className="infographic-kicker"><span>{ru?'ЭФФЕКТЫ':'MÕJUD'}</span><span>01</span></div>
         <h3>{ru?'Что может меняться сразу и со временем':'Mis võib muutuda kohe ja aja jooksul'}</h3>
         <div className="effect-columns">
-          <div className="effect-column short-term"><h4>{ru?'Кратковременно':'Lühiajaliselt'}</h4>{short.map(([icon,text])=><div className="effect-row" key={text}><Icon type={icon as Parameters<typeof Icon>[0]['type']}/><span>{text}</span></div>)}</div>
-          <div className="effect-column long-term"><h4>{ru?'При повторном тяжёлом употреблении':'Korduva rohke tarvitamise korral'}</h4>{long.map(([icon,text])=><div className="effect-row" key={text}><Icon type={icon as Parameters<typeof Icon>[0]['type']}/><span>{text}</span></div>)}</div>
+          <div className="effect-column short-term"><h4>{ru?'Кратковременно':'Lühiajaliselt'}</h4>{short.map(([icon,text])=><div className="effect-row" key={text}><Icon type={icon}/><span>{text}</span></div>)}</div>
+          <div className="effect-column long-term"><h4>{ru?'При повторном тяжёлом употреблении':'Korduva rohke tarvitamise korral'}</h4>{long.map(([icon,text])=><div className="effect-row" key={text}><Icon type={icon}/><span>{text}</span></div>)}</div>
         </div>
         <p className="infographic-note">{ru?'Эффекты зависят от количества, частоты, возраста и других факторов.':'Mõju sõltub kogusest, sagedusest, vanusest ja teistest teguritest.'} <SourceReference ids={[6,8,11]} lang={lang}/></p>
       </article>
 
-      <article className="infographic-card infographic-functions">
-        <div className="infographic-kicker"><span>{ru?'3 ФУНКЦИИ':'3 FUNKTSIOONI'}</span><span>03</span></div>
-        <h3>{ru?'Память · внимание · реакция':'Mälu · tähelepanu · reaktsioon'}</h3>
-        <div className="function-flow">
-          <div><Icon type="memory"/><b>01</b><strong>{ru?'Память':'Mälu'}</strong><p>{ru?'Кодирование и воспроизведение новой информации.':'Uue info kodeerimine ja meenutamine.'}</p></div>
-          <span className="flow-arrow" aria-hidden="true">→</span>
-          <div><Icon type="focus"/><b>02</b><strong>{ru?'Внимание':'Tähelepanu'}</strong><p>{ru?'Фокус и фильтрация лишних сигналов.':'Fookus ja ebaoluliste signaalide filtreerimine.'}</p></div>
-          <span className="flow-arrow" aria-hidden="true">→</span>
-          <div><Icon type="bolt"/><b>03</b><strong>{ru?'Реакция':'Reaktsioon'}</strong><p>{ru?'Быстрый выбор и выполнение ответа.':'Kiire valik ja vastuse sooritamine.'}</p></div>
-        </div>
-        <div className="function-band"><span>{ru?'запоминание':'meeldejätmine'}</span><span>{ru?'фокус':'fookus'}</span><span>{ru?'скорость ответа':'vastuse kiirus'}</span></div>
-        <p className="infographic-note">{ru?'Эти процессы связаны между собой, а не работают как отдельные «модули».':'Need protsessid on omavahel seotud ega tööta eraldiseisvate „moodulitena“.'} <SourceReference ids={[2,3,9]} lang={lang}/></p>
-      </article>
-
       <article className="infographic-card infographic-neuro">
-        <div className="infographic-kicker"><span>{ru?'НЕЙРОХИМИЯ':'NEUROKEEMIA'}</span><span>04</span></div>
+        <div className="infographic-kicker"><span>{ru?'НЕЙРОХИМИЯ':'NEUROKEEMIA'}</span><span>02</span></div>
         <h3>{ru?'Три сигнальные системы — очень упрощённо':'Kolm signaalisüsteemi — väga lihtsustatult'}</h3>
         <div className="synapse-visual" aria-hidden="true"><div className="synapse-top"><i/><i/><i/><i/><i/></div><div className="synapse-gap"><span/><span/><span/><span/><span/><span/></div><div className="synapse-bottom"><i/><i/><i/></div></div>
         <div className="neuro-grid">
