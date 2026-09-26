@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Brain from './sections/Brain';
+import Infographics from './sections/Infographics';
 import Memory from './sections/Memory';
 import Attention from './sections/Attention';
 import Lab from './sections/Lab';
@@ -84,7 +85,7 @@ export default function App(){
         </div>
       </section>
 
-      <Brain lang={lang}/><LearningCenter lang={lang}/><Memory lang={lang}/><Attention lang={lang}/><Lab lang={lang}/>
+      <Brain lang={lang}/><Infographics lang={lang}/><LearningCenter lang={lang}/><Memory lang={lang}/><Attention lang={lang}/><Lab lang={lang}/>
       <Section id="viktoriin" number={ru?'05 / ПРОВЕРЬ ЗНАНИЯ':'05 / KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Десять утверждений о теме. Для каждого выбери «миф» или «факт», затем прочитай объяснение.':'Kümme väidet teema kohta. Vali iga väite puhul „müüt“ või „fakt“ ja loe seejärel selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={setQuizScore}/></Section>
       <FinalSummary lang={lang} quizScore={quizScore} visited={visited.size} totalSections={trackedIds.length}/>
       <Closing lang={lang}/>
