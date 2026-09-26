@@ -52,17 +52,17 @@ export default function App(){
       <div className="intro-strip"><span><b>01</b> {ru?'Разберись':'Mõista'}</span><span><b>02</b> {ru?'Попробуй':'Proovi'}</span><span><b>03</b> {ru?'Проверь':'Kontrolli'}</span><span><b>04</b> {ru?'Поделись мнением':'Anna tagasisidet'}</span></div>
 
       <section id="teejuht" className="site-guide" aria-labelledby="guide-title">
-        <div className="site-guide-heading"><p className="eyebrow">{ru?'МАРШРУТ ПО САЙТУ':'LEHE TEEJUHT'}</p><h2 id="guide-title">{ru?'Что здесь делать?':'Mida siin teha?'}</h2><p>{ru?'Можно идти по порядку — это займёт примерно несколько коротких этапов. Или сразу открыть нужный раздел.':'Võid liikuda järjekorras või avada kohe selle osa, mis sind huvitab.'}</p></div>
+        <div className="site-guide-heading"><p className="eyebrow">{ru?'МАРШРУТ ПО САЙТУ':'LEHE TEEJUHT'}</p><h2 id="guide-title">{ru?'Что здесь делать?':'Mida siin teha?'}</h2><p>{ru?'Можно идти по порядку или сразу открыть нужный раздел.':'Võid liikuda järjekorras või avada kohe selle osa, mis sind huvitab.'}</p></div>
         <div className="guide-grid">
-          <a href="#aju" className="guide-card"><span>01</span><strong>{ru?'Понять влияние':'Mõista mõju'}</strong><p>{ru?'Коротко разберись, какие функции мозга связаны с темой.':'Vaata lühidalt, millised aju funktsioonid on teemaga seotud.'}</p><em>{ru?'Начни здесь →':'Alusta siit →'}</em></a>
+          <a href="#aju" className="guide-card"><span>01</span><strong>{ru?'Понять влияние':'Mõista mõju'}</strong><p>{ru?'Разберись в функциях мозга и открой углублённые научные карточки.':'Vaata aju funktsioone ja ava sügavamad teaduskaardid.'}</p><em>{ru?'Начни здесь →':'Alusta siit →'}</em></a>
           <a href="#malu" className="guide-card"><span>02</span><strong>{ru?'Попробовать задания':'Proovi harjutusi'}</strong><p>{ru?'Проверь память и внимание в двух отдельных упражнениях.':'Proovi eraldi mälu- ja tähelepanuharjutust.'}</p><em>{ru?'Перейти к памяти →':'Mine mälu juurde →'}</em></a>
           <a href="#labor" className="guide-card"><span>03</span><strong>{ru?'Поиграть':'Mängi'}</strong><p>{ru?'Три коротких игры: реакция, Stroop и последовательность сигналов.':'Kolm lühikest mängu: reaktsioon, Stroop ja signaalijada.'}</p><em>{ru?'Открыть игры →':'Ava mängud →'}</em></a>
-          <a href="#viktoriin" className="guide-card"><span>04</span><strong>{ru?'Проверить знания':'Kontrolli teadmisi'}</strong><p>{ru?'Ответь на восемь утверждений и сразу прочитай объяснения.':'Vasta kaheksale väitele ja loe kohe selgitusi.'}</p><em>{ru?'Начать проверку →':'Alusta kontrolli →'}</em></a>
+          <a href="#viktoriin" className="guide-card"><span>04</span><strong>{ru?'Проверить знания':'Kontrolli teadmisi'}</strong><p>{ru?'Ответь на десять утверждений и сразу прочитай объяснения.':'Vasta kümnele väitele ja loe kohe selgitusi.'}</p><em>{ru?'Начать проверку →':'Alusta kontrolli →'}</em></a>
         </div>
       </section>
 
       <Brain lang={lang}/><Memory lang={lang}/><Attention lang={lang}/><Lab lang={lang}/>
-      <Section id="viktoriin" number={ru?'05 / ПРОВЕРЬ ЗНАНИЯ':'05 / KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Восемь утверждений о теме. Для каждого выбери «миф» или «факт», затем прочитай объяснение.':'Kaheksa väidet teema kohta. Vali iga väite puhul „müüt“ või „fakt“ ja loe seejärel selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang}/></Section>
+      <Section id="viktoriin" number={ru?'05 / ПРОВЕРЬ ЗНАНИЯ':'05 / KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Десять утверждений о теме. Для каждого выбери «миф» или «факт», затем прочитай объяснение.':'Kümme väidet teema kohta. Vali iga väite puhul „müüt“ või „fakt“ ja loe seejärel selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang}/></Section>
       <Closing lang={lang}/>
     </main>
     <footer>{ru?'Алкоголь и мозг':'Alkohol ja aju'} <span>{ru?'Практическая работа гимназии':'Gümnaasiumi praktiline töö'}</span></footer>
