@@ -19,4 +19,5 @@ import './brain-segments.css';
 import './sticky-header.css';
 import './mobile-cleanup.css';
 import './research-entry.css';
+import './mobile-design-fix.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><ResearchPortal/></React.StrictMode>);
