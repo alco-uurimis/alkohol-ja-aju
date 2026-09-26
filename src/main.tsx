@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import './scrollProgress';
 import './styles.css';
 import './features.css';
 import './visuals.css';
