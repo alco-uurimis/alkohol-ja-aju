@@ -79,6 +79,12 @@ function readGameMetrics(value){
   return result;
 }
 
+function localTimestamp(){
+  return new Intl.DateTimeFormat('et-EE',{
+    timeZone:'Europe/Tallinn',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,
+  }).format(new Date());
+}
+
 export default async function handler(req, res) {
   applyCors(req, res);
   if (req.method === 'OPTIONS') return res.status(204).end();
@@ -123,69 +129,41 @@ export default async function handler(req, res) {
 
   const isRu=language==='ru';
   const knowledgeDelta=Number(scales.knowledgeAfter)-Number(scales.knowledgeBefore);
+  const deltaText=`${knowledgeDelta>=0?'+':''}${knowledgeDelta}`;
   const lines=[
-    '🧠 Alkohol ja aju — uus statistiline küsitlus',
+    isRu?'🧠 Новый ответ — «Алкоголь и мозг»':'🧠 Uus vastus — „Alkohol ja aju“',
+    `${isRu?'Язык':'Keel'}: ${language.toUpperCase()}`,
     '',
-    `Keel / Язык: ${language.toUpperCase()}`,
+    isRu?'📚 Знания и понимание':'📚 Teadmised ja arusaamine',
+    `${isRu?'Знания':'Teadmised'}: ${scales.knowledgeBefore}/5 → ${scales.knowledgeAfter}/5 (${deltaText})`,
+    `${isRu?'Понятность материала':'Materjali arusaadavus'}: ${scales.clarity}/5`,
+    `${isRu?'Уверенность «миф или факт»':'Kindlus „müüt või fakt“'}: ${scales.confidence}/5`,
+    `${isRu?'Узнал(а) новое':'Sai midagi uut teada'}: ${optionLabel(learned,language,'learned')}`,
     '',
-    '📊 STRUCTURED',
-    `knowledge_before=${scales.knowledgeBefore}`,
-    `knowledge_after=${scales.knowledgeAfter}`,
-    `knowledge_delta=${knowledgeDelta}`,
-    `clarity=${scales.clarity}`,
-    `interest=${scales.interest}`,
-    `navigation=${scales.navigation}`,
-    `visuals=${scales.visuals}`,
-    `memory_difficulty=${scales.memoryDifficulty}`,
-    `attention_difficulty=${scales.attentionDifficulty}`,
-    `games_useful=${scales.gamesUseful}`,
-    `myth_confidence=${scales.confidence}`,
-    `useful_section=${useful}`,
-    `least_clear=${leastClear}`,
-    `pace=${pace}`,
-    `learned=${learned}`,
-    `recommend=${recommend}`,
-  ];
-
-  if(gameMetrics.reaction){
-    lines.push(`reaction_latest_ms=${gameMetrics.reaction.latestMs}`,`reaction_best_ms=${gameMetrics.reaction.bestMs}`,`reaction_attempts=${gameMetrics.reaction.attempts}`);
-  }
-  if(gameMetrics.stroop){
-    lines.push(`stroop_score=${gameMetrics.stroop.score}`,`stroop_rounds=${gameMetrics.stroop.rounds}`,`stroop_avg_ms=${gameMetrics.stroop.averageMs}`,`stroop_total_ms=${gameMetrics.stroop.totalMs}`,`stroop_attempts=${gameMetrics.stroop.attempts}`);
-  }
-  if(gameMetrics.signal){
-    lines.push(`signal_level=${gameMetrics.signal.reachedLength}`,`signal_completed=${gameMetrics.signal.completed?'yes':'no'}`,`signal_duration_ms=${gameMetrics.signal.durationMs}`,`signal_attempts=${gameMetrics.signal.attempts}`);
-  }
-
-  lines.push(
-    '',
-    isRu?'📝 Ответы':'📝 Vastused',
-    `${isRu?'Знания до':'Teadmised enne'}: ${scales.knowledgeBefore}/5`,
-    `${isRu?'Знания после':'Teadmised pärast'}: ${scales.knowledgeAfter}/5 (${knowledgeDelta>=0?'+':''}${knowledgeDelta})`,
-    `${isRu?'Понятность':'Arusaadavus'}: ${scales.clarity}/5`,
+    isRu?'🖥️ Сайт':'🖥️ Veebileht',
     `${isRu?'Интерес':'Huvi'}: ${scales.interest}/5`,
     `${isRu?'Навигация':'Navigeerimine'}: ${scales.navigation}/5`,
-    `${isRu?'Визуал':'Visuaal'}: ${scales.visuals}/5`,
-    `${isRu?'Сложность памяти':'Mälu raskus'}: ${scales.memoryDifficulty}/5`,
-    `${isRu?'Сложность внимания':'Tähelepanu raskus'}: ${scales.attentionDifficulty}/5`,
-    `${isRu?'Польза игр':'Mängude kasu'}: ${scales.gamesUseful}/5`,
-    `${isRu?'Уверенность в мифах/фактах':'Müütide/faktide kindlus'}: ${scales.confidence}/5`,
-    `${isRu?'Самый полезный раздел':'Kasulikum osa'}: ${sectionLabel(useful,language)}`,
-    `${isRu?'Наименее понятный':'Kõige ebaselgem'}: ${sectionLabel(leastClear,language)}`,
-    `${isRu?'Темп':'Tempo'}: ${optionLabel(pace,language,'pace')}`,
-    `${isRu?'Узнал новое':'Sai uut teada'}: ${optionLabel(learned,language,'learned')}`,
-    `${isRu?'Рекомендует':'Soovitaks'}: ${optionLabel(recommend,language,'recommend')}`,
-  );
+    `${isRu?'Дизайн':'Kujundus'}: ${scales.visuals}/5`,
+    `${isRu?'Темп материала':'Materjali tempo'}: ${optionLabel(pace,language,'pace')}`,
+    `${isRu?'Самый полезный раздел':'Kõige kasulikum osa'}: ${sectionLabel(useful,language)}`,
+    `${isRu?'Самый непонятный раздел':'Kõige ebaselgem osa'}: ${sectionLabel(leastClear,language)}`,
+    `${isRu?'Посоветовал(а) бы однокласснику':'Soovitaks klassikaaslasele'}: ${optionLabel(recommend,language,'recommend')}`,
+    '',
+    isRu?'🧩 Упражнения':'🧩 Harjutused',
+    `${isRu?'Сложность задания на память':'Mäluharjutuse raskus'}: ${scales.memoryDifficulty}/5`,
+    `${isRu?'Сложность задания на внимание':'Tähelepanuharjutuse raskus'}: ${scales.attentionDifficulty}/5`,
+    `${isRu?'Насколько помогли мини-игры':'Kui palju minimängud aitasid'}: ${scales.gamesUseful}/5`,
+  ];
 
   if(gameMetrics.reaction||gameMetrics.stroop||gameMetrics.signal){
-    lines.push('',isRu?'🎮 Мини-игры':'🎮 Minimängud');
-    if(gameMetrics.reaction)lines.push(`${isRu?'Реакция':'Reaktsioon'}: ${gameMetrics.reaction.latestMs} ms · ${isRu?'лучшее':'parim'} ${gameMetrics.reaction.bestMs} ms · ${isRu?'попыток':'katseid'} ${gameMetrics.reaction.attempts}`);
-    if(gameMetrics.stroop)lines.push(`Stroop: ${gameMetrics.stroop.score}/${gameMetrics.stroop.rounds} · ${isRu?'среднее':'keskmine'} ${gameMetrics.stroop.averageMs} ms · ${isRu?'общее время':'koguaeg'} ${(gameMetrics.stroop.totalMs/1000).toFixed(1)} s · ${isRu?'попыток':'katseid'} ${gameMetrics.stroop.attempts}`);
-    if(gameMetrics.signal)lines.push(`${isRu?'Цепочка':'Signaalirada'}: ${isRu?'уровень':'tase'} ${gameMetrics.signal.reachedLength} · ${gameMetrics.signal.completed?(isRu?'пройдено':'läbitud'):(isRu?'не завершено':'pooleli')} · ${(gameMetrics.signal.durationMs/1000).toFixed(1)} s · ${isRu?'попыток':'katseid'} ${gameMetrics.signal.attempts}`);
+    lines.push('',isRu?'🎮 Результаты мини-игр':'🎮 Minimängude tulemused');
+    if(gameMetrics.reaction)lines.push(`⚡ ${isRu?'Реакция':'Reaktsioon'}: ${gameMetrics.reaction.latestMs} ms (${isRu?'лучший':'parim'} ${gameMetrics.reaction.bestMs} ms, ${isRu?'попыток':'katseid'} ${gameMetrics.reaction.attempts})`);
+    if(gameMetrics.stroop)lines.push(`🎨 Stroop: ${gameMetrics.stroop.score}/${gameMetrics.stroop.rounds} · ${isRu?'среднее время ответа':'keskmine vastamisaeg'} ${gameMetrics.stroop.averageMs} ms · ${isRu?'всего':'kokku'} ${(gameMetrics.stroop.totalMs/1000).toFixed(1)} s · ${isRu?'попыток':'katseid'} ${gameMetrics.stroop.attempts}`);
+    if(gameMetrics.signal)lines.push(`🔗 ${isRu?'Цепочка сигналов':'Signaalirada'}: ${isRu?'уровень':'tase'} ${gameMetrics.signal.reachedLength} · ${gameMetrics.signal.completed?(isRu?'завершено':'läbitud'):(isRu?'не завершено':'pooleli')} · ${(gameMetrics.signal.durationMs/1000).toFixed(1)} s · ${isRu?'попыток':'katseid'} ${gameMetrics.signal.attempts}`);
   }
 
-  if(comment)lines.push('',isRu?'Комментарий / структурированные данные:':'Kommentaar / struktureeritud andmed:',comment);
-  lines.push('',`Aeg / Время: ${new Date().toISOString()}`);
+  if(comment)lines.push('',isRu?'💬 Комментарий':'💬 Kommentaar',comment);
+  lines.push('',`🕒 ${isRu?'Отправлено':'Saadetud'}: ${localTimestamp()} (Tallinn)`);
 
   try{
     const telegram=await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:chatId,text:lines.join('\n'),disable_web_page_preview:true})});
