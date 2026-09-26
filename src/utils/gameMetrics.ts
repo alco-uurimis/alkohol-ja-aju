@@ -16,6 +16,7 @@ export function readGameMetrics():GameMetrics{
 
 function write(metrics:GameMetrics){
   try{window.sessionStorage.setItem(KEY,JSON.stringify(metrics));}catch{/* storage can be unavailable */}
+  try{window.dispatchEvent(new CustomEvent('alkohol-game-metrics'));}catch{/* no-op */}
 }
 
 export function recordReaction(ms:number){
@@ -71,4 +72,5 @@ export function gameMetricsCompactText(metrics:GameMetrics):string{
 
 export function clearGameMetrics(){
   try{window.sessionStorage.removeItem(KEY);}catch{/* no-op */}
+  try{window.dispatchEvent(new CustomEvent('alkohol-game-metrics'));}catch{/* no-op */}
 }
