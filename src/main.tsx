@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import ResearchPortal from './components/ResearchPortal';
 import './scrollProgress';
 import './styles.css';
 import './features.css';
@@ -17,4 +18,5 @@ import './ux-system.css';
 import './brain-segments.css';
 import './sticky-header.css';
 import './mobile-cleanup.css';
-ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
+import './research-entry.css';
+ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><ResearchPortal/></React.StrictMode>);
