@@ -7,4 +7,5 @@ import './visuals.css';
 import './polish.css';
 import './lab.css';
 import './survey.css';
+import './clarity.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
