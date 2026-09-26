@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ExerciseNote, Section } from '../components/Shared';
+import { recordReaction, recordSignal, recordStroop } from '../utils/gameMetrics';
 
 type Lang = 'et' | 'ru';
 type ReactionState = 'idle' | 'waiting' | 'go' | 'result' | 'false-start';
@@ -47,7 +48,9 @@ function ReactionGame({ lang }: { lang: Lang }) {
       return;
     }
     if (state === 'go') {
-      setResult(Math.round(performance.now() - startedAt.current));
+      const ms=Math.round(performance.now() - startedAt.current);
+      setResult(ms);
+      recordReaction(ms);
       setState('result');
     }
   };
@@ -96,6 +99,7 @@ function StroopGame({ lang }: { lang: Lang }) {
   const [active, setActive] = useState(false);
   const [done, setDone] = useState(false);
   const roundStarted = useRef(0);
+  const gameStarted = useRef(0);
 
   useEffect(() => {
     setActive(false);
@@ -112,6 +116,7 @@ function StroopGame({ lang }: { lang: Lang }) {
     setTimes([]);
     setDone(false);
     setActive(true);
+    gameStarted.current=performance.now();
     roundStarted.current = performance.now();
   };
 
@@ -123,6 +128,9 @@ function StroopGame({ lang }: { lang: Lang }) {
     setScore(nextScore);
     setTimes(nextTimes);
     if (index === rounds.length - 1) {
+      const averageMs=Math.round(nextTimes.reduce((a,b)=>a+b,0)/nextTimes.length);
+      const totalMs=Math.round(performance.now()-gameStarted.current);
+      recordStroop(nextScore,rounds.length,averageMs,totalMs);
       setActive(false);
       setDone(true);
     } else {
@@ -156,6 +164,7 @@ function SignalGame({ lang }: { lang: Lang }) {
   const [inputIndex, setInputIndex] = useState(0);
   const [won, setWon] = useState(false);
   const timers = useRef<number[]>([]);
+  const gameStarted=useRef(0);
 
   const clearTimers = () => {
     timers.current.forEach(id => window.clearTimeout(id));
@@ -185,6 +194,7 @@ function SignalGame({ lang }: { lang: Lang }) {
 
   const start = () => {
     const first = Array.from({ length: 3 }, () => signalNodes[Math.floor(Math.random() * signalNodes.length)]);
+    gameStarted.current=performance.now();
     setWon(false);
     setSequence(first);
     play(first);
@@ -193,12 +203,14 @@ function SignalGame({ lang }: { lang: Lang }) {
   const tapNode = (node: number) => {
     if (phase !== 'input') return;
     if (node !== sequence[inputIndex]) {
+      recordSignal(sequence.length,false,Math.round(performance.now()-gameStarted.current));
       setWon(false);
       setPhase('result');
       return;
     }
     if (inputIndex === sequence.length - 1) {
       if (sequence.length >= 6) {
+        recordSignal(sequence.length,true,Math.round(performance.now()-gameStarted.current));
         setWon(true);
         setPhase('result');
         return;
@@ -230,7 +242,7 @@ export default function Lab({ lang }: { lang: Lang }) {
   const [glow, setGlow] = useState(false);
 
   return <Section id="labor" number={ru ? '04 / ИГРОВАЯ ЛАБОРАТОРИЯ' : '04 / MÄNGULABOR'} title={ru ? 'Три коротких игры для мозга' : 'Kolm lühikest ajumängu'} intro={ru ? 'Измерь реакцию, попробуй не читать слово и повтори цепочку сигналов. Это игровые задания, а не тест трезвости и не медицинская оценка.' : 'Mõõda reaktsiooni, proovi sõna mitte lugeda ja korda signaalijada. Need on mängulised ülesanded, mitte kainuse test ega tervisehinnang.'} className={`lab-section ${glow ? 'glow-mode' : ''}`}>
-    <div className="lab-toolbar"><div><span className="pill">{ru ? 'ИНТЕРАКТИВ' : 'INTERAKTIIVNE'}</span><p>{ru ? 'Все результаты остаются только в браузере и исчезают после обновления страницы.' : 'Kõik tulemused jäävad ainult brauserisse ja kaovad lehe värskendamisel.'}</p></div><button className="glow-toggle" aria-pressed={glow} onClick={() => setGlow(v => !v)}><span aria-hidden="true">✦</span>{glow ? (ru ? 'Выключить нейросвечение' : 'Lülita neurohelendus välja') : (ru ? 'Включить нейросвечение' : 'Lülita neurohelendus sisse')}</button></div>
+    <div className="lab-toolbar"><div><span className="pill">{ru ? 'ИНТЕРАКТИВ' : 'INTERAKTIIVNE'}</span><p>{ru ? 'Результаты игр хранятся только в этой вкладке. Они отправятся автору только вместе с финальным опросом и после твоего согласия.' : 'Mängutulemused säilivad ainult selles vahelehes. Need saadetakse autorile ainult koos lõpuküsitlusega ja pärast sinu nõusolekut.'}</p></div><button className="glow-toggle" aria-pressed={glow} onClick={() => setGlow(v => !v)}><span aria-hidden="true">✦</span>{glow ? (ru ? 'Выключить нейросвечение' : 'Lülita neurohelendus välja') : (ru ? 'Включить нейросвечение' : 'Lülita neurohelendus sisse')}</button></div>
     <ExerciseNote lang={lang} />
     <div className="lab-grid"><ReactionGame lang={lang} /><StroopGame lang={lang} /><SignalGame lang={lang} /></div>
     <div className="neuro-marquee" aria-hidden="true"><span>MEMORY · FOCUS · REACTION · SIGNAL · MEMORY · FOCUS · REACTION · SIGNAL · </span></div>
