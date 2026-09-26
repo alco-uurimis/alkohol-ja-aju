@@ -47,6 +47,44 @@
 .reference-glossary .glossary-grid details summary{border:0;padding:13px 0}
 .reference-glossary .glossary-grid details p{padding-bottom:14px;margin:0}
 
+/* Remove decorative Unicode arrows / emoji-like glyphs from the visible UI. */
+.menu-toggle>span,
+.header nav .nav-group a>span,
+.hero .actions a>span,
+.sources h3 a>span,
+.exercise-note>span{display:none!important}
+
+.visual-bottom a{display:none!important}
+.guide-card em{display:none!important}
+.infographic-neuro .synapse-visual::after{content:''!important}
+
+/* Keep the menu control usable without the hamburger/cross glyph. */
+.menu-toggle{gap:0!important}
+@media(max-width:760px){
+  .menu-toggle{font-size:.8rem!important;min-width:82px!important;width:auto!important;padding:0 13px!important}
+}
+
+/* Hide the floating arrow control; scrolling and the menu remain available. */
+button[aria-label*='вверх'],button[aria-label*='Вверх'],button[aria-label*='üles'],button[aria-label*='Üles']{display:none!important}
+
+/* Remove any site-owned white gap above the header and match the iOS safe-area to the header surface. */
+html,body,#root{margin:0!important;padding:0!important;background:#f8f9fc!important}
+body{min-height:100%;}
+.header{top:0!important;margin-top:0!important}
+@supports(padding-top:env(safe-area-inset-top)){
+  body::before{
+    content:'';
+    position:fixed;
+    z-index:19;
+    top:0;
+    left:0;
+    right:0;
+    height:env(safe-area-inset-top);
+    background:#f8f9fc;
+    pointer-events:none;
+  }
+}
+
 @media(max-width:760px){
   .brain-photo-hero{min-height:255px!important}
   .brain-map-stage,.brain-map-visual{min-height:390px!important}
