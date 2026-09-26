@@ -1,12 +1,14 @@
 /* Final visual pass: sticky progress, real-brain imagery, mobile consistency */
-:root{--brain-photo:url('https://upload.wikimedia.org/wikipedia/commons/7/7e/Human_brain_lateral_view.JPG')}
+:root{--brain-photo:url('https://upload.wikimedia.org/wikipedia/commons/7/7e/Human_brain_lateral_view.JPG');--page-scroll-progress:0%}
 
-/* Keep progress physically inside the sticky header. */
+/* Keep progress physically inside the sticky header. The line itself follows actual page scroll;
+   the text label still reports how many learning sections were visited. */
 .header{padding-bottom:8px}
 .header-progress{position:absolute;left:0;right:0;bottom:0;height:8px;background:#e4e7ef;overflow:hidden;border-top:1px solid #d9deea}
 .header-progress-label{position:absolute;right:5%;top:-24px;font-size:.66rem;font-weight:700;color:#62697d;pointer-events:none}
 .header-progress-track{position:absolute;inset:0}
-.header-progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),#9f8be7,var(--lime));box-shadow:0 0 10px #7563d954;transition:width .25s ease}
+.header-progress-track::after{content:"";display:block;width:var(--page-scroll-progress);height:100%;background:linear-gradient(90deg,var(--purple),#9f8be7,var(--lime));box-shadow:0 0 10px #7563d954;transition:width .08s linear;will-change:width}
+.header-progress-fill{display:none}
 html{scroll-padding-top:108px}
 .section,.site-guide{scroll-margin-top:108px}
 
@@ -74,4 +76,4 @@ html{scroll-padding-top:108px}
   .brain-map-visual::after,.brain-map-stage::after,.brain-photo-hero::after{font-size:.5rem;max-width:72%;text-align:right}
 }
 
-@media(prefers-reduced-motion:reduce){.header-progress-fill{transition:none}}
+@media(prefers-reduced-motion:reduce){.header-progress-track::after{transition:none}}
