@@ -1,0 +1,55 @@
+/* Segmented anatomical brain imagery and glossary relocation. Loaded after the UX layer. */
+:root{
+  --brain-photo:url('https://upload.wikimedia.org/wikipedia/commons/0/0e/Lobes_of_the_brain_NL.svg');
+}
+
+/* The original in-flow glossary stays in the source component for now, but is removed from the visible route.
+   The same terms are rendered as a dedicated reference section near the bibliography. */
+.learning-section .glossary{display:none}
+
+.brain-photo-hero,
+.brain-map-stage,
+.brain-map-visual{
+  background-color:#11162d;
+  background-image:linear-gradient(180deg,rgba(17,22,45,.08),rgba(17,22,45,.22)),var(--brain-photo)!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+}
+
+.brain-photo-hero::after,
+.brain-map-stage::after,
+.brain-map-visual::after{
+  content:'Gray’s Anatomy / Henry Vandyke Carter · Wikimedia Commons · public domain'!important;
+  right:8px!important;
+  bottom:6px!important;
+  max-width:88%;
+  padding:4px 7px!important;
+  border-radius:6px!important;
+  background:#0d1125d9!important;
+  color:#d7dbea!important;
+  font-size:.55rem!important;
+  line-height:1.3!important;
+  text-align:right;
+}
+
+.brain-photo-hero .signal-label,
+.brain-map-node,
+.brain-point{
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+
+.reference-glossary-section{background:#f3f4f8}
+.reference-glossary{max-width:980px;margin:0 auto}
+.reference-glossary .glossary-tools{margin-bottom:18px}
+.reference-glossary .glossary-grid details{background:#fff;border:1px solid #e0e4ed;border-radius:12px;padding:0 15px;margin:0 0 9px}
+.reference-glossary .glossary-grid details summary{border:0;padding:13px 0}
+.reference-glossary .glossary-grid details p{padding-bottom:14px;margin:0}
+
+@media(max-width:760px){
+  .brain-photo-hero{min-height:255px!important}
+  .brain-map-stage,.brain-map-visual{min-height:390px!important}
+  .brain-photo-hero::after,.brain-map-stage::after,.brain-map-visual::after{font-size:.5rem!important}
+  .reference-glossary{padding:0}
+}
