@@ -12,7 +12,8 @@ const sectionOrder:Record<string,string>={
   tagasiside:'09',
   projektist:'10',
   'isiklik-kokkuvote':'11',
-  allikad:'12',
+  moisted:'12',
+  allikad:'13',
 };
 
 function sectionMeta(id:string,label:string){
