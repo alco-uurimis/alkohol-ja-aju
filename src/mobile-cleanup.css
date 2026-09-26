@@ -1,6 +1,6 @@
-/* Final mobile cleanup. Loaded last. */
+/* Final visual stability layer. Loaded last. */
 
-/* Remove decorative arrows and the floating back-to-top control. */
+/* No decorative arrow glyphs or floating back-to-top control. */
 .back-to-top,
 .header nav .nav-group a > span[aria-hidden="true"],
 .hero .actions [aria-hidden="true"],
@@ -9,307 +9,100 @@
   display:none!important;
 }
 
-.topic-button > span:last-child:not(:first-child){min-width:0}
 .topic-button > span[aria-hidden="true"]{display:none!important}
 
 /*
-  Anatomical callouts.
-  The lateral brain illustration faces left: frontal/anterior is on the left,
-  parietal is upper-middle, temporal is lower-middle and cerebellum is lower-right.
-  These labels are educational pointers: complex functions depend on networks,
-  not on one isolated point.
+  Brain diagrams are now static composed visuals.
+  The coloured anatomical image and the annotation SVG are two fixed layers
+  that scale together. There are no independently positioned HTML callouts.
 */
 .hero-visual .brain-photo-hero,
-.brain-map-stage{
+.brain-map-stage.brain-static-diagram{
   position:relative!important;
   display:block!important;
-  overflow:hidden!important;
-}
-
-/* Reset legacy button/label dimensions first. This prevents old layers from
-   stretching the callouts into large capsules. */
-.hero-visual .brain-photo-hero .signal-label,
-.brain-map-stage .brain-map-node{
-  all:unset!important;
-  box-sizing:border-box!important;
-  position:absolute!important;
-  z-index:6!important;
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:6px!important;
-  width:max-content!important;
-  min-width:0!important;
-  max-width:132px!important;
-  min-height:32px!important;
+  width:100%!important;
   height:auto!important;
-  padding:6px 10px!important;
-  border:1px solid #afa2ee!important;
-  border-radius:12px!important;
-  background:rgba(31,36,67,.94)!important;
-  color:#fff!important;
-  box-shadow:0 6px 18px rgba(0,0,0,.24)!important;
-  font-family:Inter,'Segoe UI',Arial,sans-serif!important;
-  font-size:11px!important;
-  line-height:1.15!important;
-  font-weight:750!important;
-  letter-spacing:0!important;
-  text-align:center!important;
-  white-space:normal!important;
-  overflow-wrap:normal!important;
-  word-break:normal!important;
-  hyphens:none!important;
-  cursor:pointer!important;
-  backdrop-filter:blur(7px)!important;
-  -webkit-backdrop-filter:blur(7px)!important;
+  min-height:0!important;
+  aspect-ratio:800 / 560!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border-radius:18px!important;
+  background-color:#11162d!important;
+  background-repeat:no-repeat!important;
+  background-position:center center,center center!important;
+  background-size:100% 100%,66% auto!important;
 }
 
-.hero-visual .brain-photo-hero .signal-label{
-  cursor:default!important;
+html[lang="ru"] .hero-visual .brain-photo-hero,
+html[lang="ru"] .brain-map-stage.brain-static-diagram{
+  background-image:url('./assets/brain-functions-ru.svg'),var(--brain-photo)!important;
 }
 
-.brain-map-stage .brain-map-node > span{
-  all:unset!important;
-  box-sizing:border-box!important;
-  display:grid!important;
-  place-items:center!important;
-  width:22px!important;
-  height:22px!important;
-  flex:0 0 22px!important;
-  border-radius:50%!important;
-  background:#7060d7!important;
-  color:#fff!important;
-  font-size:9px!important;
-  line-height:1!important;
-  font-weight:800!important;
+html[lang="et"] .hero-visual .brain-photo-hero,
+html[lang="et"] .brain-map-stage.brain-static-diagram{
+  background-image:url('./assets/brain-functions-et.svg'),var(--brain-photo)!important;
 }
 
-.brain-map-stage .brain-map-node strong{
-  all:unset!important;
-  display:block!important;
-  min-width:0!important;
-  color:#fff!important;
-  font-family:Inter,'Segoe UI',Arial,sans-serif!important;
-  font-size:10.5px!important;
-  line-height:1.15!important;
-  font-weight:750!important;
-  white-space:normal!important;
-  overflow-wrap:normal!important;
-  word-break:normal!important;
-  hyphens:none!important;
+/* Remove every legacy interactive/floating label from both brain visuals. */
+.hero-visual .brain-photo-hero .signal-label,
+.brain-map-stage .brain-map-node,
+.brain-map-stage .brain-map-label,
+.brain-map-stage > svg{
+  display:none!important;
 }
 
-.brain-map-stage .brain-map-node.active{
-  background:#f0edff!important;
-  color:#171b37!important;
-  border-color:#c9f574!important;
-  box-shadow:0 0 0 3px rgba(201,245,116,.16),0 6px 18px rgba(0,0,0,.24)!important;
-}
-.brain-map-stage .brain-map-node.active strong{color:#171b37!important}
-
-/* Leader line and anatomical target dot. */
-.hero-visual .brain-photo-hero .signal-label::after,
-.brain-map-stage .brain-map-node::after{
-  content:""!important;
-  position:absolute!important;
-  z-index:-1!important;
-  height:1.5px!important;
-  background:#b9aef1!important;
-  opacity:.95!important;
-  pointer-events:none!important;
-}
-
-.hero-visual .brain-photo-hero .signal-label::before,
-.brain-map-stage .brain-map-node::before{
-  content:""!important;
-  position:absolute!important;
-  z-index:7!important;
-  width:6px!important;
-  height:6px!important;
-  border-radius:50%!important;
-  background:#c9f574!important;
-  box-shadow:0 0 0 3px rgba(201,245,116,.18)!important;
-  pointer-events:none!important;
-}
-
-/* HERO IMAGE --------------------------------------------------------------
-   Decisions -> anterior frontal/prefrontal cortex (left/front).
-   Attention -> upper frontoparietal region.
-   Memory -> temporal/hippocampal region; hippocampus itself is internal.
-   Reaction -> cerebellar/lower-posterior region. */
-.hero-visual .brain-photo-hero .label-four{
-  left:3%!important;
-  top:20%!important;
-}
-.hero-visual .brain-photo-hero .label-four::after{
-  left:96%!important;top:66%!important;width:62px!important;
-  transform-origin:0 50%!important;transform:rotate(18deg)!important;
-}
-.hero-visual .brain-photo-hero .label-four::before{
-  left:calc(96% + 58px)!important;top:calc(66% + 18px)!important;
-}
-
-.hero-visual .brain-photo-hero .label-two{
-  right:3%!important;
-  top:18%!important;
-}
-.hero-visual .brain-photo-hero .label-two::after{
-  right:96%!important;top:70%!important;width:58px!important;
-  transform-origin:100% 50%!important;transform:rotate(-18deg)!important;
-}
-.hero-visual .brain-photo-hero .label-two::before{
-  right:calc(96% + 54px)!important;top:calc(70% + 17px)!important;
-}
-
-.hero-visual .brain-photo-hero .label-one{
-  left:3%!important;
-  bottom:17%!important;
-}
-.hero-visual .brain-photo-hero .label-one::after{
-  left:96%!important;top:35%!important;width:70px!important;
-  transform-origin:0 50%!important;transform:rotate(-17deg)!important;
-}
-.hero-visual .brain-photo-hero .label-one::before{
-  left:calc(96% + 66px)!important;top:calc(35% - 18px)!important;
-}
-
-.hero-visual .brain-photo-hero .label-three{
-  right:3%!important;
-  bottom:12%!important;
-}
-.hero-visual .brain-photo-hero .label-three::after{
-  right:96%!important;top:35%!important;width:54px!important;
-  transform-origin:100% 50%!important;transform:rotate(14deg)!important;
-}
-.hero-visual .brain-photo-hero .label-three::before{
-  right:calc(96% + 50px)!important;top:calc(35% - 12px)!important;
-}
-
-/* INTERACTIVE MAP: node order = memory, attention, reaction, decision. */
-.brain-map-stage .node-3{
-  left:2.5%!important;
-  top:18%!important;
-}
-.brain-map-stage .node-3::after{
-  left:96%!important;top:62%!important;width:74px!important;
-  transform-origin:0 50%!important;transform:rotate(16deg)!important;
-}
-.brain-map-stage .node-3::before{
-  left:calc(96% + 70px)!important;top:calc(62% + 19px)!important;
-}
-
-.brain-map-stage .node-1{
-  right:2.5%!important;
-  top:17%!important;
-}
-.brain-map-stage .node-1::after{
-  right:96%!important;top:66%!important;width:66px!important;
-  transform-origin:100% 50%!important;transform:rotate(-16deg)!important;
-}
-.brain-map-stage .node-1::before{
-  right:calc(96% + 62px)!important;top:calc(66% + 17px)!important;
-}
-
-.brain-map-stage .node-0{
-  left:2.5%!important;
-  bottom:15%!important;
-}
-.brain-map-stage .node-0::after{
-  left:96%!important;top:36%!important;width:76px!important;
-  transform-origin:0 50%!important;transform:rotate(-18deg)!important;
-}
-.brain-map-stage .node-0::before{
-  left:calc(96% + 72px)!important;top:calc(36% - 22px)!important;
-}
-
-.brain-map-stage .node-2{
-  right:2.5%!important;
-  bottom:10%!important;
-}
-.brain-map-stage .node-2::after{
-  right:96%!important;top:35%!important;width:60px!important;
-  transform-origin:100% 50%!important;transform:rotate(14deg)!important;
-}
-.brain-map-stage .node-2::before{
-  right:calc(96% + 56px)!important;top:calc(35% - 13px)!important;
-}
-
-/* Attribution is independent from labels. */
+/* Attribution remains a separate stable strip, never mixed with labels. */
 .hero-visual .brain-photo-hero::after,
-.brain-map-stage::after{
-  left:10px!important;
-  right:10px!important;
-  bottom:6px!important;
+.brain-map-stage.brain-static-diagram::after{
+  content:'Gray’s Anatomy / Henry Vandyke Carter · Wikimedia Commons · public domain'!important;
+  position:absolute!important;
+  left:12%!important;
+  right:12%!important;
+  bottom:5px!important;
   max-width:none!important;
   padding:3px 6px!important;
+  border-radius:7px!important;
+  background:rgba(9,13,31,.88)!important;
+  color:#d7dbea!important;
+  font-size:7px!important;
+  line-height:1.2!important;
   text-align:center!important;
   white-space:nowrap!important;
   overflow:hidden!important;
   text-overflow:ellipsis!important;
-  font-size:7px!important;
-  line-height:1.2!important;
+  pointer-events:none!important;
 }
 
+/* Static map no longer advertises itself as an interactive control. */
+.brain-map-static .brain-map-copy{align-self:center}
+.brain-map-static .brain-map-copy .small{max-width:620px}
+
 @media(max-width:760px){
-  .hero-visual .brain-photo-hero{
-    height:330px!important;
-    min-height:330px!important;
-    padding:0!important;
-    background-position:center 48%!important;
-    background-size:78% auto!important;
+  .hero-visual .brain-photo-hero,
+  .brain-map-stage.brain-static-diagram{
+    aspect-ratio:4 / 3!important;
+    background-size:100% 100%,62% auto!important;
     border-radius:16px!important;
   }
 
-  .brain-map-stage{
-    height:390px!important;
-    min-height:390px!important;
-    padding:0!important;
-    background-position:center 49%!important;
-    background-size:78% auto!important;
-    border-radius:18px!important;
+  .hero-visual .brain-photo-hero::after,
+  .brain-map-stage.brain-static-diagram::after{
+    left:9%!important;
+    right:9%!important;
+    bottom:4px!important;
+    font-size:6px!important;
   }
-
-  .hero-visual .brain-photo-hero .signal-label,
-  .brain-map-stage .brain-map-node{
-    max-width:108px!important;
-    min-height:28px!important;
-    padding:5px 8px!important;
-    border-radius:10px!important;
-    font-size:10px!important;
-  }
-
-  .brain-map-stage .brain-map-node strong{font-size:9.5px!important}
-  .brain-map-stage .brain-map-node > span{width:19px!important;height:19px!important;flex-basis:19px!important;font-size:8px!important}
-
-  /* Shorter lines keep mobile labels clear of each other. */
-  .hero-visual .brain-photo-hero .label-four::after{width:44px!important}
-  .hero-visual .brain-photo-hero .label-four::before{left:calc(96% + 40px)!important;top:calc(66% + 13px)!important}
-  .hero-visual .brain-photo-hero .label-two::after{width:42px!important}
-  .hero-visual .brain-photo-hero .label-two::before{right:calc(96% + 38px)!important;top:calc(70% + 12px)!important}
-  .hero-visual .brain-photo-hero .label-one::after{width:50px!important}
-  .hero-visual .brain-photo-hero .label-one::before{left:calc(96% + 46px)!important;top:calc(35% - 14px)!important}
-  .hero-visual .brain-photo-hero .label-three::after{width:40px!important}
-  .hero-visual .brain-photo-hero .label-three::before{right:calc(96% + 36px)!important;top:calc(35% - 9px)!important}
-
-  .brain-map-stage .node-3::after{width:48px!important}
-  .brain-map-stage .node-3::before{left:calc(96% + 44px)!important;top:calc(62% + 13px)!important}
-  .brain-map-stage .node-1::after{width:46px!important}
-  .brain-map-stage .node-1::before{right:calc(96% + 42px)!important;top:calc(66% + 12px)!important}
-  .brain-map-stage .node-0::after{width:52px!important}
-  .brain-map-stage .node-0::before{left:calc(96% + 48px)!important;top:calc(36% - 15px)!important}
-  .brain-map-stage .node-2::after{width:42px!important}
-  .brain-map-stage .node-2::before{right:calc(96% + 38px)!important;top:calc(35% - 9px)!important}
 }
 
-@media(max-width:390px){
-  .hero-visual .brain-photo-hero{height:310px!important;min-height:310px!important;background-size:75% auto!important}
-  .brain-map-stage{height:365px!important;min-height:365px!important;background-size:75% auto!important}
-
-  .hero-visual .brain-photo-hero .signal-label,
-  .brain-map-stage .brain-map-node{
-    max-width:96px!important;
-    padding:4px 7px!important;
-    font-size:9px!important;
+@media(max-width:420px){
+  .hero-visual .brain-photo-hero,
+  .brain-map-stage.brain-static-diagram{
+    aspect-ratio:1 / 1!important;
+    background-size:100% 100%,58% auto!important;
   }
-  .brain-map-stage .brain-map-node strong{font-size:8.8px!important}
+
+  .hero-visual .brain-photo-hero::after,
+  .brain-map-stage.brain-static-diagram::after{
+    font-size:5.5px!important;
+  }
 }
