@@ -1,0 +1,96 @@
+/* Final stability layer: responsive header, overflow safety, touch ergonomics and cross-layout consistency. */
+
+html{overflow-x:hidden;text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{min-width:320px;overflow-x:hidden}
+main,.section,.hero,.site-guide,.header>*{min-width:0}
+img,svg{max-width:100%}
+h1,h2,h3,h4,p,li,dd,summary,.button,.topic-button,.guide-card,.brain-point,.brain-map-node{overflow-wrap:anywhere}
+
+/* Make the header robust on tablets as well as phones. */
+@media(max-width:1100px){
+  .header{gap:12px}
+  .menu-toggle{display:block;border:1px solid var(--line);padding:8px 13px;border-radius:9px;background:#fff;color:var(--ink);min-height:42px}
+  .header nav{display:none;position:absolute;top:88px;left:0;right:0;max-height:calc(100dvh - 88px);overflow-y:auto;overscroll-behavior:contain;padding:14px 5% 18px;background:#f7f8fcf8;border-bottom:1px solid var(--line);box-shadow:0 18px 34px #171b3718;backdrop-filter:blur(16px)}
+  .header nav.open{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px}
+  .header nav a{padding:12px 2px;font-size:.9rem;border-bottom:1px solid #e6e9f1}
+  body:has(#navigation.open){overflow:hidden}
+}
+
+/* Prevent the compact header from colliding at narrow widths. */
+@media(max-width:760px){
+  .header{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));gap:8px}
+  .header nav{top:78px;max-height:calc(100dvh - 78px);padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right))}
+  .header nav.open{grid-template-columns:1fr}
+  .header-actions{gap:6px}
+  .brand{gap:8px}
+  .brand-mark{width:32px;height:32px}
+  .menu-toggle{padding-inline:11px;white-space:nowrap}
+
+  /* iOS Safari zooms form controls below 16px; keep controls stable. */
+  input,select,textarea{font-size:16px!important}
+
+  /* General mobile rhythm. */
+  .section{padding-left:5%;padding-right:5%}
+  .section-heading{margin-bottom:26px}
+  .section-heading h2{font-size:clamp(1.9rem,9vw,2.55rem)}
+  .section-heading>p:last-child{font-size:.94rem;line-height:1.65}
+  .button{min-height:46px}
+  .task-card,.quiz-card{padding:22px 18px}
+  .quiz-card{width:100%}
+  .quiz-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .quiz-choices button{min-width:0;width:100%;padding-inline:12px}
+  .number-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:9px}
+  .number-options button{min-width:0;width:100%}
+  .word-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .letter-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .stats strong{font-size:1.4rem}
+  .result-card{align-items:flex-start;flex-direction:column}
+  footer{padding-bottom:max(32px,env(safe-area-inset-bottom))}
+}
+
+@media(max-width:520px){
+  .brand span{display:none}
+  .brand-mark{width:36px;height:36px}
+  .language-switch button{min-width:36px;min-height:36px;padding-inline:7px}
+  .menu-toggle{font-size:.88rem}
+  .hero h1{font-size:clamp(3.1rem,17vw,4.5rem)}
+  .hero{padding-inline:5%}
+  .intro-strip{padding-inline:5%}
+  .survey-block-head{align-items:flex-start}
+  .survey-question legend{font-size:1rem}
+  .survey-scale{gap:6px}
+  .survey-scale span{min-height:44px}
+  .sources-section .sources li{overflow:hidden}
+  .sources-section .sources a{overflow-wrap:anywhere}
+}
+
+@media(max-width:380px){
+  .header{padding-inline:10px}
+  .language-switch{padding:2px}
+  .language-switch button{min-width:32px;padding-inline:5px}
+  .menu-toggle{padding-inline:9px}
+  .quiz-choices{grid-template-columns:1fr}
+  .letter-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .survey-inline{grid-template-columns:1fr!important}
+  .survey-inline label{grid-column:auto!important}
+}
+
+/* Keep interactive overlays readable if the remote anatomical photo is unavailable. */
+.brain-photo-hero,.brain-map-stage,.brain-map-visual{background-color:#151a31}
+.brain-photo-hero::before,.brain-map-stage::before,.brain-map-visual::before{pointer-events:none}
+
+/* Touch targets and keyboard focus. */
+@media(pointer:coarse){
+  .topic-button,.brain-point,.brain-map-node,.swatch,.signal-node,.path-options button,.neuro-options button{min-height:44px}
+  summary{min-height:44px;display:flex;align-items:center}
+}
+
+/* Avoid hover-only motion on touch screens. */
+@media(hover:none){
+  .guide-card:hover,.topic-button:hover,.task-card:hover,.quiz-card:hover,.hero-visual:hover,.brain-map-node:hover,.sources li:hover{transform:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+}
