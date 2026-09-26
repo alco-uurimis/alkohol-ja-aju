@@ -1,0 +1,208 @@
+/* Canonical final UI layer. Keep this file last in main.tsx. */
+:root{
+  --surface:#fff;
+  --surface-soft:#f7f8fc;
+  --surface-tint:#f0edff;
+  --shadow-sm:0 6px 18px rgba(23,27,55,.08);
+  --shadow-md:0 14px 38px rgba(23,27,55,.11);
+  --brain-photo:url('https://upload.wikimedia.org/wikipedia/commons/7/7e/Human_brain_lateral_view.JPG');
+  --page-scroll-progress:0%;
+}
+
+html{overflow-x:hidden;text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{min-width:320px;overflow-x:hidden}
+main,.section,.hero,.site-guide,.header>*{min-width:0}
+img,svg{max-width:100%}
+h1,h2,h3,h4,p,li,dd,summary,.button,.topic-button,.guide-card,.brain-point,.brain-map-node{overflow-wrap:anywhere}
+
+/* Sticky header and real page-scroll progress. */
+.header{padding-bottom:8px;box-shadow:0 1px 0 rgba(23,27,55,.04)}
+.header-actions{gap:10px}
+.header-progress{position:absolute;left:0;right:0;bottom:0;height:8px;background:#e4e7ef;overflow:hidden;border-top:1px solid #d9deea}
+.header-progress-label{position:absolute;right:5%;top:-24px;font-size:.66rem;font-weight:700;color:#62697d;pointer-events:none}
+.header-progress-track{position:absolute;inset:0}
+.header-progress-track::after{content:"";display:block;width:var(--page-scroll-progress);height:100%;background:linear-gradient(90deg,var(--purple),#9f8be7,var(--lime));box-shadow:0 0 10px #7563d954;transition:width .08s linear;will-change:width}
+html{scroll-padding-top:108px}
+.section,.site-guide{scroll-margin-top:108px}
+
+/* Header controls. */
+.language-switch{min-height:46px;padding:4px;border-color:#d8dce8;box-shadow:0 3px 12px rgba(23,27,55,.05)}
+.language-switch button{min-width:42px;min-height:36px;transition:background .18s ease,color .18s ease,transform .18s ease}
+.language-switch button:hover:not(.active){background:#f0f1f6;color:var(--ink)}
+.language-switch button.active{box-shadow:0 4px 12px rgba(23,27,55,.18)}
+.menu-toggle{min-height:46px;padding:0 17px;border:1px solid #232946;border-radius:999px;background:linear-gradient(135deg,#171b37 0%,#252b50 100%);color:#fff;font-weight:750;letter-spacing:-.01em;box-shadow:0 7px 18px rgba(23,27,55,.18);transition:transform .16s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease}
+.menu-toggle:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(23,27,55,.24);background:linear-gradient(135deg,#202646 0%,#333a67 100%)}
+.menu-toggle:active{transform:translateY(0);box-shadow:0 4px 12px rgba(23,27,55,.16)}
+.menu-toggle[aria-expanded="true"]{background:linear-gradient(135deg,#5b4bc2 0%,#7564db 100%);border-color:#5b4bc2;box-shadow:0 8px 24px rgba(97,80,200,.28)}
+.menu-toggle:focus-visible{outline:3px solid #a997ff;outline-offset:3px}
+
+/* Shared controls and cards. */
+.button{border-radius:12px;font-weight:700;box-shadow:0 4px 12px rgba(23,27,55,.05);transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease,background .16s ease}
+.button:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.button:active:not(:disabled){transform:none}
+.button.primary{background:linear-gradient(135deg,#171b37,#282e54);border-color:#171b37;box-shadow:0 7px 18px rgba(23,27,55,.16)}
+.button.primary:hover:not(:disabled){background:linear-gradient(135deg,#222846,#343b67);box-shadow:0 10px 24px rgba(23,27,55,.20)}
+.text-link{text-decoration-thickness:1.5px;text-decoration-color:#aaa1da;transition:color .15s ease,text-decoration-color .15s ease}
+.text-link:hover{color:#4938aa;text-decoration-color:#4938aa}
+.guide-card,.knowledge-card,.task-card,.quiz-card,.survey-block,.survey-finish,.science-game,.depth-card,.method-card,.brain-map-panel,.summary-stats article{border-color:#dfe3ed}
+.guide-card,.knowledge-card,.task-card,.science-game,.depth-card,.method-card,.brain-map-panel,.summary-stats article{box-shadow:0 8px 28px rgba(23,27,55,.045)}
+.guide-card:hover{box-shadow:var(--shadow-md);border-color:#b8afe6}
+
+/* Brain imagery. The dark background remains a usable fallback if the remote photo cannot load. */
+.brain-photo-hero,.brain-map-stage,.brain-map-visual{background-color:#151a31}
+.brain-photo-hero{position:relative;min-height:330px;background-image:linear-gradient(180deg,#171b3726,#171b3760),var(--brain-photo);background-repeat:no-repeat;background-position:center;background-size:contain}
+.brain-photo-hero::after{content:'John A. Beal, PhD · Wikimedia Commons · CC BY 2.5';position:absolute;right:8px;bottom:6px;padding:4px 7px;border-radius:6px;background:#0d1125cc;color:#cfd4e7;font-size:.58rem;letter-spacing:.02em}
+.brain-photo-hero .signal-label{z-index:2;background:#171d38e8;border-color:#8a91b5;box-shadow:0 8px 24px #0005}
+.brain-map-stage{background:linear-gradient(180deg,#13182f22,#13182f66),var(--brain-photo) center/contain no-repeat,#11162d}
+.brain-map-stage::before{background-image:linear-gradient(#ffffff05 1px,transparent 1px),linear-gradient(90deg,#ffffff05 1px,transparent 1px);opacity:.55;pointer-events:none}
+.brain-map-stage svg,.brain-map-label{display:none}
+.brain-map-stage::after{content:'John A. Beal, PhD · CC BY 2.5';position:absolute;right:10px;bottom:8px;z-index:2;color:#d5daea;font-size:.6rem;background:#11162dcc;padding:4px 7px;border-radius:6px}
+.brain-map-node{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:#171d38e8;border-color:#8b93b4}
+.brain-map-node.active{background:#f0ecff;color:#171b37;border-color:var(--lime)}
+.brain-map-visual{background:linear-gradient(180deg,#151a3124,#151a3168),var(--brain-photo) center/82% auto no-repeat,#151a31}
+.brain-silhouette{display:none}
+.brain-map-visual::after{content:'Foto: John A. Beal, PhD · Wikimedia Commons · CC BY 2.5';position:absolute;right:10px;bottom:8px;color:#d4d9e9;font-size:.58rem;background:#0f1428cc;padding:4px 7px;border-radius:6px;z-index:1}
+.brain-point{z-index:2;max-width:210px;background:#202744e8;border-color:#838cad;box-shadow:0 8px 22px #0004}
+.brain-point.active{background:#202744f5;border-color:var(--lime);box-shadow:0 0 0 3px #c9f57424,0 10px 28px #0005}
+
+/* Infographic brain card: show the anatomical photo, not decorative ellipses. */
+.infographic-brain .brain-zone-shape{position:relative;min-height:320px;border:1px solid #3d476f;border-radius:20px;overflow:hidden;background:linear-gradient(180deg,#0f14281f,#0f142865),var(--brain-photo) center/contain no-repeat,#11162d;box-shadow:inset 0 0 0 1px #ffffff08,0 14px 34px #05071155;filter:none}
+.infographic-brain .brain-zone-shape::before{content:'ANATOMICAL PHOTO';position:absolute;left:12px;top:12px;z-index:2;padding:6px 9px;border:1px solid #69749d;border-radius:999px;background:#11162dcc;color:#dfe4f3;font-size:.58rem;font-weight:800;letter-spacing:.1em}
+.infographic-brain .brain-zone-shape::after{content:'John A. Beal, PhD · Wikimedia Commons · CC BY 2.5';position:absolute;right:10px;bottom:8px;z-index:2;max-width:78%;padding:4px 7px;border-radius:6px;background:#0d1125d9;color:#cdd3e5;font-size:.52rem;line-height:1.3;text-align:right}
+.infographic-brain .brain-lobe,.infographic-brain .brain-stem-mini{display:none}
+.infographic-brain .brain-zone-list li{grid-template-columns:40px 1fr;padding:13px 14px;background:linear-gradient(135deg,#1b2344,#171d39);border-color:#46517c}
+.infographic-brain .brain-zone-list li>span{width:36px;height:36px;background:linear-gradient(135deg,#806de1,#6050bd);box-shadow:0 6px 16px #0003}
+.infographic-brain .brain-zone-list li:nth-child(1)>span{background:linear-gradient(135deg,#c9f574,#8eaf49);color:#182033}
+.infographic-brain .brain-zone-list li:nth-child(4)>span{background:linear-gradient(135deg,#65d7f2,#367da1)}
+.infographic-brain .brain-zone-list strong{font-size:.92rem}
+.infographic-brain .brain-zone-list small{font-size:.74rem;line-height:1.45}
+
+/* Neurochemistry graphic: three visually linked signal lanes. */
+.infographic-neuro .synapse-visual{min-height:250px;padding:22px 18px;border-color:#46517f;background:radial-gradient(circle at 16% 18%,#c9f57412,transparent 22%),radial-gradient(circle at 50% 22%,#c197ff14,transparent 24%),radial-gradient(circle at 84% 18%,#ffc85712,transparent 22%),linear-gradient(180deg,#11172f,#0c1126)}
+.infographic-neuro .synapse-visual::before{content:'GABA        Glu         DA';position:absolute;top:12px;left:10%;right:10%;z-index:4;color:#dfe4f5;font:800 .66rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.05em;text-align:center;word-spacing:2.5rem;opacity:.9}
+.infographic-neuro .synapse-visual::after{content:'↓             ↓             ↓';position:absolute;inset:auto 13% 78px;z-index:3;color:#94a0c9;font:800 1.05rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center;white-space:pre}
+.infographic-neuro .synapse-top,.infographic-neuro .synapse-bottom{left:8%;right:8%;height:auto;margin:0;display:grid;grid-template-columns:repeat(3,1fr);align-items:center;justify-items:center;border-color:#5a6697;background:linear-gradient(180deg,#23305a,#182244);box-shadow:inset 0 0 30px #7080c117}
+.infographic-neuro .synapse-top{top:38px;min-height:72px;border-radius:48% 48% 24% 24% / 64% 64% 28% 28%}
+.infographic-neuro .synapse-bottom{bottom:24px;min-height:62px;border-radius:22% 22% 46% 46% / 28% 28% 58% 58%}
+.infographic-neuro .synapse-top i{display:block;width:23px;height:23px;margin:0;border-radius:50%;background:#c9f574;box-shadow:0 0 0 7px #c9f57412,0 0 18px #c9f574a8}
+.infographic-neuro .synapse-top i:nth-child(2){background:#c197ff;box-shadow:0 0 0 7px #c197ff12,0 0 18px #c197ffa8}
+.infographic-neuro .synapse-top i:nth-child(3){background:#ffc857;box-shadow:0 0 0 7px #ffc85712,0 0 18px #ffc857a8}
+.infographic-neuro .synapse-top i:nth-child(n+4){display:none}
+.infographic-neuro .synapse-gap{top:113px;bottom:91px;left:14%;right:14%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);place-items:center;column-gap:20px}
+.infographic-neuro .synapse-gap::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 16%,#c9f57422 16%,#c9f57422 17%,transparent 17%,transparent 50%,#c197ff22 50%,#c197ff22 51%,transparent 51%,transparent 83%,#ffc85722 83%,#ffc85722 84%,transparent 84%);pointer-events:none}
+.infographic-neuro .synapse-gap span{width:10px;height:10px;z-index:1;background:#c9f574;box-shadow:0 0 12px #c9f574}
+.infographic-neuro .synapse-gap span:nth-child(2),.infographic-neuro .synapse-gap span:nth-child(5){background:#c197ff;box-shadow:0 0 12px #c197ff}
+.infographic-neuro .synapse-gap span:nth-child(3),.infographic-neuro .synapse-gap span:nth-child(6){background:#ffc857;box-shadow:0 0 12px #ffc857}
+.infographic-neuro .synapse-bottom i{width:30px;height:36px;margin:0;border:4px solid #c9f574;border-top:0;border-radius:0 0 12px 12px;background:transparent;box-shadow:0 8px 18px #c9f57422}
+.infographic-neuro .synapse-bottom i:nth-child(2){border-color:#c197ff;box-shadow:0 8px 18px #c197ff22}
+.infographic-neuro .synapse-bottom i:nth-child(3){border-color:#ffc857;box-shadow:0 8px 18px #ffc85722}
+.infographic-neuro .neuro-item{position:relative;border-width:1px 1px 1px 4px}
+.infographic-neuro .neuro-item.gaba{border-left-color:#c9f574}
+.infographic-neuro .neuro-item.glutamate{border-left-color:#c197ff}
+.infographic-neuro .neuro-item.dopamine{border-left-color:#ffc857}
+.infographic-neuro .neuro-outcomes span{border:1px solid #343e68;background:#1c2445}
+
+/* Lab clarity. */
+.lab-section{scroll-margin-top:108px}
+.lab-steps{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:-4px 0 24px}
+.lab-steps span{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid #39405e;border-radius:12px;background:#1b2038;color:#dce0ed;font-size:.82rem;font-weight:650}
+.lab-steps b{font-size:.68rem;letter-spacing:.08em;color:var(--lime)}
+.visual-effect-control{display:flex;flex-direction:column;align-items:flex-end;gap:7px;max-width:330px}
+.visual-effect-control small{color:#9299b5;font-size:.72rem;line-height:1.45;text-align:right}
+.game-meaning{display:grid;gap:4px;padding:11px 12px;margin:14px 0 18px;border-left:2px solid #7b6be0;background:#171c33;border-radius:0 9px 9px 0}
+.game-meaning strong{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#c9f574}
+.game-meaning span{font-size:.76rem;line-height:1.5;color:#aeb5cd}
+.lab-card>p{margin-bottom:0}
+
+/* Long-page affordance. */
+.back-to-top{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(20px,calc(env(safe-area-inset-bottom) + 16px));z-index:18;display:grid;place-items:center;width:48px;height:48px;border:1px solid #3a4167;border-radius:50%;background:#171b37e8;color:#fff;font-size:1.2rem;box-shadow:0 10px 28px #171b3733;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .18s ease,transform .18s ease,visibility .18s ease}
+.back-to-top.visible{opacity:1;visibility:visible;transform:none}
+.back-to-top:hover{background:#6150c8;border-color:#6150c8}
+.back-to-top:focus-visible{outline:3px solid #a997ff;outline-offset:3px}
+
+@media(max-width:1100px){
+  .header{gap:12px}
+  .menu-toggle{display:block}
+  .header nav{display:none;position:absolute;top:88px;left:0;right:0;max-height:calc(100dvh - 88px);overflow-y:auto;overscroll-behavior:contain;padding:18px 5% 20px;background:#f7f8fcf8;border-bottom:1px solid var(--line);border-radius:0 0 18px 18px;box-shadow:0 18px 34px #171b3718;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .header nav.open{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px;animation:menu-in .16s ease-out}
+  .header nav a{position:relative;padding:12px 10px;font-size:.9rem;border-bottom:1px solid #e6e9f1;border-radius:9px;transition:background .15s ease,color .15s ease,padding .15s ease}
+  .header nav a:hover,.header nav a[aria-current]{background:#eeebff;color:#4637a5;padding-left:14px}
+  .header nav a[aria-current]::before{content:"";position:absolute;left:3px;top:50%;width:4px;height:18px;border-radius:99px;background:var(--purple);transform:translateY(-50%)}
+  .infographic-brain .brain-zone-visual{grid-template-columns:minmax(280px,.85fr) 1.15fr}
+}
+@keyframes menu-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+
+@media(min-width:761px){.section{padding-top:78px;padding-bottom:78px}.section-heading{margin-bottom:32px}}
+
+@media(max-width:760px){
+  .header{height:78px;padding-top:0;padding-bottom:8px;padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));gap:8px}
+  .header nav{top:78px;max-height:calc(100dvh - 78px);padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));border-radius:0 0 16px 16px}
+  .header nav.open{grid-template-columns:1fr}
+  .header-actions{gap:7px}
+  .brand{gap:8px}.brand-mark{width:32px;height:32px}
+  .language-switch{min-height:44px}.language-switch button{min-height:34px;min-width:36px}
+  .menu-toggle{min-height:44px;padding-inline:14px;font-size:.9rem;white-space:nowrap}
+  .header-progress{height:6px}.header-progress-label{display:none}
+  html{scroll-padding-top:92px}.section,.site-guide{scroll-margin-top:92px}
+
+  input,select,textarea{font-size:16px!important}
+  .section{padding-left:5%;padding-right:5%}
+  .section-heading{margin-bottom:26px}.section-heading h2{font-size:clamp(1.9rem,9vw,2.55rem)}.section-heading>p:last-child{font-size:.94rem;line-height:1.65}
+  .button{min-height:46px;border-radius:11px}
+  .task-card,.quiz-card{padding:22px 18px}.quiz-card{width:100%}
+  .quiz-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quiz-choices button{min-width:0;width:100%;padding-inline:12px}
+  .number-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:9px}.number-options button{min-width:0;width:100%}
+  .word-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.letter-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.stats strong{font-size:1.4rem}.result-card{align-items:flex-start;flex-direction:column}
+  footer{padding-bottom:max(32px,env(safe-area-inset-bottom))}
+
+  .hero{padding-top:30px}.hero-visual{min-height:auto;padding:20px;border-radius:18px}
+  .brain-photo-hero{min-height:270px;background-size:92% auto}.brain-photo-hero .signal-label{font-size:.72rem;padding:6px 10px}
+  .label-one{top:14px;left:3%}.label-two{top:64px;right:1%}.label-three{bottom:34px;left:1%}.label-four{bottom:12px;right:2%}
+  .brain-map{padding:18px 14px;gap:18px}.brain-map-copy h3{font-size:1.75rem}.brain-map-stage{min-height:335px;background-size:90% auto}
+  .brain-map-node{min-width:0;max-width:126px;width:auto;padding:8px 9px;border-radius:12px}.brain-map-node strong{font-size:.72rem;line-height:1.15}
+  .brain-map-node.node-0{left:2%;top:4%}.brain-map-node.node-1{right:2%;top:7%}.brain-map-node.node-2{left:2%;bottom:9%}.brain-map-node.node-3{right:2%;bottom:6%}
+  .brain-map-wrap{gap:14px;margin-bottom:46px}.brain-map-visual{min-height:420px;background-size:90% auto;border-radius:18px}.brain-point{font-size:.66rem;padding:7px 9px;gap:6px;max-width:145px}.brain-point span{width:24px;height:24px}.brain-point b{max-width:100px;line-height:1.15}
+  .point-prefrontal{left:3%;top:5%}.point-hippocampus{left:3%;top:48%}.point-reward{right:3%;top:31%}.point-cerebellum{right:3%;bottom:13%}.point-brainstem{left:24%;bottom:4%}
+  .brain-map-panel{padding:22px 20px}.brain-map-panel h3{font-size:clamp(1.75rem,9vw,2.45rem);margin:18px 0 20px;overflow-wrap:anywhere}
+  .topic-panel{padding:24px 20px}.topic-panel h3{font-size:1.8rem;margin-top:36px}.panel-number{font-size:3.5rem}.context-grid{gap:16px}.context-grid .info-card{padding:20px}
+
+  .infographic-brain .brain-zone-visual{grid-template-columns:1fr;gap:16px}.infographic-brain .brain-zone-shape{min-height:280px;width:100%;max-width:none;margin:0}.infographic-brain .brain-zone-list{gap:9px}
+  .infographic-neuro .synapse-visual{min-height:220px;margin-bottom:12px;padding-inline:10px}.infographic-neuro .synapse-visual::before{top:10px;font-size:.6rem;word-spacing:1.1rem}.infographic-neuro .synapse-visual::after{bottom:68px;font-size:.88rem;inset-inline:10%}
+  .infographic-neuro .synapse-top{top:34px;min-height:62px;left:7%;right:7%}.infographic-neuro .synapse-gap{top:99px;bottom:79px;left:12%;right:12%}.infographic-neuro .synapse-bottom{bottom:19px;min-height:54px;left:7%;right:7%}
+  .infographic-neuro .synapse-top i{width:19px;height:19px}.infographic-neuro .synapse-bottom i{width:26px;height:30px;border-width:3px}
+  .infographic-neuro .neuro-grid{display:grid;grid-template-columns:1fr;gap:7px}.infographic-neuro .neuro-item{display:grid;grid-template-columns:minmax(92px,.42fr) 1fr;align-items:center;gap:10px;padding:10px 12px}.infographic-neuro .neuro-item strong{font-size:.88rem}.infographic-neuro .neuro-item span{margin:0;font-size:.68rem}
+  .infographic-neuro .neuro-outcomes{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:9px}.infographic-neuro .neuro-outcomes span{display:grid;place-items:center;min-height:46px;padding:7px 5px;font-size:.6rem;line-height:1.25}
+
+  .lab-section{scroll-margin-top:92px;padding-top:42px;padding-bottom:48px}.lab-section .section-heading{margin-bottom:24px}.lab-section .section-heading h2{font-size:clamp(2.25rem,11vw,3.15rem);line-height:1.02;margin-bottom:16px}.lab-section .section-heading>p:last-child{font-size:1rem;line-height:1.58}
+  .lab-steps{grid-template-columns:1fr;gap:7px;margin-bottom:20px}.lab-steps span{padding:9px 12px}.lab-toolbar{gap:18px;padding:14px 0 20px;margin-bottom:20px;border-bottom:0}.lab-toolbar p{font-size:.83rem;line-height:1.55;margin-top:8px}
+  .visual-effect-control{align-items:stretch;width:100%;max-width:none}.visual-effect-control small{text-align:left;padding-left:4px}.glow-toggle{width:100%;justify-content:center;padding:10px 14px;min-height:48px;font-size:.9rem}
+  .lab-section .exercise-note{margin-top:0;padding-top:16px}.lab-grid{gap:14px;margin-top:24px;margin-bottom:44px}.lab-card{padding:20px;border-radius:16px}.lab-card-top{margin-bottom:20px}.lab-card h3{font-size:1.35rem}.game-meaning{margin:12px 0 16px}.reaction-pad{min-height:170px}.stroop-intro,.stroop-stage{padding:18px}.signal-board{height:235px}.neuro-marquee{display:none}
+}
+
+@media(max-width:520px){
+  .brand span{display:none}.brand-mark{width:36px;height:36px}.language-switch button{min-width:36px;min-height:36px;padding-inline:7px}.menu-toggle{font-size:.88rem}
+  .hero h1{font-size:clamp(3.1rem,17vw,4.5rem)}.hero{padding-inline:5%}.intro-strip{padding-inline:5%}
+  .survey-block-head{align-items:flex-start}.survey-question legend{font-size:1rem}.survey-scale{gap:6px}.survey-scale span{min-height:44px}
+  .sources-section .sources li{overflow:hidden}.sources-section .sources a{overflow-wrap:anywhere}
+  .back-to-top{width:44px;height:44px;right:14px;bottom:max(14px,calc(env(safe-area-inset-bottom) + 12px))}
+}
+
+@media(max-width:430px){
+  .brain-photo-hero{min-height:245px}.brain-map-stage{min-height:315px}.brain-map-visual{min-height:390px}.brain-point{max-width:132px}.brain-point b{max-width:86px}
+  .brain-map-visual::after,.brain-map-stage::after,.brain-photo-hero::after{font-size:.5rem;max-width:72%;text-align:right}
+  .infographic-brain .brain-zone-shape{min-height:240px;background-size:94% auto}.infographic-brain .brain-zone-shape::before{font-size:.52rem;left:9px;top:9px}.infographic-brain .brain-zone-shape::after{font-size:.46rem;right:8px;bottom:6px}.infographic-brain .brain-zone-list li{padding:12px}
+}
+
+@media(max-width:390px){
+  .infographic-neuro .synapse-visual::before{font-size:.56rem;word-spacing:.45rem}.infographic-neuro .neuro-item{grid-template-columns:88px 1fr}.infographic-neuro .neuro-outcomes span{font-size:.56rem}
+}
+
+@media(max-width:380px){
+  .header{padding-inline:10px}.language-switch{padding:2px}.language-switch button{min-width:32px;padding-inline:5px}.menu-toggle{padding-inline:12px;font-size:.84rem}
+  .quiz-choices{grid-template-columns:1fr}.letter-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.survey-inline{grid-template-columns:1fr!important}.survey-inline label{grid-column:auto!important}
+}
+
+@media(pointer:coarse){.topic-button,.brain-point,.brain-map-node,.swatch,.signal-node,.path-options button,.neuro-options button{min-height:44px}summary{min-height:44px;display:flex;align-items:center}}
+@media(hover:none){.guide-card:hover,.topic-button:hover,.task-card:hover,.quiz-card:hover,.hero-visual:hover,.brain-map-node:hover,.sources li:hover,.menu-toggle:hover,.button:hover:not(:disabled){transform:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.header-progress-track::after,.menu-toggle,.button,.language-switch button,.header nav a,.back-to-top{transition:none}.header nav.open{animation:none}}
