@@ -1,0 +1,59 @@
+name: Test research delivery
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test-delivery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Submit diagnostic research response
+        shell: bash
+        run: |
+          cat > payload.json <<'JSON'
+          {
+            "schemaVersion": 3,
+            "submissionId": "research_diag_delivery_20260926",
+            "language": "et",
+            "answers": {
+              "adult": "yes",
+              "consent": "yes",
+              "ageGroup": "prefer_not",
+              "ownUse": "never",
+              "contexts": [],
+              "peerNorm": "unsure",
+              "closeExposure": "never",
+              "closeRelations": [],
+              "closeConflict": "never",
+              "closeUnsafe": "never",
+              "worry": "never",
+              "sleep": "never",
+              "study": "never",
+              "mood": "never",
+              "avoid": "never",
+              "unsafe": "never",
+              "extraResponsibility": "never",
+              "overallImpact": "none",
+              "pressure": "never",
+              "refusalNormal": "unsure",
+              "helpKnowledge": "partly",
+              "supportChoice": "prefer_not"
+            }
+          }
+          JSON
+          code=$(curl -sS --max-time 30 \
+            -H 'Content-Type: application/json' \
+            -H 'Origin: https://alco-uurimis.github.io' \
+            -o response.json -w '%{http_code}' \
+            --data-binary @payload.json \
+            https://alkohol-ja-aju.vercel.app/api/research || true)
+          echo "HTTP $code"
+          cat response.json 2>/dev/null || true
+          echo
+          test -s response.json
