@@ -98,9 +98,9 @@ function MemoryPath({lang}:{lang:Lang}){
   const [message,setMessage]=useState('');
   const pick=(index:number)=>{
     if(chosen.includes(index))return;
+    if(index!==chosen.length){setMessage(ru?'Не совсем: выбери следующий этап по порядку.':'Mitte päris: vali järgmine etapp õiges järjekorras.');return;}
     const next=[...chosen,index];
     setChosen(next);
-    if(index!==chosen.length){setMessage(ru?'Не совсем: попробуй начать с более раннего этапа.':'Mitte päris: proovi alustada varasemast etapist.');return;}
     if(next.length===steps.length)setMessage(ru?'Готово. Чтобы воспоминание можно было позже вызвать, информация сначала должна быть закодирована и закреплена.':'Valmis. Et mälestust hiljem meenutada, peab info esmalt kodeeruma ja kinnistuma.');else setMessage('');
   };
   const reset=()=>{setChosen([]);setMessage('');};
