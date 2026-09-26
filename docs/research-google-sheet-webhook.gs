@@ -21,6 +21,10 @@ function doPost(e) {
     return json({ ok: false, error: 'forbidden' });
   }
 
+  if (body.health === true) {
+    return json({ ok: true, health: true });
+  }
+
   const r = body.response || {};
   const responseId = String(r.response_id || '');
   if (!responseId) return json({ ok: false, error: 'missing_response_id' });
