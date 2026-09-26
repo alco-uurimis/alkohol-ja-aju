@@ -6,12 +6,16 @@ const ALLOWED_ORIGINS = new Set([
 const LANGUAGES = new Set(['et','ru']);
 const YES_NO = new Set(['yes','no']);
 const AGE_GROUPS = new Set(['18_20','21_25','26_35','36_plus','prefer_not']);
-const OWN_USE = new Set(['never','once','rare','monthly','weekly_plus','prefer_not']);
+const OWN_USE = new Set(['never','less_monthly','monthly','two_four_month','two_three_week','four_plus_week','prefer_not','once','rare','weekly_plus']);
 const LAST30 = new Set(['0','1_2','3_5','6_plus','prefer_not']);
+const TYPICAL_UNITS = new Set(['1_2','3_4','5_6','7_9','10_plus','prefer_not']);
+const SIX_PLUS = new Set(['never','less_monthly','monthly','weekly','daily_almost','prefer_not']);
 const CONTEXTS = new Set(['friends','family','event','alone','other','prefer_not']);
 const PEER_NORM = new Set(['rare','some','common','very_common','unsure','prefer_not']);
 const FREQ = new Set(['never','rare','sometimes','often','prefer_not']);
 const CLOSE_RELATIONS = new Set(['partner','family','friend','other','prefer_not']);
+const HOUSEHOLD = new Set(['yes','sometimes','no','prefer_not']);
+const OVERALL_IMPACT = new Set(['none','slight','moderate','strong','very_strong','prefer_not']);
 const REFUSAL_NORMAL = new Set(['yes','mostly','unsure','mostly_no','no','prefer_not']);
 const HELP_KNOWLEDGE = new Set(['yes','partly','no','prefer_not']);
 const SUPPORT_CHOICE = new Set(['friend','family','school','doctor','helpline','none','prefer_not']);
@@ -61,16 +65,18 @@ function localTimestamp(){
 }
 
 const FIELD_LABELS={
-  ru:{ageGroup:'Возраст',ownUse:'Собственный опыт',last30:'Дней за последние 30',contexts:'Контекст употребления',peerNorm:'Употребление среди ровесников',closeExposure:'Близкий был заметно пьян',closeRelations:'Кто из близких',closeConflict:'Конфликты/напряжение',closeUnsafe:'Непредсказуемость/небезопасность',worry:'Переживания',sleep:'Сон/отдых',study:'Учёба/работа',mood:'Настроение',avoid:'Избегание',unsafe:'Чувство небезопасности',pressure:'Давление компании',refusalNormal:'Нормальность отказа',helpKnowledge:'Знание о помощи',supportChoice:'К кому обратиться'},
-  et:{ageGroup:'Vanuserühm',ownUse:'Enda kogemus',last30:'Päevi viimase 30 jooksul',contexts:'Tarvitamise olukord',peerNorm:'Tarvitamine eakaaslaste seas',closeExposure:'Lähedane selgelt joobes',closeRelations:'Kes lähedastest',closeConflict:'Konflikt/pinge',closeUnsafe:'Ettearvamatus/ebaturvalisus',worry:'Muretsemine',sleep:'Uni/puhkus',study:'Õppimine/töö',mood:'Meeleolu',avoid:'Vältimine',unsafe:'Ebaturvalisuse tunne',pressure:'Seltskonna surve',refusalNormal:'Keeldumise normaalsus',helpKnowledge:'Teadmine abist',supportChoice:'Kelle poole pöörduda'},
+  ru:{ageGroup:'Возраст',ownUse:'Частота употребления за 12 месяцев',last30:'Дней за последние 30',typicalUnits:'Единиц в обычный день',sixPlus:'6+ единиц за один раз',contexts:'Контекст употребления',peerNorm:'Употребление среди ровесников',closeExposure:'Близкий был заметно пьян',closeRelations:'Кто из близких',closeHousehold:'Совместное проживание',closeConflict:'Конфликты/напряжение',closeUnsafe:'Непредсказуемость/небезопасность',worry:'Переживания',sleep:'Сон/отдых',study:'Учёба/работа',mood:'Настроение',avoid:'Избегание',unsafe:'Чувство небезопасности',extraResponsibility:'Дополнительные обязанности',overallImpact:'Общее негативное влияние',pressure:'Давление компании',refusalNormal:'Нормальность отказа',helpKnowledge:'Знание о помощи',supportChoice:'К кому обратиться'},
+  et:{ageGroup:'Vanuserühm',ownUse:'Tarvitamise sagedus 12 kuu jooksul',last30:'Päevi viimase 30 jooksul',typicalUnits:'Ühikuid tavalisel päeval',sixPlus:'6+ ühikut korraga',contexts:'Tarvitamise olukord',peerNorm:'Tarvitamine eakaaslaste seas',closeExposure:'Lähedane selgelt joobes',closeRelations:'Kes lähedastest',closeHousehold:'Koos elamine',closeConflict:'Konflikt/pinge',closeUnsafe:'Ettearvamatus/ebaturvalisus',worry:'Muretsemine',sleep:'Uni/puhkus',study:'Õppimine/töö',mood:'Meeleolu',avoid:'Vältimine',unsafe:'Ebaturvalisuse tunne',extraResponsibility:'Lisakohustused',overallImpact:'Üldine negatiivne mõju',pressure:'Seltskonna surve',refusalNormal:'Keeldumise normaalsus',helpKnowledge:'Teadmine abist',supportChoice:'Kelle poole pöörduda'},
 };
 
 const VALUE_LABELS={
-  ru:{yes:'Да',no:'Нет',18_20:'18–20',21_25:'21–25',26_35:'26–35',36_plus:'36+',prefer_not:'Предпочитаю не отвечать',never:'Никогда',once:'Несколько раз',rare:'Редко',monthly:'Раз в месяц или чаще',weekly_plus:'Раз в неделю или чаще','0':'0','1_2':'1–2','3_5':'3–5','6_plus':'6+',friends:'С друзьями',family:'С семьёй/родственниками',event:'Вечеринка/мероприятие',alone:'В одиночку',other:'Другое',some:'У части людей',common:'Довольно распространено',very_common:'Очень распространено',unsure:'Не знаю/не уверен(а)',sometimes:'Иногда',often:'Часто',partner:'Партнёр',friend:'Друг',mostly:'Скорее нормально',mostly_no:'Скорее сложно',partly:'Примерно представляю',school:'Специалист школы/университета',doctor:'Медицинский специалист',helpline:'Анонимная служба помощи',none:'Ни к кому из перечисленных'},
-  et:{yes:'Jah',no:'Ei',18_20:'18–20',21_25:'21–25',26_35:'26–35',36_plus:'36+',prefer_not:'Eelistan mitte vastata',never:'Mitte kunagi',once:'Mõnel korral',rare:'Harva',monthly:'Kord kuus või sagedamini',weekly_plus:'Kord nädalas või sagedamini','0':'0','1_2':'1–2','3_5':'3–5','6_plus':'6+',friends:'Sõpradega',family:'Pere/sugulastega',event:'Pidu/üritus',alone:'Üksi',other:'Muu',some:'Osal inimestest',common:'Üsna levinud',very_common:'Väga levinud',unsure:'Ei tea / pole kindel',sometimes:'Mõnikord',often:'Sageli',partner:'Partner',friend:'Sõber',mostly:'Pigem normaalne',mostly_no:'Pigem keeruline',partly:'Umbes tean',school:'Kooli/ülikooli spetsialist',doctor:'Tervishoiuspetsialist',helpline:'Anonüümne abiteenus',none:'Mitte kellegi nimetatu poole'},
+  ru:{yes:'Да',no:'Нет',18_20:'18–20',21_25:'21–25',26_35:'26–35',36_plus:'36+',prefer_not:'Предпочитаю не отвечать',never:'Никогда',once:'Несколько раз',rare:'Редко',less_monthly:'Реже раза в месяц',monthly:'Примерно раз в месяц',two_four_month:'2–4 раза в месяц',two_three_week:'2–3 раза в неделю',four_plus_week:'4 раза в неделю или чаще',weekly_plus:'Раз в неделю или чаще','0':'0','1_2':'1–2','3_5':'3–5','6_plus':'6+','3_4':'3–4','5_6':'5–6','7_9':'7–9',10_plus:'10+',weekly:'Примерно раз в неделю',daily_almost:'Ежедневно или почти ежедневно',friends:'С друзьями',family:'С семьёй/родственниками',event:'Вечеринка/мероприятие',alone:'В одиночку',other:'Другое',some:'У части людей',common:'Довольно распространено',very_common:'Очень распространено',unsure:'Не знаю/не уверен(а)',sometimes:'Иногда',often:'Часто',partner:'Партнёр',friend:'Друг',mostly:'Скорее нормально',mostly_no:'Скорее сложно',partly:'Примерно представляю',school:'Специалист школы/университета',doctor:'Медицинский/психологический специалист',helpline:'Анонимная служба помощи',none:'Ни к кому из перечисленных',slight:'Незначительно',moderate:'Умеренно',strong:'Сильно',very_strong:'Очень сильно'},
+  et:{yes:'Jah',no:'Ei',18_20:'18–20',21_25:'21–25',26_35:'26–35',36_plus:'36+',prefer_not:'Eelistan mitte vastata',never:'Mitte kunagi',once:'Mõnel korral',rare:'Harva',less_monthly:'Harvem kui kord kuus',monthly:'Umbes kord kuus',two_four_month:'2–4 korda kuus',two_three_week:'2–3 korda nädalas',four_plus_week:'4 korda nädalas või sagedamini',weekly_plus:'Kord nädalas või sagedamini','0':'0','1_2':'1–2','3_5':'3–5','6_plus':'6+','3_4':'3–4','5_6':'5–6','7_9':'7–9',10_plus:'10+',weekly:'Umbes kord nädalas',daily_almost:'Iga päev või peaaegu iga päev',friends:'Sõpradega',family:'Pere/sugulastega',event:'Pidu/üritus',alone:'Üksi',other:'Muu',some:'Osal inimestest',common:'Üsna levinud',very_common:'Väga levinud',unsure:'Ei tea / pole kindel',sometimes:'Mõnikord',often:'Sageli',partner:'Partner',friend:'Sõber',mostly:'Pigem normaalne',mostly_no:'Pigem keeruline',partly:'Umbes tean',school:'Kooli/ülikooli spetsialist',doctor:'Tervishoiu-/vaimse tervise spetsialist',helpline:'Anonüümne abiteenus',none:'Mitte kellegi nimetatu poole',slight:'Vähesel määral',moderate:'Mõõdukalt',strong:'Tugevalt',very_strong:'Väga tugevalt'},
 };
 
-function answerLabel(value,language){
+function answerLabel(value,language,key){
+  if(key==='overallImpact'&&value==='none')return language==='ru'?'Не повлияло':'Ei mõjutanud';
+  if(key==='closeHousehold'&&value==='sometimes')return language==='ru'?'Часть времени':'Osa ajast';
   if(Array.isArray(value))return value.map(v=>VALUE_LABELS[language]?.[v]??v).join(', ');
   return VALUE_LABELS[language]?.[value]??value;
 }
@@ -83,13 +89,14 @@ export default async function handler(req,res){
   const origin=req.headers.origin;
   if(origin&&!ALLOWED_ORIGINS.has(origin))return res.status(403).json({ok:false,error:'origin_not_allowed'});
   const length=Number(req.headers['content-length']||0);
-  if(length>16000)return res.status(413).json({ok:false,error:'payload_too_large'});
+  if(length>18000)return res.status(413).json({ok:false,error:'payload_too_large'});
 
   let body;
   try{body=readBody(req);}catch{return res.status(400).json({ok:false,error:'invalid_json'});}
 
   const language=String(body.language??'');
   if(!LANGUAGES.has(language))return res.status(400).json({ok:false,error:'invalid_language'});
+  const schemaVersion=Number(body.schemaVersion||2)>=3?3:2;
   const input=body.answers;
   if(!input||typeof input!=='object'||Array.isArray(input))return res.status(400).json({ok:false,error:'invalid_answers'});
 
@@ -98,11 +105,14 @@ export default async function handler(req,res){
     consent:scalar(input.consent,YES_NO),
     ageGroup:scalar(input.ageGroup,AGE_GROUPS),
     ownUse:scalar(input.ownUse,OWN_USE),
-    last30:scalar(input.last30,LAST30),
+    last30:scalar(input.last30,LAST30,true),
+    typicalUnits:scalar(input.typicalUnits,TYPICAL_UNITS,true),
+    sixPlus:scalar(input.sixPlus,SIX_PLUS,true),
     contexts:list(input.contexts,CONTEXTS),
     peerNorm:scalar(input.peerNorm,PEER_NORM),
     closeExposure:scalar(input.closeExposure,FREQ),
     closeRelations:list(input.closeRelations,CLOSE_RELATIONS),
+    closeHousehold:scalar(input.closeHousehold,HOUSEHOLD,true),
     closeConflict:scalar(input.closeConflict,FREQ),
     closeUnsafe:scalar(input.closeUnsafe,FREQ),
     worry:scalar(input.worry,FREQ),
@@ -111,16 +121,28 @@ export default async function handler(req,res){
     mood:scalar(input.mood,FREQ),
     avoid:scalar(input.avoid,FREQ),
     unsafe:scalar(input.unsafe,FREQ),
+    extraResponsibility:scalar(input.extraResponsibility,FREQ,true),
+    overallImpact:scalar(input.overallImpact,OVERALL_IMPACT,true),
     pressure:scalar(input.pressure,FREQ),
     refusalNormal:scalar(input.refusalNormal,REFUSAL_NORMAL),
     helpKnowledge:scalar(input.helpKnowledge,HELP_KNOWLEDGE),
     supportChoice:scalar(input.supportChoice,SUPPORT_CHOICE),
   };
 
-  const required=['adult','consent','ageGroup','ownUse','last30','peerNorm','closeExposure','closeConflict','closeUnsafe','worry','sleep','study','mood','avoid','unsafe','pressure','refusalNormal','helpKnowledge','supportChoice'];
+  const required=['adult','consent','ageGroup','ownUse','peerNorm','closeExposure','closeConflict','closeUnsafe','worry','sleep','study','mood','avoid','unsafe','pressure','refusalNormal','helpKnowledge','supportChoice'];
   if(required.some(key=>answers[key]===null))return res.status(400).json({ok:false,error:'invalid_or_missing_answer'});
   if(answers.contexts===null||answers.closeRelations===null)return res.status(400).json({ok:false,error:'invalid_multi_answer'});
   if(answers.adult!=='yes'||answers.consent!=='yes')return res.status(400).json({ok:false,error:'consent_required'});
+
+  if(schemaVersion>=3){
+    const drank=answers.ownUse!=='never'&&answers.ownUse!=='prefer_not';
+    if(drank&&(!answers.typicalUnits||!answers.sixPlus))return res.status(400).json({ok:false,error:'missing_consumption_detail'});
+    const exposed=answers.closeExposure!=='never'&&answers.closeExposure!=='prefer_not';
+    if(exposed&&((!Array.isArray(answers.closeRelations)||answers.closeRelations.length===0)||!answers.closeHousehold))return res.status(400).json({ok:false,error:'missing_close_context'});
+    if(!answers.extraResponsibility||!answers.overallImpact)return res.status(400).json({ok:false,error:'missing_impact_summary'});
+  }else if(!answers.last30){
+    return res.status(400).json({ok:false,error:'missing_last30'});
+  }
 
   const sheetUrl=process.env.SHEET_WEBHOOK_URL;
   const sheetSecret=process.env.SHEET_WEBHOOK_SECRET;
@@ -129,7 +151,7 @@ export default async function handler(req,res){
   if(!sheetUrl||!sheetSecret||!botToken||!chatId)return res.status(500).json({ok:false,error:'server_not_configured'});
 
   const responseId=makeId();
-  const response={submitted_at:new Date().toISOString(),response_id:responseId,language,version:2,...answers};
+  const response={submitted_at:new Date().toISOString(),response_id:responseId,language,version:schemaVersion,...answers};
 
   try{
     const sheet=await fetch(sheetUrl,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({secret:sheetSecret,response})});
@@ -143,14 +165,15 @@ export default async function handler(req,res){
 
   const labels=FIELD_LABELS[language];
   const isRu=language==='ru';
-  const order=['ageGroup','ownUse','last30','contexts','peerNorm','closeExposure','closeRelations','closeConflict','closeUnsafe','worry','sleep','study','mood','avoid','unsafe','pressure','refusalNormal','helpKnowledge','supportChoice'];
+  const order=['ageGroup','ownUse','last30','typicalUnits','sixPlus','contexts','peerNorm','closeExposure','closeRelations','closeHousehold','closeConflict','closeUnsafe','worry','sleep','study','mood','avoid','unsafe','extraResponsibility','overallImpact','pressure','refusalNormal','helpKnowledge','supportChoice'];
   const lines=[
     isRu?'Новый ответ — «Помоги науке»':'Uus vastus — „Aita teadust“',
     `${isRu?'ID ответа':'Vastuse ID'}: ${responseId}`,
+    `${isRu?'Версия анкеты':'Küsitluse versioon'}: ${schemaVersion}`,
     `${isRu?'Язык':'Keel'}: ${language.toUpperCase()}`,
     `${isRu?'Отправлено':'Saadetud'}: ${localTimestamp()} (Tallinn)`,
     '',
-    ...order.map(key=>`${labels[key]}: ${answerLabel(answers[key],language)}`),
+    ...order.filter(key=>Array.isArray(answers[key])?answers[key].length>0:answers[key]!==''&&answers[key]!=null).map(key=>`${labels[key]}: ${answerLabel(answers[key],language,key)}`),
     '',
     isRu?'Сохранено в Google Sheets.':'Salvestatud Google Sheetsi.',
   ];
