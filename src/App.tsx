@@ -74,12 +74,13 @@ export default function App(){
       <div className="intro-strip"><span><b>01</b> {ru?'Разберись':'Mõista'}</span><span><b>02</b> {ru?'Углубись':'Süvene'}</span><span><b>03</b> {ru?'Попробуй':'Proovi'}</span><span><b>04</b> {ru?'Проверь':'Kontrolli'}</span><span><b>05</b> {ru?'Поделись мнением':'Anna tagasisidet'}</span></div>
 
       <section id="teejuht" className="site-guide" aria-labelledby="guide-title">
-        <div className="site-guide-heading"><p className="eyebrow">{ru?'МАРШРУТ ПО САЙТУ':'LEHE TEEJUHT'}</p><h2 id="guide-title">{ru?'Что здесь делать?':'Mida siin teha?'}</h2><p>{ru?'Можно идти по порядку или сразу открыть нужный раздел.':'Võid liikuda järjekorras või avada kohe selle osa, mis sind huvitab.'}</p></div>
+        <div className="site-guide-heading"><p className="eyebrow">{ru?'МАРШРУТ ПО САЙТУ':'LEHE TEEJUHT'}</p><h2 id="guide-title">{ru?'Что здесь делать?':'Mida siin teha?'}</h2><p>{ru?'Лучше идти по порядку: сначала разобраться в теме, затем попробовать задания и только после этого оценить материал.':'Kõige loogilisem on liikuda järjekorras: esmalt mõista teemat, siis proovida ülesandeid ja alles lõpus anda tagasisidet.'}</p></div>
         <div className="guide-grid">
           <a href="#aju" className="guide-card"><span>01</span><strong>{ru?'Понять влияние':'Mõista mõju'}</strong><p>{ru?'Разберись, какие функции мозга связаны с темой.':'Vaata, millised aju funktsioonid on teemaga seotud.'}</p><em>{ru?'Начни здесь →':'Alusta siit →'}</em></a>
           <a href="#teadmised" className="guide-card"><span>02</span><strong>{ru?'Углубиться':'Süvene'}</strong><p>{ru?'Карта мозга, глоссарий, научные уровни и мини-интерактивы.':'Ajukaart, sõnastik, teadustasemed ja miniinteraktiivid.'}</p><em>{ru?'Открыть базу →':'Ava teadusbaas →'}</em></a>
-          <a href="#labor" className="guide-card"><span>03</span><strong>{ru?'Попробовать задания':'Proovi ülesandeid'}</strong><p>{ru?'Память, внимание и три короткие мини-игры.':'Mälu, tähelepanu ja kolm lühikest minimängu.'}</p><em>{ru?'Открыть игры →':'Ava mängud →'}</em></a>
+          <a href="#malu" className="guide-card"><span>03</span><strong>{ru?'Попробовать':'Proovi'}</strong><p>{ru?'Сначала память и внимание, затем три короткие игры.':'Esmalt mälu ja tähelepanu, seejärel kolm lühikest mängu.'}</p><em>{ru?'К упражнениям →':'Harjutuste juurde →'}</em></a>
           <a href="#viktoriin" className="guide-card"><span>04</span><strong>{ru?'Проверить знания':'Kontrolli teadmisi'}</strong><p>{ru?'Ответь на десять утверждений и сразу прочитай объяснения.':'Vasta kümnele väitele ja loe kohe selgitusi.'}</p><em>{ru?'Начать проверку →':'Alusta kontrolli →'}</em></a>
+          <a href="#tagasiside" className="guide-card"><span>05</span><strong>{ru?'Оценить материал':'Anna tagasisidet'}</strong><p>{ru?'После прохождения сайта заполни анонимный опрос для статистики проекта.':'Pärast lehe läbimist täida projekti statistika jaoks anonüümne küsitlus.'}</p><em>{ru?'К опросу →':'Küsitluse juurde →'}</em></a>
         </div>
       </section>
 
