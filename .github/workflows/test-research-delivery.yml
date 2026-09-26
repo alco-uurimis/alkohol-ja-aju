@@ -2,8 +2,6 @@ name: Test research delivery
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
@@ -19,7 +17,7 @@ jobs:
           cat > payload.json <<'JSON'
           {
             "schemaVersion": 3,
-            "submissionId": "research_diag_delivery_20260926",
+            "submissionId": "research_diag_delivery_manual",
             "language": "et",
             "answers": {
               "adult": "yes",
