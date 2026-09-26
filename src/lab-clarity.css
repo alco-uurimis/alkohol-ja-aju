@@ -1,0 +1,33 @@
+.lab-section{scroll-margin-top:104px}
+.lab-steps{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:-4px 0 24px}
+.lab-steps span{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid #39405e;border-radius:12px;background:#1b2038;color:#dce0ed;font-size:.82rem;font-weight:650}
+.lab-steps b{font-size:.68rem;letter-spacing:.08em;color:var(--lime)}
+.visual-effect-control{display:flex;flex-direction:column;align-items:flex-end;gap:7px;max-width:330px}
+.visual-effect-control small{color:#9299b5;font-size:.72rem;line-height:1.45;text-align:right}
+.game-meaning{display:grid;gap:4px;padding:11px 12px;margin:14px 0 18px;border-left:2px solid #7b6be0;background:#171c33;border-radius:0 9px 9px 0}
+.game-meaning strong{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#c9f574}
+.game-meaning span{font-size:.76rem;line-height:1.5;color:#aeb5cd}
+.lab-card>p{margin-bottom:0}
+@media(max-width:760px){
+  .lab-section{scroll-margin-top:86px;padding-top:42px;padding-bottom:48px}
+  .lab-section .section-heading{margin-bottom:24px}
+  .lab-section .section-heading h2{font-size:clamp(2.25rem,11vw,3.15rem);line-height:1.02;margin-bottom:16px}
+  .lab-section .section-heading>p:last-child{font-size:1rem;line-height:1.58}
+  .lab-steps{grid-template-columns:1fr;gap:7px;margin-bottom:20px}
+  .lab-steps span{padding:9px 12px}
+  .lab-toolbar{gap:18px;padding:14px 0 20px;margin-bottom:20px;border-bottom:0}
+  .lab-toolbar p{font-size:.83rem;line-height:1.55;margin-top:8px}
+  .visual-effect-control{align-items:stretch;width:100%;max-width:none}
+  .visual-effect-control small{text-align:left;padding-left:4px}
+  .glow-toggle{width:100%;justify-content:center;padding:10px 14px;min-height:48px;font-size:.9rem}
+  .lab-section .exercise-note{margin-top:0;padding-top:16px}
+  .lab-grid{gap:14px;margin-top:24px;margin-bottom:44px}
+  .lab-card{padding:20px;border-radius:16px}
+  .lab-card-top{margin-bottom:20px}
+  .lab-card h3{font-size:1.35rem}
+  .game-meaning{margin:12px 0 16px}
+  .reaction-pad{min-height:170px}
+  .stroop-intro,.stroop-stage{padding:18px}
+  .signal-board{height:235px}
+  .neuro-marquee{display:none}
+}
