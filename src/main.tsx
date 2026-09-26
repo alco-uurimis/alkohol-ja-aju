@@ -13,4 +13,5 @@ import './lab-clarity.css';
 import './learning.css';
 import './final-polish.css';
 import './stability.css';
+import './design-polish.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
