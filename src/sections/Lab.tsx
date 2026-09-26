@@ -10,6 +10,11 @@ type Ink = 'violet' | 'lime' | 'cyan' | 'coral';
 const inks: Ink[] = ['violet', 'lime', 'cyan', 'coral'];
 const signalNodes = [0, 1, 2, 3];
 
+function GameMeaning({lang,children}:{lang:Lang;children:React.ReactNode}){
+  const ru=lang==='ru';
+  return <div className="game-meaning"><strong>{ru?'Что показывает':'Mida see näitab'}</strong><span>{children}</span></div>;
+}
+
 function ReactionGame({ lang }: { lang: Lang }) {
   const ru = lang === 'ru';
   const [state, setState] = useState<ReactionState>('idle');
@@ -48,7 +53,7 @@ function ReactionGame({ lang }: { lang: Lang }) {
       return;
     }
     if (state === 'go') {
-      const ms=Math.round(performance.now() - startedAt.current);
+      const ms = Math.round(performance.now() - startedAt.current);
       setResult(ms);
       recordReaction(ms);
       setState('result');
@@ -69,6 +74,7 @@ function ReactionGame({ lang }: { lang: Lang }) {
     <div className="lab-card-top"><span>01</span><span>{ru ? 'РЕАКЦИЯ' : 'REAKTSIOON'}</span></div>
     <h3>{ru ? 'Поймай зелёный сигнал' : 'Püüa roheline signaal'}</h3>
     <p>{ru ? 'Нажми «Старт», дождись смены поля и кликни как можно быстрее.' : 'Vajuta „Start“, oota välja muutumist ja reageeri nii kiiresti kui saad.'}</p>
+    <GameMeaning lang={lang}>{ru?'Время между появлением визуального сигнала и нажатием. На него влияют внимание, устройство и случайные колебания — это не медицинский тест.':'Aeg visuaalse signaali ilmumisest vajutuseni. Tulemust mõjutavad tähelepanu, seade ja juhuslik kõikumine — see ei ole tervisetest.'}</GameMeaning>
     <button className={`reaction-pad state-${state}`} onClick={tap} disabled={state === 'idle' || state === 'result' || state === 'false-start'} aria-live="polite">
       <span className="reaction-dot" aria-hidden="true" />
       <strong>{label}</strong>
@@ -116,7 +122,7 @@ function StroopGame({ lang }: { lang: Lang }) {
     setTimes([]);
     setDone(false);
     setActive(true);
-    gameStarted.current=performance.now();
+    gameStarted.current = performance.now();
     roundStarted.current = performance.now();
   };
 
@@ -128,8 +134,8 @@ function StroopGame({ lang }: { lang: Lang }) {
     setScore(nextScore);
     setTimes(nextTimes);
     if (index === rounds.length - 1) {
-      const averageMs=Math.round(nextTimes.reduce((a,b)=>a+b,0)/nextTimes.length);
-      const totalMs=Math.round(performance.now()-gameStarted.current);
+      const averageMs = Math.round(nextTimes.reduce((a,b)=>a+b,0)/nextTimes.length);
+      const totalMs = Math.round(performance.now()-gameStarted.current);
       recordStroop(nextScore,rounds.length,averageMs,totalMs);
       setActive(false);
       setDone(true);
@@ -145,14 +151,15 @@ function StroopGame({ lang }: { lang: Lang }) {
   return <article className="lab-card stroop-game">
     <div className="lab-card-top"><span>02</span><span>STROOP</span></div>
     <h3>{ru ? 'Смотри на цвет, а не на слово' : 'Vaata värvi, mitte sõna'}</h3>
-    <p>{ru ? 'Назови цвет букв. Само слово специально будет мешать.' : 'Vali tähtede värv. Sõna ise püüab sind meelega eksitada.'}</p>
+    <p>{ru ? 'Выбирай цвет букв. Само слово специально будет мешать.' : 'Vali tähtede värv. Sõna ise püüab sind meelega eksitada.'}</p>
+    <GameMeaning lang={lang}>{ru?'Насколько легко удерживать правило и игнорировать конфликтующую информацию. Здесь важны и точность, и скорость ответа.':'Kui lihtne on reeglit hoida ja vastuolulist infot eirata. Olulised on nii vastuse täpsus kui ka kiirus.'}</GameMeaning>
     {!active && !done && <div className="stroop-intro"><span className="stroop-word ink-cyan">{names.violet}</span><p className="small">{ru ? 'Здесь правильный ответ — голубой.' : 'Siin on õige vastus tsüaan.'}</p><button className="button primary" onClick={start}>{ru ? 'Запустить 8 раундов' : 'Alusta 8 vooru'}</button></div>}
     {active && <div className="stroop-stage">
       <div className="stroop-progress"><span>{index + 1} / {rounds.length}</span><span>{ru ? 'Правильно' : 'Õigeid'}: {score}</span></div>
       <div className={`stroop-word ink-${current.ink}`} aria-label={ru ? `Слово ${names[current.word]}, цвет букв ${names[current.ink]}` : `Sõna ${names[current.word]}, tähtede värv ${names[current.ink]}`}>{names[current.word]}</div>
       <div className="stroop-options">{inks.map(ink => <button key={ink} className={`swatch swatch-${ink}`} onClick={() => answer(ink)}><span aria-hidden="true" />{names[ink]}</button>)}</div>
     </div>}
-    {done && <div className="mini-result"><strong>{score} / 8</strong><span>{ru ? `Средняя реакция: ${avg} мс` : `Keskmine vastus: ${avg} ms`}</span><button className="button" onClick={start}>{ru ? 'Повторить' : 'Uus katse'}</button></div>}
+    {done && <div className="mini-result"><strong>{score} / 8</strong><span>{ru ? `Среднее время ответа: ${avg} мс` : `Keskmine vastamisaeg: ${avg} ms`}</span><button className="button" onClick={start}>{ru ? 'Повторить' : 'Uus katse'}</button></div>}
   </article>;
 }
 
@@ -164,7 +171,7 @@ function SignalGame({ lang }: { lang: Lang }) {
   const [inputIndex, setInputIndex] = useState(0);
   const [won, setWon] = useState(false);
   const timers = useRef<number[]>([]);
-  const gameStarted=useRef(0);
+  const gameStarted = useRef(0);
 
   const clearTimers = () => {
     timers.current.forEach(id => window.clearTimeout(id));
@@ -194,7 +201,7 @@ function SignalGame({ lang }: { lang: Lang }) {
 
   const start = () => {
     const first = Array.from({ length: 3 }, () => signalNodes[Math.floor(Math.random() * signalNodes.length)]);
-    gameStarted.current=performance.now();
+    gameStarted.current = performance.now();
     setWon(false);
     setSequence(first);
     play(first);
@@ -228,6 +235,7 @@ function SignalGame({ lang }: { lang: Lang }) {
     <div className="lab-card-top"><span>03</span><span>{ru ? 'СИГНАЛ' : 'SIGNAAL'}</span></div>
     <h3>{ru ? 'Повтори путь импульса' : 'Korda impulsi rada'}</h3>
     <p>{ru ? 'Запомни, какие нейроны вспыхивают, и повтори последовательность. Каждый уровень добавляет один сигнал.' : 'Jäta meelde, millised neuronid süttivad, ja korda järjekorda. Iga tase lisab ühe signaali.'}</p>
+    <GameMeaning lang={lang}>{ru?'Насколько длинную визуальную последовательность удаётся удержать и точно воспроизвести в этой попытке.':'Kui pikka visuaalset järjestust õnnestub selles katses meeles hoida ja täpselt korrata.'}</GameMeaning>
     <div className={`signal-board phase-${phase}`} aria-label={ru ? 'Поле из четырёх нейронов' : 'Nelja neuroni mänguväli'}>
       <svg viewBox="0 0 100 100" className="signal-lines" aria-hidden="true"><path d="M20 24 C45 18 55 18 80 28M20 24 C35 50 35 70 28 78M80 28 C65 50 68 68 76 78M28 78 C48 68 58 70 76 78M20 24 C50 45 54 54 76 78M80 28 C54 42 46 57 28 78" /></svg>
       {signalNodes.map(node => <button key={node} className={`signal-node node-${node} ${activeNode === node ? 'active' : ''}`} disabled={phase !== 'input'} onClick={() => tapNode(node)} aria-label={(ru ? 'Нейрон ' : 'Neuron ') + (node + 1)}><span /></button>)}
@@ -241,8 +249,12 @@ export default function Lab({ lang }: { lang: Lang }) {
   const ru = lang === 'ru';
   const [glow, setGlow] = useState(false);
 
-  return <Section id="labor" number={ru ? '04 / ИГРОВАЯ ЛАБОРАТОРИЯ' : '04 / MÄNGULABOR'} title={ru ? 'Три коротких игры для мозга' : 'Kolm lühikest ajumängu'} intro={ru ? 'Измерь реакцию, попробуй не читать слово и повтори цепочку сигналов. Это игровые задания, а не тест трезвости и не медицинская оценка.' : 'Mõõda reaktsiooni, proovi sõna mitte lugeda ja korda signaalijada. Need on mängulised ülesanded, mitte kainuse test ega tervisehinnang.'} className={`lab-section ${glow ? 'glow-mode' : ''}`}>
-    <div className="lab-toolbar"><div><span className="pill">{ru ? 'ИНТЕРАКТИВ' : 'INTERAKTIIVNE'}</span><p>{ru ? 'Результаты игр хранятся только в этой вкладке. Они отправятся автору только вместе с финальным опросом и после твоего согласия.' : 'Mängutulemused säilivad ainult selles vahelehes. Need saadetakse autorile ainult koos lõpuküsitlusega ja pärast sinu nõusolekut.'}</p></div><button className="glow-toggle" aria-pressed={glow} onClick={() => setGlow(v => !v)}><span aria-hidden="true">✦</span>{glow ? (ru ? 'Выключить нейросвечение' : 'Lülita neurohelendus välja') : (ru ? 'Включить нейросвечение' : 'Lülita neurohelendus sisse')}</button></div>
+  return <Section id="labor" number={ru ? '04 / ИГРОВАЯ ЛАБОРАТОРИЯ' : '04 / MÄNGULABOR'} title={ru ? 'Три коротких игры для мозга' : 'Kolm lühikest ajumängu'} intro={ru ? 'Пройди три задания по порядку: реакция, конфликт цвета и слова, затем последовательность. Результаты описывают только конкретную попытку.' : 'Läbi kolm ülesannet järjest: reaktsioon, värvi ja sõna konflikt ning seejärel järjestus. Tulemused kirjeldavad ainult konkreetset katset.'} className={`lab-section ${glow ? 'glow-mode' : ''}`}>
+    <div className="lab-steps" aria-label={ru?'Порядок мини-игр':'Minimängude järjekord'}><span><b>01</b>{ru?'Реакция':'Reaktsioon'}</span><span><b>02</b>Stroop</span><span><b>03</b>{ru?'Последовательность':'Järjestus'}</span></div>
+    <div className="lab-toolbar">
+      <div><span className="pill">{ru ? 'ИНТЕРАКТИВ' : 'INTERAKTIIVNE'}</span><p>{ru ? 'Результаты игр хранятся только в этой вкладке. Они отправятся автору только вместе с финальным опросом и после твоего согласия.' : 'Mängutulemused säilivad ainult selles vahelehes. Need saadetakse autorile ainult koos lõpuküsitlusega ja pärast sinu nõusolekut.'}</p></div>
+      <div className="visual-effect-control"><button className="glow-toggle" aria-pressed={glow} onClick={() => setGlow(v => !v)}><span aria-hidden="true">✦</span>{glow ? (ru ? 'Выключить визуальный эффект' : 'Lülita visuaalne efekt välja') : (ru ? 'Включить визуальный эффект' : 'Lülita visuaalne efekt sisse')}</button><small>{ru?'Только оформление — на игры и результаты не влияет.':'Ainult kujundus — ei mõjuta mänge ega tulemusi.'}</small></div>
+    </div>
     <ExerciseNote lang={lang} />
     <div className="lab-grid"><ReactionGame lang={lang} /><StroopGame lang={lang} /><SignalGame lang={lang} /></div>
     <div className="neuro-marquee" aria-hidden="true"><span>MEMORY · FOCUS · REACTION · SIGNAL · MEMORY · FOCUS · REACTION · SIGNAL · </span></div>
