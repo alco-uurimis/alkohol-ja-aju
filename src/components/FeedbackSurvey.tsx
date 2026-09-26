@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import { clearGameMetrics, readGameMetrics } from '../utils/gameMetrics';
+import type { GameMetrics } from '../utils/gameMetrics';
 
 type Lang='et'|'ru';
 type Status='idle'|'sending'|'sent'|'error';
@@ -16,6 +18,14 @@ function Scale({name,value,onChange,label,low,high}:{name:string;value:string;on
     </div>
     <div className="survey-scale-labels" aria-hidden="true"><span>1 — {low}</span><span>5 — {high}</span></div>
   </fieldset>;
+}
+
+function gameMetricsCompact(metrics:GameMetrics){
+  const parts:string[]=[];
+  if(metrics.reaction)parts.push(`reaction_latest=${metrics.reaction.latestMs}ms`,`reaction_best=${metrics.reaction.bestMs}ms`,`reaction_attempts=${metrics.reaction.attempts}`);
+  if(metrics.stroop)parts.push(`stroop=${metrics.stroop.score}/${metrics.stroop.rounds}`,`stroop_avg=${metrics.stroop.averageMs}ms`,`stroop_total=${metrics.stroop.totalMs}ms`,`stroop_attempts=${metrics.stroop.attempts}`);
+  if(metrics.signal)parts.push(`signal_level=${metrics.signal.reachedLength}`,`signal_done=${metrics.signal.completed?'yes':'no'}`,`signal_time=${metrics.signal.durationMs}ms`,`signal_attempts=${metrics.signal.attempts}`);
+  return parts.join('; ');
 }
 
 export default function FeedbackSurvey({lang}:{lang:Lang}){
@@ -46,17 +56,18 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
     setPace('');setLearned('');setRecommend('');setComment('');setConsent(false);
   };
 
-  const buildStructuredComment=()=>{
+  const buildStructuredComment=(metrics:GameMetrics)=>{
     const compact=[
       `kb=${knowledgeBefore}`,`ka=${knowledgeAfter}`,`cl=${clarity}`,`in=${interest}`,`nav=${navigation}`,`vis=${visuals}`,
       `mem=${memoryDifficulty}`,`att=${attentionDifficulty}`,`games=${gamesUseful}`,`conf=${confidence}`,
       `use=${useful}`,`unclear=${leastClear}`,`pace=${pace}`,`learned=${learned}`,`rec=${recommend}`,
     ].join('; ');
+    const games=gameMetricsCompact(metrics);
     const cleanComment=comment.trim().replace(/\s+/g,' ');
-    return cleanComment ? `${compact}\n${cleanComment}`.slice(0,1000) : compact;
+    return [compact,games,cleanComment].filter(Boolean).join('\n').slice(0,1000);
   };
 
-  async function post(body:Record<string,string>){
+  async function post(body:unknown){
     const controller=new AbortController();
     const timeout=window.setTimeout(()=>controller.abort(),12000);
     try{
@@ -72,17 +83,18 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
     setStatus('sending');
     setErrorDetail('');
 
-    const structuredComment=buildStructuredComment();
+    const gameMetrics=readGameMetrics();
+    const structuredComment=buildStructuredComment(gameMetrics);
     const modernPayload={
       knowledgeBefore,knowledgeAfter,clarity,interest,navigation,visuals,memoryDifficulty,attentionDifficulty,gamesUseful,confidence,
-      useful,leastClear,pace,learned,recommend,comment:structuredComment,language:lang,
+      useful,leastClear,pace,learned,recommend,comment:structuredComment,language:lang,gameMetrics,
     };
 
     try{
       let res=await post(modernPayload);
 
-      // Backward-compatible retry for the older Vercel API schema. The full new answer set
-      // is preserved inside the structured comment, so no statistics are lost.
+      // Backward-compatible retry for an older Vercel API. Game metrics are also embedded
+      // in the structured comment, so they still reach Telegram on the legacy schema.
       if(!res.ok && [400,404,405,422].includes(res.status)){
         const legacyUseful=legacySections.has(useful)?useful:'quiz';
         const legacyRecommend=recommend==='no'?'no':'yes';
@@ -96,6 +108,7 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
       }
 
       setStatus('sent');
+      clearGameMetrics();
       reset();
     }catch(error){
       setStatus('error');
@@ -115,7 +128,7 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
   return <form className="feedback-form" onSubmit={submit} noValidate={false}>
     <div className="survey-intro-card">
       <span className="pill">{ru?'АНОНИМНО':'ANONÜÜMNE'}</span>
-      <div><strong>{ru?'15 вопросов · около 3–4 минут':'15 küsimust · umbes 3–4 minutit'}</strong><p>{ru?'Ответы нужны для общей статистики проекта. Имя, контакты и другие идентифицирующие данные не запрашиваются.':'Vastuseid kasutatakse projekti üldstatistikaks. Nime, kontaktandmeid ega muid isikut tuvastavaid andmeid ei küsita.'}</p></div>
+      <div><strong>{ru?'15 вопросов · около 3–4 минут':'15 küsimust · umbes 3–4 minutit'}</strong><p>{ru?'Ответы нужны для общей статистики проекта. Если ты проходил(а) мини-игры в этой вкладке, вместе с опросом будут отправлены их результаты: время и баллы. Имя и контакты не запрашиваются.':'Vastuseid kasutatakse projekti üldstatistikaks. Kui tegid selles vahelehes minimänge, saadetakse koos küsitlusega ka nende tulemused: aeg ja punktid. Nime ega kontaktandmeid ei küsita.'}</p></div>
     </div>
 
     <div className="survey-block"><div className="survey-block-head"><span>01</span><h3>{ru?'Знания и понимание':'Teadmised ja arusaamine'}</h3></div>
@@ -149,9 +162,9 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
 
     <div className="survey-finish">
       <label className="survey-question survey-comment">{ru?'Что стоит улучшить или добавить? (необязательно)':'Mida võiks parandada või lisada? (valikuline)'}<textarea maxLength={1000} rows={5} value={comment} onChange={e=>setComment(e.target.value)} placeholder={ru?'Не указывай имя, контакты, сведения о здоровье или другие личные данные.':'Ära lisa nime, kontaktandmeid, terviseandmeid ega muid isikuandmeid.'}/><span className="survey-counter">{comment.length}/1000</span></label>
-      <label className="check-label survey-consent"><input required type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/><span>{ru?'Я согласен(-на) отправить эти анонимные ответы автору проекта для анализа общей статистики.':'Nõustun saatma need anonüümsed vastused projekti autorile üldise statistika analüüsimiseks.'}</span></label>
+      <label className="check-label survey-consent"><input required type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/><span>{ru?'Я согласен(-на) отправить анонимные ответы и, если они есть, результаты мини-игр (время и баллы) автору проекта для общей статистики.':'Nõustun saatma projekti autorile üldstatistika jaoks anonüümsed vastused ja olemasolu korral minimängude tulemused (aja ja punktid).'}</span></label>
       <button className="button primary survey-submit" disabled={status==='sending'} type="submit">{status==='sending'?(ru?'Отправка…':'Saadan…'):(ru?'Отправить ответы':'Saada vastused')}</button>
-      {status==='sent'&&<p className="survey-status success" role="status">{ru?'Спасибо. Ответы успешно отправлены.':'Aitäh. Vastused on edukalt saadetud.'}</p>}
+      {status==='sent'&&<p className="survey-status success" role="status">{ru?'Спасибо. Ответы и результаты игр успешно отправлены.':'Aitäh. Vastused ja mängutulemused on edukalt saadetud.'}</p>}
       {status==='error'&&<div className="survey-status error" role="alert"><strong>{ru?'Не удалось отправить ответы.':'Vastuste saatmine ebaõnnestus.'}</strong><span>{ru?'Проверь соединение и попробуй ещё раз.':'Kontrolli ühendust ja proovi uuesti.'}{errorDetail?` (${errorDetail})`:''}</span></div>}
     </div>
   </form>;
