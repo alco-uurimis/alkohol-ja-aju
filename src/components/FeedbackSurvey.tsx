@@ -10,10 +10,10 @@ const scaleValues=['1','2','3','4','5'];
 const legacySections=new Set(['brain','memory','attention','quiz']);
 
 function Scale({name,value,onChange,label,low,high}:{name:string;value:string;onChange:(value:string)=>void;label:string;low:string;high:string}){
-  return <fieldset className="survey-question survey-scale-question">
+  return <fieldset className="survey-question survey-scale-question" data-field={name}>
     <legend>{label}</legend>
     <div className="survey-scale" role="radiogroup" aria-label={label}>
-      {scaleValues.map(v=><label key={v} className={value===v?'selected':''}><input required type="radio" name={name} value={v} checked={value===v} onChange={e=>onChange(e.target.value)}/><span>{v}</span></label>)}
+      {scaleValues.map(v=><label key={v} className={value===v?'selected':''}><input type="radio" name={name} value={v} checked={value===v} onChange={e=>onChange(e.target.value)}/><span>{v}</span></label>)}
     </div>
     <div className="survey-scale-labels" aria-hidden="true"><span>1 — {low}</span><span>5 — {high}</span></div>
   </fieldset>;
@@ -40,11 +40,12 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
   const [consent,setConsent]=useState(false);
   const [status,setStatus]=useState<Status>('idle');
   const [errorDetail,setErrorDetail]=useState('');
+  const [validationError,setValidationError]=useState('');
 
   const reset=()=>{
     setKnowledgeBefore('');setKnowledgeAfter('');setClarity('');setInterest('');setNavigation('');setVisuals('');
     setMemoryDifficulty('');setAttentionDifficulty('');setGamesUseful('');setConfidence('');setUseful('');setLeastClear('');
-    setPace('');setLearned('');setRecommend('');setComment('');setConsent(false);
+    setPace('');setLearned('');setRecommend('');setComment('');setConsent(false);setValidationError('');
   };
 
   const buildLegacyComment=(gameMetrics:ReturnType<typeof readGameMetrics>)=>{
@@ -60,7 +61,7 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
 
   async function post(body:Record<string,unknown>){
     const controller=new AbortController();
-    const timeout=window.setTimeout(()=>controller.abort(),12000);
+    const timeout=window.setTimeout(()=>controller.abort(),15000);
     try{
       return await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal:controller.signal});
     }finally{
@@ -68,9 +69,34 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
     }
   }
 
+  function validate(){
+    const fields=[
+      ['knowledgeBefore',knowledgeBefore],['knowledgeAfter',knowledgeAfter],['clarity',clarity],['confidence',confidence],
+      ['interest',interest],['navigation',navigation],['visuals',visuals],['pace',pace],
+      ['memoryDifficulty',memoryDifficulty],['attentionDifficulty',attentionDifficulty],['gamesUseful',gamesUseful],
+      ['useful',useful],['leastClear',leastClear],['learned',learned],['recommend',recommend],
+    ];
+    const missing=fields.filter(([,value])=>!value);
+    if(!consent)missing.push(['consent','']);
+    if(!missing.length)return true;
+
+    const first=missing[0][0];
+    setValidationError(ru?`Заполни все обязательные пункты. Осталось: ${missing.length}.`:`Täida kõik kohustuslikud väljad. Puudu: ${missing.length}.`);
+    window.setTimeout(()=>{
+      const target=document.querySelector<HTMLElement>(`[data-field="${first}"], [name="${first}"]`);
+      target?.scrollIntoView({behavior:'smooth',block:'center'});
+      const focusable=target?.matches('input,select,button')?target:target?.querySelector<HTMLElement>('input,select,button');
+      focusable?.focus({preventScroll:true});
+    },0);
+    return false;
+  }
+
   async function submit(e:FormEvent){
     e.preventDefault();
-    if(!consent||status==='sending')return;
+    if(status==='sending')return;
+    setValidationError('');
+    if(!validate())return;
+
     setStatus('sending');
     setErrorDetail('');
 
@@ -84,7 +110,7 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
     try{
       let res=await post(modernPayload);
 
-      if(!res.ok && [400,404,405,422].includes(res.status)){
+      if(!res.ok&&[400,404,405,422].includes(res.status)){
         const legacyUseful=legacySections.has(useful)?useful:'quiz';
         const legacyRecommend=recommend==='no'?'no':'yes';
         res=await post({clarity,useful:legacyUseful,recommend:legacyRecommend,comment:buildLegacyComment(gameMetrics),language:lang});
@@ -100,7 +126,7 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
       reset();
     }catch(error){
       setStatus('error');
-      setErrorDetail(error instanceof Error?error.message:'unknown_error');
+      setErrorDetail(error instanceof DOMException&&error.name==='AbortError'?(ru?'Сервер не ответил вовремя':'Server ei vastanud õigel ajal'):error instanceof Error?error.message:'unknown_error');
     }
   }
 
@@ -113,7 +139,7 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
     ['sources',ru?'Источники и выводы':'Allikad ja kokkuvõte'],
   ];
 
-  return <form className="feedback-form" onSubmit={submit} noValidate={false}>
+  return <form className="feedback-form" onSubmit={submit} noValidate>
     <div className="survey-intro-card">
       <span className="pill">{ru?'АНОНИМНО':'ANONÜÜMNE'}</span>
       <div><strong>{ru?'15 вопросов · около 3–4 минут':'15 küsimust · umbes 3–4 minutit'}</strong><p>{ru?'Ответы нужны для общей статистики проекта. Имя, контакты и другие идентифицирующие данные не запрашиваются.':'Vastuseid kasutatakse projekti üldstatistikaks. Nime, kontaktandmeid ega muid isikut tuvastavaid andmeid ei küsita.'}</p></div>
@@ -130,7 +156,7 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
       <Scale name="interest" value={interest} onChange={setInterest} label={ru?'Насколько интересным был сайт в целом?':'Kui huvitav oli veebileht tervikuna?'} low={ru?'совсем неинтересно':'üldse mitte huvitav'} high={ru?'очень интересно':'väga huvitav'}/>
       <Scale name="navigation" value={navigation} onChange={setNavigation} label={ru?'Насколько легко было ориентироваться на сайте?':'Kui lihtne oli veebilehel liikuda?'} low={ru?'очень сложно':'väga keeruline'} high={ru?'очень легко':'väga lihtne'}/>
       <Scale name="visuals" value={visuals} onChange={setVisuals} label={ru?'Насколько тебе понравилось визуальное оформление?':'Kui hästi meeldis sulle visuaalne kujundus?'} low={ru?'совсем не понравилось':'ei meeldinud üldse'} high={ru?'очень понравилось':'meeldis väga'}/>
-      <label className="survey-question survey-select">{ru?'Как бы ты описал(а) темп материала?':'Kuidas kirjeldaksid materjali tempot?'}<select required value={pace} onChange={e=>setPace(e.target.value)}><option value="">{ru?'Выбери вариант':'Vali vastus'}</option><option value="too_short">{ru?'Слишком коротко':'Liiga lühike'}</option><option value="balanced">{ru?'В самый раз':'Paras'}</option><option value="too_long">{ru?'Слишком длинно':'Liiga pikk'}</option></select></label>
+      <label className="survey-question survey-select" data-field="pace">{ru?'Как бы ты описал(а) темп материала?':'Kuidas kirjeldaksid materjali tempot?'}<select name="pace" value={pace} onChange={e=>setPace(e.target.value)}><option value="">{ru?'Выбери вариант':'Vali vastus'}</option><option value="too_short">{ru?'Слишком коротко':'Liiga lühike'}</option><option value="balanced">{ru?'В самый раз':'Paras'}</option><option value="too_long">{ru?'Слишком длинно':'Liiga pikk'}</option></select></label>
     </div>
 
     <div className="survey-block"><div className="survey-block-head"><span>03</span><h3>{ru?'Упражнения и игры':'Harjutused ja mängud'}</h3></div>
@@ -141,19 +167,20 @@ export default function FeedbackSurvey({lang}:{lang:Lang}){
 
     <div className="survey-block"><div className="survey-block-head"><span>04</span><h3>{ru?'Что сработало лучше всего':'Mis töötas kõige paremini'}</h3></div>
       <div className="survey-two-col">
-        <label className="survey-question survey-select">{ru?'Какой раздел оказался самым полезным?':'Milline osa oli kõige kasulikum?'}<select required value={useful} onChange={e=>setUseful(e.target.value)}><option value="">{ru?'Выбери вариант':'Vali vastus'}</option>{sectionOptions.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
-        <label className="survey-question survey-select">{ru?'Какой раздел был наименее понятным?':'Milline osa jäi kõige ebaselgemaks?'}<select required value={leastClear} onChange={e=>setLeastClear(e.target.value)}><option value="">{ru?'Выбери вариант':'Vali vastus'}</option><option value="none">{ru?'Всё было понятно':'Kõik oli arusaadav'}</option>{sectionOptions.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
+        <label className="survey-question survey-select" data-field="useful">{ru?'Какой раздел оказался самым полезным?':'Milline osa oli kõige kasulikum?'}<select name="useful" value={useful} onChange={e=>setUseful(e.target.value)}><option value="">{ru?'Выбери вариант':'Vali vastus'}</option>{sectionOptions.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
+        <label className="survey-question survey-select" data-field="leastClear">{ru?'Какой раздел был наименее понятным?':'Milline osa jäi kõige ebaselgemaks?'}<select name="leastClear" value={leastClear} onChange={e=>setLeastClear(e.target.value)}><option value="">{ru?'Выбери вариант':'Vali vastus'}</option><option value="none">{ru?'Всё было понятно':'Kõik oli arusaadav'}</option>{sectionOptions.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
       </div>
-      <fieldset className="survey-question"><legend>{ru?'Узнал(а) ли ты что-то новое?':'Kas said midagi uut teada?'}</legend><div className="survey-inline"><label><input required type="radio" name="learned" value="yes" checked={learned==='yes'} onChange={e=>setLearned(e.target.value)}/><span>{ru?'Да':'Jah'}</span></label><label><input type="radio" name="learned" value="partly" checked={learned==='partly'} onChange={e=>setLearned(e.target.value)}/><span>{ru?'Частично':'Osaliselt'}</span></label><label><input type="radio" name="learned" value="no" checked={learned==='no'} onChange={e=>setLearned(e.target.value)}/><span>{ru?'Нет':'Ei'}</span></label></div></fieldset>
-      <fieldset className="survey-question"><legend>{ru?'Посоветовал(а) бы ты этот материал однокласснику?':'Kas soovitaksid seda õppematerjali klassikaaslasele?'}</legend><div className="survey-inline"><label><input required type="radio" name="recommend" value="yes" checked={recommend==='yes'} onChange={e=>setRecommend(e.target.value)}/><span>{ru?'Да':'Jah'}</span></label><label><input type="radio" name="recommend" value="maybe" checked={recommend==='maybe'} onChange={e=>setRecommend(e.target.value)}/><span>{ru?'Возможно':'Võib-olla'}</span></label><label><input type="radio" name="recommend" value="no" checked={recommend==='no'} onChange={e=>setRecommend(e.target.value)}/><span>{ru?'Нет':'Ei'}</span></label></div></fieldset>
+      <fieldset className="survey-question" data-field="learned"><legend>{ru?'Узнал(а) ли ты что-то новое?':'Kas said midagi uut teada?'}</legend><div className="survey-inline"><label><input type="radio" name="learned" value="yes" checked={learned==='yes'} onChange={e=>setLearned(e.target.value)}/><span>{ru?'Да':'Jah'}</span></label><label><input type="radio" name="learned" value="partly" checked={learned==='partly'} onChange={e=>setLearned(e.target.value)}/><span>{ru?'Частично':'Osaliselt'}</span></label><label><input type="radio" name="learned" value="no" checked={learned==='no'} onChange={e=>setLearned(e.target.value)}/><span>{ru?'Нет':'Ei'}</span></label></div></fieldset>
+      <fieldset className="survey-question" data-field="recommend"><legend>{ru?'Посоветовал(а) бы ты этот материал однокласснику?':'Kas soovitaksid seda õppematerjali klassikaaslasele?'}</legend><div className="survey-inline"><label><input type="radio" name="recommend" value="yes" checked={recommend==='yes'} onChange={e=>setRecommend(e.target.value)}/><span>{ru?'Да':'Jah'}</span></label><label><input type="radio" name="recommend" value="maybe" checked={recommend==='maybe'} onChange={e=>setRecommend(e.target.value)}/><span>{ru?'Возможно':'Võib-olla'}</span></label><label><input type="radio" name="recommend" value="no" checked={recommend==='no'} onChange={e=>setRecommend(e.target.value)}/><span>{ru?'Нет':'Ei'}</span></label></div></fieldset>
     </div>
 
     <div className="survey-finish">
       <label className="survey-question survey-comment">{ru?'Что стоит улучшить или добавить? (необязательно)':'Mida võiks parandada või lisada? (valikuline)'}<textarea maxLength={1000} rows={5} value={comment} onChange={e=>setComment(e.target.value)} placeholder={ru?'Не указывай имя, контакты, сведения о здоровье или другие личные данные.':'Ära lisa nime, kontaktandmeid, terviseandmeid ega muid isikuandmeid.'}/><span className="survey-counter">{comment.length}/1000</span></label>
-      <label className="check-label survey-consent"><input required type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/><span>{ru?'Я согласен(-на) отправить эти анонимные ответы и результаты мини-игр автору проекта для общей статистики.':'Nõustun saatma need anonüümsed vastused ja minimängude tulemused projekti autorile üldise statistika jaoks.'}</span></label>
+      <label className="check-label survey-consent" data-field="consent"><input name="consent" type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/><span>{ru?'Я согласен(-на) отправить эти анонимные ответы и результаты мини-игр автору проекта для общей статистики.':'Nõustun saatma need anonüümsed vastused ja minimängude tulemused projekti autorile üldise statistika jaoks.'}</span></label>
+      {validationError&&<div className="survey-status error" role="alert"><strong>{validationError}</strong><span>{ru?'Кнопка работает — сначала нужно заполнить отмеченные обязательные пункты.':'Nupp töötab — enne saatmist tuleb täita kohustuslikud väljad.'}</span></div>}
       <button className="button primary survey-submit" disabled={status==='sending'} type="submit">{status==='sending'?(ru?'Отправка…':'Saadan…'):(ru?'Отправить ответы':'Saada vastused')}</button>
       {status==='sent'&&<p className="survey-status success" role="status">{ru?'Спасибо. Ответы успешно отправлены.':'Aitäh. Vastused on edukalt saadetud.'}</p>}
-      {status==='error'&&<div className="survey-status error" role="alert"><strong>{ru?'Не удалось отправить ответы.':'Vastuste saatmine ebaõnnestus.'}</strong><span>{ru?'Проверь соединение и попробуй ещё раз.':'Kontrolli ühendust ja proovi uuesti.'}{errorDetail?` (${errorDetail})`:''}</span></div>}
+      {status==='error'&&<div className="survey-status error" role="alert"><strong>{ru?'Не удалось отправить ответы.':'Vastuste saatmine ebaõnnestus.'}</strong><span>{ru?'Попробуй ещё раз. Если ошибка повторяется, ниже показана причина:':'Proovi uuesti. Kui viga kordub, on põhjus allpool:'}{errorDetail?` ${errorDetail}`:''}</span></div>}
     </div>
   </form>;
 }
