@@ -1,5 +1,35 @@
 import type { ReactNode } from 'react';
-export function Section({id,number,title,intro,children,className=''}:{id:string;number:string;title:string;intro?:string;children:ReactNode;className?:string}){return <section id={id} aria-labelledby={id+'-title'} className={'section '+className}><div className="section-heading"><p className="eyebrow">{number}</p><h2 id={id+'-title'}>{title}</h2>{intro&&<p>{intro}</p>}</div>{children}</section>;}
+
+const sectionOrder:Record<string,string>={
+  aju:'01',
+  infograafika:'02',
+  teadmised:'03',
+  malu:'04',
+  tahelepanu:'05',
+  labor:'06',
+  viktoriin:'07',
+  'isiklik-kokkuvote':'08',
+  meelespea:'09',
+  tagasiside:'10',
+  projektist:'11',
+  allikad:'12',
+};
+
+function orderedLabel(id:string,label:string){
+  const order=sectionOrder[id];
+  if(!order)return label;
+  const slash=label.indexOf('/');
+  return slash>=0?`${order} ${label.slice(slash)}`:`${order} / ${label}`;
+}
+
+export function Section({id,number,title,intro,children,className=''}:{id:string;number:string;title:string;intro?:string;children:ReactNode;className?:string}){
+  const introId=intro?`${id}-intro`:undefined;
+  return <section id={id} aria-labelledby={id+'-title'} aria-describedby={introId} className={'section '+className}>
+    <div className="section-heading"><p className="eyebrow">{orderedLabel(id,number)}</p><h2 id={id+'-title'}>{title}</h2>{intro&&<p id={introId}>{intro}</p>}</div>
+    {children}
+  </section>;
+}
+
 export function InfoCard({title,children}:{title:string;children:ReactNode}){return <article className="info-card"><h3>{title}</h3>{children}</article>;}
 export function SourceReference({ids,lang='et'}:{ids:number[];lang?:'et'|'ru'}){return <span className="source-refs">{ids.map(id=><a key={id} href={'#allikas-'+id} aria-label={(lang==='ru'?'Источник ':'Allikas ')+id}>[{id}]</a>)}</span>;}
 export function ProgressBar({value,max,label}:{value:number;max:number;label:string}){return <div className="progress-wrap"><label>{label}<progress aria-label={label} max={max} value={value}/></label></div>;}
