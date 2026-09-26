@@ -14,4 +14,5 @@ import './learning.css';
 import './final-polish.css';
 import './stability.css';
 import './design-polish.css';
+import './infographics.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
