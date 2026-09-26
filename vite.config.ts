@@ -8,8 +8,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        science: resolve(__dirname, 'science/index.html'),
+        main: resolve(process.cwd(), 'index.html'),
+        science: resolve(process.cwd(), 'science/index.html'),
       },
     },
   },
