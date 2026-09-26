@@ -16,4 +16,5 @@ import './stability.css';
 import './design-polish.css';
 import './infographics.css';
 import './infographics-photo-fix.css';
+import './neuro-infographic-fix.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
