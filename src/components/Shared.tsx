@@ -8,24 +8,32 @@ const sectionOrder:Record<string,string>={
   tahelepanu:'05',
   labor:'06',
   viktoriin:'07',
-  'isiklik-kokkuvote':'08',
-  meelespea:'09',
-  tagasiside:'10',
-  projektist:'11',
+  meelespea:'08',
+  tagasiside:'09',
+  projektist:'10',
+  'isiklik-kokkuvote':'11',
   allikad:'12',
 };
 
-function orderedLabel(id:string,label:string){
-  const order=sectionOrder[id];
-  if(!order)return label;
+function sectionMeta(id:string,label:string){
+  const order=sectionOrder[id]??'';
   const slash=label.indexOf('/');
-  return slash>=0?`${order} ${label.slice(slash)}`:`${order} / ${label}`;
+  const name=(slash>=0?label.slice(slash+1):label).trim();
+  return {order,name};
 }
 
 export function Section({id,number,title,intro,children,className=''}:{id:string;number:string;title:string;intro?:string;children:ReactNode;className?:string}){
   const introId=intro?`${id}-intro`:undefined;
+  const meta=sectionMeta(id,number);
   return <section id={id} aria-labelledby={id+'-title'} aria-describedby={introId} className={'section '+className}>
-    <div className="section-heading"><p className="eyebrow">{orderedLabel(id,number)}</p><h2 id={id+'-title'}>{title}</h2>{intro&&<p id={introId}>{intro}</p>}</div>
+    <div className="section-heading">
+      <div className="section-heading-meta">
+        {meta.order&&<span className="section-index" aria-hidden="true">{meta.order}</span>}
+        <p className="eyebrow">{meta.name}</p>
+      </div>
+      <h2 id={id+'-title'}>{title}</h2>
+      {intro&&<p id={introId} className="section-intro">{intro}</p>}
+    </div>
     {children}
   </section>;
 }
