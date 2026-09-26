@@ -1,0 +1,77 @@
+/* Final visual pass: sticky progress, real-brain imagery, mobile consistency */
+:root{--brain-photo:url('https://upload.wikimedia.org/wikipedia/commons/7/7e/Human_brain_lateral_view.JPG')}
+
+/* Keep progress physically inside the sticky header. */
+.header{padding-bottom:8px}
+.header-progress{position:absolute;left:0;right:0;bottom:0;height:8px;background:#e4e7ef;overflow:hidden;border-top:1px solid #d9deea}
+.header-progress-label{position:absolute;right:5%;top:-24px;font-size:.66rem;font-weight:700;color:#62697d;pointer-events:none}
+.header-progress-track{position:absolute;inset:0}
+.header-progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),#9f8be7,var(--lime));box-shadow:0 0 10px #7563d954;transition:width .25s ease}
+html{scroll-padding-top:108px}
+.section,.site-guide{scroll-margin-top:108px}
+
+/* Hero: use an actual human-brain photograph instead of rings/circles. */
+.brain-photo-hero{position:relative;min-height:330px;background-image:linear-gradient(180deg,#171b3726,#171b3760),var(--brain-photo);background-repeat:no-repeat;background-position:center;background-size:contain}
+.brain-photo-hero::after{content:'John A. Beal, PhD · Wikimedia Commons · CC BY 2.5';position:absolute;right:8px;bottom:6px;padding:4px 7px;border-radius:6px;background:#0d1125cc;color:#cfd4e7;font-size:.58rem;letter-spacing:.02em}
+.brain-photo-hero .signal-label{z-index:2;background:#171d38e8;border-color:#8a91b5;box-shadow:0 8px 24px #0005}
+
+/* Main brain explorer: remove decorative SVG brain and place a real photograph underneath the controls. */
+.brain-map-stage{background:linear-gradient(180deg,#13182f22,#13182f66),var(--brain-photo) center/contain no-repeat,#11162d}
+.brain-map-stage::before{background-image:linear-gradient(#ffffff05 1px,transparent 1px),linear-gradient(90deg,#ffffff05 1px,transparent 1px);opacity:.55}
+.brain-map-stage svg,.brain-map-label{display:none}
+.brain-map-stage::after{content:'John A. Beal, PhD · CC BY 2.5';position:absolute;right:10px;bottom:8px;z-index:2;color:#d5daea;font-size:.6rem;background:#11162dcc;padding:4px 7px;border-radius:6px}
+.brain-map-node{backdrop-filter:blur(8px);background:#171d38e8;border-color:#8b93b4}
+.brain-map-node.active{background:#f0ecff;color:#171b37;border-color:var(--lime)}
+
+/* Scientific map: replace the fake silhouette and ovals with the same anatomical photograph. */
+.brain-map-visual{background:linear-gradient(180deg,#151a3124,#151a3168),var(--brain-photo) center/82% auto no-repeat,#151a31}
+.brain-silhouette{display:none}
+.brain-map-visual::after{content:'Foto: John A. Beal, PhD · Wikimedia Commons · CC BY 2.5';position:absolute;right:10px;bottom:8px;color:#d4d9e9;font-size:.58rem;background:#0f1428cc;padding:4px 7px;border-radius:6px;z-index:1}
+.brain-point{z-index:2;max-width:210px;background:#202744e8;border-color:#838cad;box-shadow:0 8px 22px #0004}
+.brain-point.active{background:#202744f5;border-color:var(--lime);box-shadow:0 0 0 3px #c9f57424,0 10px 28px #0005}
+
+/* Reduce oversized spacing and avoid labels colliding with the image on phones. */
+@media(max-width:760px){
+  .header{height:78px;padding-top:0;padding-bottom:8px}
+  .header nav{top:78px}
+  .header-progress{height:6px}
+  .header-progress-label{display:none}
+  html{scroll-padding-top:92px}
+  .section,.site-guide{scroll-margin-top:92px}
+
+  .hero{padding-top:30px}
+  .hero-visual{min-height:auto;padding:20px;border-radius:18px}
+  .brain-photo-hero{min-height:270px;background-size:92% auto}
+  .brain-photo-hero .signal-label{font-size:.72rem;padding:6px 10px}
+  .label-one{top:14px;left:3%}.label-two{top:64px;right:1%}.label-three{bottom:34px;left:1%}.label-four{bottom:12px;right:2%}
+
+  .brain-map{padding:18px 14px;gap:18px}
+  .brain-map-copy h3{font-size:1.75rem}
+  .brain-map-stage{min-height:335px;background-size:90% auto}
+  .brain-map-node{min-width:0;max-width:126px;width:auto;padding:8px 9px;border-radius:12px}
+  .brain-map-node strong{font-size:.72rem;line-height:1.15}
+  .brain-map-node.node-0{left:2%;top:4%}.brain-map-node.node-1{right:2%;top:7%}.brain-map-node.node-2{left:2%;bottom:9%}.brain-map-node.node-3{right:2%;bottom:6%}
+
+  .brain-map-wrap{gap:14px;margin-bottom:46px}
+  .brain-map-visual{min-height:420px;background-size:90% auto;border-radius:18px}
+  .brain-point{font-size:.66rem;padding:7px 9px;gap:6px;max-width:145px}
+  .brain-point span{width:24px;height:24px}
+  .brain-point b{max-width:100px;line-height:1.15}
+  .point-prefrontal{left:3%;top:5%}.point-hippocampus{left:3%;top:48%}.point-reward{right:3%;top:31%}.point-cerebellum{right:3%;bottom:13%}.point-brainstem{left:24%;bottom:4%}
+  .brain-map-panel{padding:22px 20px}
+  .brain-map-panel h3{font-size:clamp(1.75rem,9vw,2.45rem);margin:18px 0 20px;overflow-wrap:anywhere}
+
+  .topic-panel{padding:24px 20px}.topic-panel h3{font-size:1.8rem;margin-top:36px}.panel-number{font-size:3.5rem}
+  .context-grid{gap:16px}.context-grid .info-card{padding:20px}
+}
+
+@media(max-width:430px){
+  .brain-photo-hero{min-height:245px}
+  .brain-map-stage{min-height:315px}
+  .brain-map-visual{min-height:390px}
+  .brain-point{max-width:132px}
+  .brain-point b{max-width:86px}
+  .brain-map-visual::after,.brain-map-stage::after,.brain-photo-hero::after{font-size:.5rem;max-width:72%;text-align:right}
+}
+
+@media(prefers-reduced-motion:reduce){.header-progress-fill{transition:none}}
