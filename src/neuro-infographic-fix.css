@@ -1,0 +1,142 @@
+/* Neurochemistry infographic clarity pass */
+.infographic-neuro .synapse-visual{
+  min-height:250px;
+  padding:22px 18px;
+  border-color:#46517f;
+  background:
+    radial-gradient(circle at 16% 18%,#c9f57412,transparent 22%),
+    radial-gradient(circle at 50% 22%,#c197ff14,transparent 24%),
+    radial-gradient(circle at 84% 18%,#ffc85712,transparent 22%),
+    linear-gradient(180deg,#11172f,#0c1126);
+}
+.infographic-neuro .synapse-visual::before{
+  content:'GABA        Glu         DA';
+  position:absolute;
+  top:12px;
+  left:10%;
+  right:10%;
+  z-index:4;
+  color:#dfe4f5;
+  font:800 .66rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.05em;
+  text-align:center;
+  word-spacing:2.5rem;
+  opacity:.9;
+}
+.infographic-neuro .synapse-visual::after{
+  content:'↓             ↓             ↓';
+  position:absolute;
+  inset:auto 13% 78px;
+  z-index:3;
+  color:#94a0c9;
+  font:800 1.05rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-align:center;
+  letter-spacing:.03em;
+  white-space:pre;
+}
+.infographic-neuro .synapse-top,
+.infographic-neuro .synapse-bottom{
+  left:8%;
+  right:8%;
+  height:auto;
+  margin:0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  align-items:center;
+  justify-items:center;
+  border-color:#5a6697;
+  background:linear-gradient(180deg,#23305a,#182244);
+  box-shadow:inset 0 0 30px #7080c117;
+}
+.infographic-neuro .synapse-top{
+  top:38px;
+  min-height:72px;
+  border-radius:48% 48% 24% 24% / 64% 64% 28% 28%;
+}
+.infographic-neuro .synapse-bottom{
+  bottom:24px;
+  min-height:62px;
+  border-radius:22% 22% 46% 46% / 28% 28% 58% 58%;
+}
+.infographic-neuro .synapse-top i{
+  display:block;
+  width:23px;
+  height:23px;
+  margin:0;
+  border-radius:50%;
+  background:#c9f574;
+  box-shadow:0 0 0 7px #c9f57412,0 0 18px #c9f574a8;
+}
+.infographic-neuro .synapse-top i:nth-child(2){background:#c197ff;box-shadow:0 0 0 7px #c197ff12,0 0 18px #c197ffa8}
+.infographic-neuro .synapse-top i:nth-child(3){background:#ffc857;box-shadow:0 0 0 7px #ffc85712,0 0 18px #ffc857a8}
+.infographic-neuro .synapse-top i:nth-child(n+4){display:none}
+.infographic-neuro .synapse-gap{
+  top:113px;
+  bottom:91px;
+  left:14%;
+  right:14%;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(2,1fr);
+  place-items:center;
+  column-gap:20px;
+}
+.infographic-neuro .synapse-gap::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,transparent 16%,#c9f57422 16%,#c9f57422 17%,transparent 17%,transparent 50%,#c197ff22 50%,#c197ff22 51%,transparent 51%,transparent 83%,#ffc85722 83%,#ffc85722 84%,transparent 84%);
+  pointer-events:none;
+}
+.infographic-neuro .synapse-gap span{
+  width:10px;
+  height:10px;
+  z-index:1;
+  background:#c9f574;
+  box-shadow:0 0 12px #c9f574;
+}
+.infographic-neuro .synapse-gap span:nth-child(2),
+.infographic-neuro .synapse-gap span:nth-child(5){background:#c197ff;box-shadow:0 0 12px #c197ff}
+.infographic-neuro .synapse-gap span:nth-child(3),
+.infographic-neuro .synapse-gap span:nth-child(6){background:#ffc857;box-shadow:0 0 12px #ffc857}
+.infographic-neuro .synapse-bottom i{
+  width:30px;
+  height:36px;
+  margin:0;
+  border:4px solid #c9f574;
+  border-top:0;
+  border-radius:0 0 12px 12px;
+  background:transparent;
+  box-shadow:0 8px 18px #c9f57422;
+}
+.infographic-neuro .synapse-bottom i:nth-child(2){border-color:#c197ff;box-shadow:0 8px 18px #c197ff22}
+.infographic-neuro .synapse-bottom i:nth-child(3){border-color:#ffc857;box-shadow:0 8px 18px #ffc85722}
+.infographic-neuro .neuro-item{position:relative;border-width:1px 1px 1px 4px}
+.infographic-neuro .neuro-item.gaba{border-left-color:#c9f574}
+.infographic-neuro .neuro-item.glutamate{border-left-color:#c197ff}
+.infographic-neuro .neuro-item.dopamine{border-left-color:#ffc857}
+.infographic-neuro .neuro-outcomes span{border:1px solid #343e68;background:#1c2445}
+
+@media(max-width:680px){
+  .infographic-neuro .synapse-visual{min-height:220px;margin-bottom:12px;padding-inline:10px}
+  .infographic-neuro .synapse-visual::before{top:10px;font-size:.6rem;word-spacing:1.1rem}
+  .infographic-neuro .synapse-visual::after{bottom:68px;font-size:.88rem;inset-inline:10%}
+  .infographic-neuro .synapse-top{top:34px;min-height:62px;left:7%;right:7%}
+  .infographic-neuro .synapse-gap{top:99px;bottom:79px;left:12%;right:12%}
+  .infographic-neuro .synapse-bottom{bottom:19px;min-height:54px;left:7%;right:7%}
+  .infographic-neuro .synapse-top i{width:19px;height:19px}
+  .infographic-neuro .synapse-bottom i{width:26px;height:30px;border-width:3px}
+  .infographic-neuro .neuro-grid{display:grid;grid-template-columns:1fr;gap:7px}
+  .infographic-neuro .neuro-item{display:grid;grid-template-columns:minmax(92px,.42fr) 1fr;align-items:center;gap:10px;padding:10px 12px}
+  .infographic-neuro .neuro-item strong{font-size:.88rem}
+  .infographic-neuro .neuro-item span{margin:0;font-size:.68rem}
+  .infographic-neuro .neuro-outcomes{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:9px}
+  .infographic-neuro .neuro-outcomes span{display:grid;place-items:center;min-height:46px;padding:7px 5px;font-size:.6rem;line-height:1.25}
+}
+
+@media(max-width:390px){
+  .infographic-neuro .synapse-visual::before{font-size:.56rem;word-spacing:.45rem}
+  .infographic-neuro .neuro-item{grid-template-columns:88px 1fr}
+  .infographic-neuro .neuro-outcomes span{font-size:.56rem}
+}
