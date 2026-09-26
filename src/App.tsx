@@ -4,8 +4,9 @@ import Infographics from './sections/Infographics';
 import Memory from './sections/Memory';
 import Attention from './sections/Attention';
 import Lab from './sections/Lab';
-import LearningCenter, { FinalSummary } from './sections/LearningCenter';
+import LearningCenter from './sections/LearningCenter';
 import Closing from './sections/Closing';
+import FinalSummary from './components/FinalSummary';
 import { Section } from './components/Shared';
 import { Quiz } from './components/Quiz';
 import { questions } from './data/content';
@@ -13,9 +14,10 @@ import { questionsRu } from './data/content.ru';
 
 type Lang='et'|'ru';
 
-const trackedIds=['aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin'];
+const trackedIds=['aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin','tagasiside'];
 const progressKey='alkohol-ja-aju:visited-sections';
 const languageKey='alkohol-ja-aju:language';
+const quizScoreKey='alkohol-ja-aju:quiz-score';
 
 function readVisited(){
   if(typeof window==='undefined')return new Set<string>();
@@ -30,12 +32,22 @@ function readLanguage():Lang{
   }catch{return 'et';}
 }
 
+function readQuizScore(){
+  if(typeof window==='undefined')return null;
+  try{
+    const raw=window.sessionStorage.getItem(quizScoreKey);
+    if(raw===null)return null;
+    const value=Number(raw);
+    return Number.isInteger(value)&&value>=0&&value<=10?value:null;
+  }catch{return null;}
+}
+
 export default function App(){
   const [menu,setMenu]=useState(false);
   const [active,setActive]=useState('avaleht');
   const [lang,setLang]=useState<Lang>(readLanguage);
   const [visited,setVisited]=useState<Set<string>>(readVisited);
-  const [quizScore,setQuizScore]=useState<number|null>(null);
+  const [quizScore,setQuizScore]=useState<number|null>(readQuizScore);
   const [showTop,setShowTop]=useState(false);
   const menuButton=useRef<HTMLButtonElement>(null);
   const ru=lang==='ru';
@@ -113,6 +125,10 @@ export default function App(){
 
   const switchLanguage=(next:Lang)=>{setLang(next);setMenu(false);};
   const goTop=()=>window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  const handleQuizComplete=(score:number)=>{
+    setQuizScore(score);
+    try{window.sessionStorage.setItem(quizScoreKey,String(score));}catch{/* storage can be unavailable */}
+  };
 
   return <>
     <a className="skip" href="#sisu">{ru?'Перейти к содержанию':'Liigu põhisisu juurde'}</a>
@@ -126,7 +142,7 @@ export default function App(){
         <button type="button" ref={menuButton} className="menu-toggle" aria-expanded={menu} aria-controls="navigation" aria-label={menu?(ru?'Закрыть меню':'Sulge menüü'):(ru?'Открыть меню':'Ava menüü')} onClick={()=>setMenu(v=>!v)}>{ru?'Меню':'Menüü'} <span aria-hidden="true">{menu?'−':'+'}</span></button>
       </div>
       <nav id="navigation" aria-label={ru?'Главное меню':'Peamenüü'} className={menu?'open':''}>{links.map(([id,name])=><a key={id} aria-current={active===id?'location':undefined} href={'#'+id} onClick={()=>setMenu(false)}>{name}</a>)}</nav>
-      <div className="header-progress" aria-label={ru?`Изучено разделов: ${visited.size} из ${trackedIds.length}`:`Läbitud osi: ${visited.size} / ${trackedIds.length}`}>
+      <div className="header-progress" aria-label={ru?`Изучено этапов: ${visited.size} из ${trackedIds.length}`:`Läbitud etappe: ${visited.size} / ${trackedIds.length}`}>
         <span className="header-progress-label">{ru?'Изучено':'Läbitud'} · {visited.size}/{trackedIds.length}</span>
         <div className="header-progress-track" aria-hidden="true"/>
       </div>
@@ -164,9 +180,8 @@ export default function App(){
       <Memory lang={lang}/>
       <Attention lang={lang}/>
       <Lab lang={lang}/>
-      <Section id="viktoriin" number={ru?'05 / ПРОВЕРЬ ЗНАНИЯ':'05 / KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Десять утверждений о теме. Для каждого выбери «миф» или «факт», затем прочитай объяснение.':'Kümme väidet teema kohta. Vali iga väite puhul „müüt“ või „fakt“ ja loe seejärel selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={setQuizScore}/></Section>
-      <FinalSummary lang={lang} quizScore={quizScore} visited={visited.size} totalSections={trackedIds.length}/>
-      <Closing lang={lang}/>
+      <Section id="viktoriin" number={ru?'05 / ПРОВЕРЬ ЗНАНИЯ':'05 / KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Десять утверждений о теме. Для каждого выбери «миф» или «факт», затем прочитай объяснение.':'Kümme väidet teema kohta. Vali iga väite puhul „müüt“ või „fakt“ ja loe seejärel selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section>
+      <Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length}/>}/>
     </main>
 
     <footer>{ru?'Алкоголь и мозг':'Alkohol ja aju'} <span>{ru?'Практическая работа гимназии':'Gümnaasiumi praktiline töö'}</span></footer>
