@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" role="img" aria-labelledby="title desc">
+  <title id="title">Ajupiirkonnad ja nendega seotud funktsioonid</title>
+  <desc id="desc">Lihtsustatud õppeskeem: prefrontaalne ajukoor on seotud otsuste ja enesekontrolliga, frontoparietaalne võrgustik tähelepanuga, hipokampus mäluga ning väikeaju ja motoorsed süsteemid koordinatsiooni ja reaktsioonikiirusega.</desc>
+  <style>
+    .box{fill:#202745;stroke:#b6a8f0;stroke-width:2.5}
+    .line{fill:none;stroke:#c1b5f4;stroke-width:3;stroke-linecap:round}
+    .dot{fill:#c9f574;stroke:#28304e;stroke-width:5}
+    .title{fill:#fff;font:700 20px Inter,Arial,sans-serif}
+    .copy{fill:#cbd1e7;font:500 15px Inter,Arial,sans-serif}
+  </style>
+  <g>
+    <path class="line" d="M278 118 L260 165 L246 224"/><circle class="dot" cx="246" cy="224" r="7"/>
+    <rect class="box" x="20" y="34" width="292" height="86" rx="18"/>
+    <text class="title" x="42" y="68">Prefrontaalne ajukoor</text>
+    <text class="copy" x="42" y="95">otsused · enesekontroll</text>
+  </g>
+  <g>
+    <path class="line" d="M555 118 L520 154 L474 190"/><circle class="dot" cx="474" cy="190" r="7"/>
+    <rect class="box" x="514" y="34" width="266" height="86" rx="18"/>
+    <text class="title" x="536" y="68">Frontoparietaalne võrgustik</text>
+    <text class="copy" x="536" y="95">tähelepanu · fookus</text>
+  </g>
+  <g>
+    <path class="line" d="M292 445 L340 397 L405 336"/><circle class="dot" cx="405" cy="336" r="7"/>
+    <rect class="box" x="20" y="430" width="330" height="96" rx="18"/>
+    <text class="title" x="42" y="465">Hipokampus</text>
+    <text class="copy" x="42" y="492">mälu · sisemine struktuur</text>
+  </g>
+  <g>
+    <path class="line" d="M555 447 L570 417 L588 389"/><circle class="dot" cx="588" cy="389" r="7"/>
+    <rect class="box" x="494" y="430" width="286" height="96" rx="18"/>
+    <text class="title" x="516" y="465">Väikeaju ja motoorsed süsteemid</text>
+    <text class="copy" x="516" y="492">koordinatsioon · reaktsioonikiirus</text>
+  </g>
+</svg>
