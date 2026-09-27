@@ -50,7 +50,7 @@ function doPost(e) {
       responseId,
       r.language || '',
       r.version || '',
-      r.adult || '',
+      r.ageEligible15Plus || r.adult || '',
       r.consent || '',
       r.ageGroup || '',
       r.ownUse || '',
@@ -76,6 +76,7 @@ function doPost(e) {
       r.refusalNormal || '',
       r.helpKnowledge || '',
       r.supportChoice || '',
+      r.minorConsent || '',
     ]);
 
     SpreadsheetApp.flush();
