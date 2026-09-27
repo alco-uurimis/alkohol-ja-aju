@@ -47,6 +47,11 @@ html{scroll-padding-top:108px}
 .guide-card,.knowledge-card,.task-card,.quiz-card,.survey-block,.survey-finish,.science-game,.depth-card,.method-card,.brain-map-panel,.summary-stats article{border-color:#dfe3ed}
 .guide-card,.knowledge-card,.task-card,.science-game,.depth-card,.method-card,.brain-map-panel,.summary-stats article{box-shadow:0 8px 28px rgba(23,27,55,.045)}
 .guide-card:hover{box-shadow:var(--shadow-md);border-color:#b8afe6}
+.reflection-section{background:#f3f1fb}
+.reflection-section .section-heading{max-width:720px}
+.reflection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.reflection-grid .info-card{position:relative;padding:54px 20px 22px;border:1px solid #dfe3ed;border-radius:16px;background:#fff;box-shadow:0 8px 28px rgba(23,27,55,.045)}
+.reflection-grid .info-card p{margin-bottom:0;font-size:.92rem;line-height:1.6}
 
 /* Brain imagery. The dark background remains a usable fallback if the remote photo cannot load. */
 .brain-photo-hero,.brain-map-stage,.brain-map-visual{background-color:#151a31}
@@ -147,6 +152,7 @@ html{scroll-padding-top:108px}
 
   input,select,textarea{font-size:16px!important}
   .section{padding-left:5%;padding-right:5%}
+  .reflection-grid{grid-template-columns:1fr;gap:12px}
   .section-heading{margin-bottom:26px}.section-heading h2{font-size:clamp(1.9rem,9vw,2.55rem)}.section-heading>p:last-child{font-size:.94rem;line-height:1.65}
   .button{min-height:46px;border-radius:11px}
   .task-card,.quiz-card{padding:22px 18px}.quiz-card{width:100%}

@@ -7,6 +7,7 @@ import Lab from './sections/Lab';
 import LearningCenter from './sections/LearningCenter';
 import Closing from './sections/Closing';
 import FinalSummary from './components/FinalSummary';
+import Reflection from './components/Reflection';
 import { Section } from './components/Shared';
 import { Quiz } from './components/Quiz';
 import { questions } from './data/content';
@@ -15,7 +16,7 @@ import { questionsRu } from './data/content.ru';
 type Lang='et'|'ru';
 type NavItem=[string,string];
 
-const trackedIds=['aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin','tagasiside'];
+const trackedIds=['aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin','samoprov','obsuzhdenie','tagasiside'];
 const progressKey='alkohol-ja-aju:visited-sections';
 const languageKey='alkohol-ja-aju:language';
 const quizScoreKey='alkohol-ja-aju:quiz-score';
@@ -66,6 +67,10 @@ export default function App(){
     ]},
     {label:ru?'ПРОВЕРЬ':'KONTROLLI',items:[
       ['viktoriin',ru?'Проверка знаний':'Teadmiste kontroll'],
+      ['samoprov',ru?'Самопроверка':'Enesekontroll'],
+    ]},
+    {label:ru?'ОБСУДИ':'ARUTLE',items:[
+      ['obsuzhdenie',ru?'Вопросы для обсуждения':'Aruteluküsimused'],
     ]},
     {label:ru?'ЗАВЕРШИ':'LÕPETA',items:[
       ['tagasiside',ru?'Опрос':'Küsitlus'],
@@ -219,6 +224,8 @@ export default function App(){
 
       <div className="phase-divider"><span>03</span><div><strong>{ru?'Проверь знания':'Kontrolli teadmisi'}</strong><small>{ru?'Миф или факт — 10 вопросов':'Müüt või fakt — 10 küsimust'}</small></div></div>
       <Section id="viktoriin" number={ru?'ПРОВЕРЬ ЗНАНИЯ':'KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Для каждого утверждения выбери «миф» или «факт». После ответа сразу появится короткое объяснение.':'Vali iga väite puhul „müüt“ või „fakt“. Pärast vastust näed kohe lühikest selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section>
+
+      <Reflection lang={lang}/>
 
       <div className="phase-divider"><span>04</span><div><strong>{ru?'Заверши маршрут':'Lõpeta teekond'}</strong><small>{ru?'Выводы, обратная связь и итог':'Järeldused, tagasiside ja kokkuvõte'}</small></div></div>
       <Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length}/>}/>
