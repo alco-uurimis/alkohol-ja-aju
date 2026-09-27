@@ -1,0 +1,97 @@
+/* Mobile simplicity layer. Loaded last on both the main and research pages. */
+@media(max-width:760px){
+  :root{--mobile-header-shell:60px}
+  html{scroll-padding-top:76px!important}
+  #root{padding-top:calc(60px + env(safe-area-inset-top,0px))!important}
+
+  .header{height:calc(60px + env(safe-area-inset-top,0px))!important;min-height:calc(60px + env(safe-area-inset-top,0px))!important;padding:env(safe-area-inset-top,0px) 10px 0!important;gap:7px!important;background:#fff!important;border-bottom:1px solid #e5e7ef!important;box-shadow:0 2px 10px rgba(23,27,55,.05)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .header .brand span,.header-context,.header-progress-label{display:none!important}
+  .brand-mark{width:34px!important;height:34px!important;border-radius:9px!important}
+  .header-actions{gap:5px!important}
+  .language-switch{height:36px!important;min-height:36px!important;padding:2px!important;background:#f2f3f7!important;border:0!important;box-shadow:none!important}
+  .language-switch button{height:32px!important;min-height:32px!important;min-width:31px!important;padding:0 6px!important;font-size:.72rem!important}
+  .menu-toggle,.research-entry-link{height:36px!important;min-height:36px!important;border-radius:10px!important;font-size:.72rem!important;line-height:1!important;box-shadow:none!important;transform:none!important}
+  .menu-toggle{min-width:58px!important;padding:0 9px!important}
+  .research-entry-link{min-width:49px!important;padding:0 7px!important}
+  .header-progress{height:2px!important;background:#eceef3!important;border:0!important}
+
+  .header nav{top:100%!important;max-height:calc(100dvh - 60px - env(safe-area-inset-top,0px))!important;padding:12px 13px max(24px,env(safe-area-inset-bottom,0px))!important;background:#fff!important;box-shadow:0 12px 28px rgba(23,27,55,.09)!important}
+  .nav-groups{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}
+  .nav-group{padding:0!important;border:0!important;background:transparent!important}
+  .nav-group-label{margin:0 0 4px!important;font-size:.62rem!important;letter-spacing:.09em!important;color:#858b9c!important}
+  .nav-group a{min-height:40px!important;padding:9px 10px!important;border-radius:9px!important;font-size:.88rem!important;line-height:1.22!important}
+  .nav-group a[aria-current="location"]{background:#f0edff!important;color:#4f3db6!important}
+
+  .section,.lab-section,.reference-glossary-section{padding:34px 15px 40px!important}
+  .section-heading{margin-bottom:17px!important}
+  .section-heading-meta{margin-bottom:6px!important}
+  .section-heading h2{font-size:clamp(1.75rem,8.7vw,2.35rem)!important;line-height:1.06!important;letter-spacing:-.04em!important;margin-bottom:8px!important}
+  .section-intro,.section-heading>p:last-child{font-size:.92rem!important;line-height:1.5!important}
+
+  .card,.info-card,.fact-card,.lab-card,.topic-panel,.quiz-card,.survey-card,.learning-card,.infographic-card,.reflection-card{border-radius:14px!important;box-shadow:none!important}
+  .brain-layout{gap:13px!important}
+  .topic-buttons{gap:6px!important}
+  .topic-button{min-height:58px!important;grid-template-columns:24px minmax(0,1fr)!important;gap:9px!important;padding:10px 11px!important;border-radius:11px!important;box-shadow:none!important}
+  .topic-number{width:24px!important;font-size:.65rem!important}
+  .topic-button strong{font-size:.95rem!important;margin-bottom:1px!important}
+  .topic-button small{font-size:.75rem!important;line-height:1.22!important}
+  .topic-panel{padding:18px 15px 20px!important;border-radius:14px!important}
+  .topic-panel h3{font-size:1.52rem!important;margin:26px 0 10px!important}
+  .topic-body{font-size:.93rem!important;line-height:1.5!important}
+
+  .lab-grid{gap:13px!important;margin-top:18px!important}
+  .lab-card{min-height:0!important;padding:17px 14px!important}
+  .lab-card h3{min-height:0!important;font-size:1.22rem!important;margin-bottom:7px!important}
+  .lab-card>p{min-height:0!important;font-size:.86rem!important;line-height:1.46!important}
+  .game-meaning{min-height:0!important;margin:11px 0 13px!important;padding:10px 11px!important;border-radius:9px!important}
+  .reaction-pad,.signal-board,.stroop-intro,.stroop-stage,.mini-result{min-height:185px!important}
+  .lab-section .game-action.button{min-height:47px!important;padding:10px 15px!important;border-radius:10px!important;box-shadow:none!important}
+  .science-games-grid{gap:13px!important}
+  .enhanced-science-game{min-height:0!important;padding:17px 14px!important;border-radius:14px!important;box-shadow:none!important}
+  .button,.primary-button,.secondary-button{min-height:45px!important;border-radius:10px!important}
+}
+
+@media(max-width:390px){
+  .section,.lab-section,.reference-glossary-section{padding-left:13px!important;padding-right:13px!important}
+  .header{padding-left:8px!important;padding-right:8px!important}
+  .language-switch button{min-width:29px!important;padding-inline:4px!important}
+  .menu-toggle{min-width:55px!important;padding-inline:7px!important}
+  .research-entry-link{min-width:46px!important;padding-inline:6px!important}
+}
+
+@media(max-width:620px){
+  .research-header{min-height:58px!important;padding:8px 11px!important;background:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .research-brand img{width:34px!important;height:34px!important}
+  .research-home{margin-left:auto!important;padding:7px 8px!important;font-size:.72rem!important}
+  .research-lang{padding:2px!important;box-shadow:none!important}
+  .research-lang button{padding:7px 8px!important;font-size:.73rem!important}
+  .research-main{padding:24px 11px 52px!important}
+  .research-hero{margin-bottom:22px!important}
+  .research-kicker{font-size:.65rem!important;letter-spacing:.085em!important;margin-bottom:9px!important}
+  .research-hero h1{font-size:clamp(1.95rem,10vw,2.9rem)!important;line-height:1.03!important;letter-spacing:-.05em!important;margin-bottom:13px!important}
+  .research-hero>p{font-size:.92rem!important;line-height:1.48!important}
+  .research-trust{gap:7px!important;margin-top:18px!important}
+  .research-trust>div{padding:12px 13px!important;border-radius:11px!important}
+  .research-trust strong{font-size:.84rem!important;margin-bottom:3px!important}
+  .research-trust span{font-size:.77rem!important;line-height:1.38!important}
+  .research-card{border-radius:13px!important;box-shadow:none!important}
+  .research-progress-head{padding:15px 14px 9px!important}
+  .research-progress-head strong{font-size:.92rem!important}
+  .research-progress{height:4px!important}
+  .research-steps{padding:11px 14px 0!important;gap:4px!important}
+  .research-steps b{width:24px!important;height:24px!important;font-size:.66rem!important}
+  .research-step{padding:20px 14px 5px!important}
+  .research-step h2{font-size:1.58rem!important;line-height:1.08!important}
+  .research-step-intro{font-size:.87rem!important;line-height:1.48!important;margin-bottom:18px!important}
+  .research-privacy,.research-stop,.research-help{padding:12px 13px!important;margin-bottom:17px!important;border-radius:10px!important}
+  .research-privacy p,.research-help p{font-size:.81rem!important;line-height:1.45!important}
+  .research-question{padding:17px 0!important}
+  .research-question legend{font-size:.92rem!important;line-height:1.38!important}
+  .research-question-hint{font-size:.79rem!important;line-height:1.4!important}
+  .research-options{gap:6px!important;margin-top:11px!important}
+  .research-option{min-height:48px!important;padding:9px 10px!important;border-radius:9px!important;font-size:.86rem!important}
+  .research-control{width:18px!important;height:18px!important}
+  .research-actions{padding:11px 14px max(11px,env(safe-area-inset-bottom,0px))!important;gap:7px!important;background:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .research-primary,.research-secondary{min-height:45px!important;padding:9px 11px!important;border-radius:9px!important;font-size:.86rem!important}
+  .research-error{margin:11px 14px 0!important;font-size:.82rem!important}
+}

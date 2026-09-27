@@ -4,6 +4,7 @@ import ResearchApp from './ResearchApp';
 import './research.css';
 import './research-final.css';
 import './research-refine.css';
+import './mobile-simple.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode><ResearchApp /></React.StrictMode>,

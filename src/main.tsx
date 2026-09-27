@@ -21,5 +21,5 @@ import './mobile-cleanup.css';
 import './research-entry.css';
 import './mobile-design-fix.css';
 import './paths.css';
+import './mobile-simple.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><ResearchPortal/></React.StrictMode>);
-
