@@ -83,6 +83,28 @@ const articles: Article[] = [
     found: {ru: 'Важен не один навык, а их сочетание. Даже учебная задача на реакцию не показывает, может ли конкретный человек безопасно управлять автомобилем.', et: 'Oluline ei ole üks oskus, vaid nende koosmõju. Isegi õppeotstarbeline reaktsiooniülesanne ei näita, kas konkreetne inimene saab autot ohutult juhtida.'},
     limits: {ru: 'Это образовательное объяснение, а не способ рассчитать личный риск или определить, когда можно садиться за руль. Безопасное решение — не водить после употребления алкоголя.', et: 'See on hariv selgitus, mitte viis isikliku riski arvutamiseks või rooli istumise aja määramiseks. Ohutu otsus on pärast alkoholi tarvitamist mitte juhtida.'},
     citation: 'National Highway Traffic Safety Administration · evidence summary', url: 'https://www.nhtsa.gov/risky-driving/drunk-driving'
+  },
+  {
+    id: 'reward-and-habits', source: 'NIAAA · The Brain in Addiction and Recovery',
+    title: {ru: 'Система вознаграждения и привычки', et: 'Tasustamissüsteem ja harjumused'},
+    lead: {ru: 'Как удовольствие, обучение и сигналы среды могут связываться с алкоголем?', et: 'Kuidas võivad nauding, õppimine ja keskkonnamärgid alkoholiga seostuda?'},
+    question: {ru: 'Почему алкогольные сигналы могут становиться значимыми?', et: 'Miks võivad alkoholiga seotud märgid muutuda tähenduslikuks?'},
+    answer: {ru: 'Алкоголь может активировать системы вознаграждения. Дофамин участвует в обучении связям между эффектом алкоголя и людьми, местами или ситуациями, в которых он употреблялся.', et: 'Alkohol võib aktiveerida tasustamissüsteeme. Dopamiin osaleb seoste õppimises alkoholi toime ning inimeste, kohtade või olukordade vahel, kus seda tarvitati.'},
+    measured: {ru: 'Страница NIAAA обобщает нейробиологические исследования систем вознаграждения, привычек, стресса и самоконтроля при расстройстве, связанном с употреблением алкоголя.', et: 'NIAAA leht võtab kokku neurobioloogilisi uuringuid tasu, harjumuste, stressi ja enesekontrolli süsteemidest alkoholi tarvitamise häire korral.'},
+    found: {ru: 'Повторяющееся тяжёлое употребление может сопровождаться переходом от поиска награды к привычному поведению и попыткам уменьшить неприятные состояния. Это один из научных механизмов, а не описание каждого человека.', et: 'Korduva rohke tarvitamisega võib kaasneda üleminek tasu otsimiselt harjumuspärasele käitumisele ja ebameeldivate seisundite leevendamise katsetele. See on üks teaduslik mehhanism, mitte iga inimese kirjeldus.'},
+    limits: {ru: 'Дофамин не равен «гормону удовольствия», а схема не означает, что зависимость развивается у каждого. На риск влияют биологические, психологические и социальные факторы.', et: 'Dopamiin ei võrdu „naudinguhormooniga“ ning skeem ei tähenda, et sõltuvus kujuneb kõigil. Riski mõjutavad bioloogilised, psühholoogilised ja sotsiaalsed tegurid.'},
+    citation: 'National Institute on Alcohol Abuse and Alcoholism · evidence summary', url: 'https://www.niaaa.nih.gov/health-professionals-communities/core-resource-on-alcohol/neuroscience-brain-addiction-and-recovery'
+  },
+  {
+    id: 'recovery-and-brain', source: 'Powell et al., 2024',
+    title: {ru: 'Восстановление когнитивных функций', et: 'Kognitiivsete funktsioonide taastumine'},
+    lead: {ru: 'Что известно о мышлении и памяти после прекращения употребления при алкогольном расстройстве?', et: 'Mida teatakse mõtlemise ja mälu kohta pärast tarvitamise lõpetamist alkoholi tarvitamise häire korral?'},
+    question: {ru: 'Может ли часть когнитивных функций улучшаться при воздержании?', et: 'Kas osa kognitiivseid funktsioone võib karskuse ajal paraneda?'},
+    answer: {ru: 'Систематический обзор продольных исследований описывает улучшения некоторых когнитивных функций при воздержании, но скорость и полнота восстановления различаются между функциями и людьми.', et: 'Pikisuunaliste uuringute süstemaatiline ülevaade kirjeldab mõne kognitiivse funktsiooni paranemist karskuse ajal, kuid taastumise kiirus ja täielikkus erinevad funktsioonide ja inimeste vahel.'},
+    measured: {ru: 'Авторы рассматривали исследования взрослых с расстройством, связанным с употреблением алкоголя, в которых когнитивные показатели измеряли повторно после начала воздержания.', et: 'Autorid käsitlesid alkoholi tarvitamise häirega täiskasvanute uuringuid, kus kognitiivseid näitajaid mõõdeti korduvalt pärast karskuse algust.'},
+    found: {ru: 'В литературе есть основания говорить о возможном восстановлении части функций, но для разных навыков сроки неодинаковы, а данные по некоторым областям всё ещё ограничены.', et: 'Kirjanduses on alust rääkida osa funktsioonide võimalikust taastumisest, kuid eri oskuste ajakava ei ole sama ning mõne valdkonna andmed on endiselt piiratud.'},
+    limits: {ru: 'Это не обещание одинакового восстановления и не руководство по лечению. Участники исследований — взрослые с диагностированным расстройством; индивидуальную помощь планируют со специалистом.', et: 'See ei ole lubadus ühesugusest taastumisest ega ravijuhis. Uuringute osalejad olid diagnoositud häirega täiskasvanud; individuaalset abi planeeritakse koos spetsialistiga.'},
+    citation: 'PLOS ONE, 2024 · systematic review of longitudinal studies', url: 'https://pubmed.ncbi.nlm.nih.gov/38166127/'
   }
 ];
 

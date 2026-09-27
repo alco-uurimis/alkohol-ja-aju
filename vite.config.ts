@@ -15,6 +15,8 @@ export default defineConfig({
         selfControl: 'self-control/index.html',
         alcoholAndSleep: 'alcohol-and-sleep/index.html',
         alcoholAndDriving: 'alcohol-and-driving/index.html',
+        rewardAndHabits: 'reward-and-habits/index.html',
+        recoveryAndBrain: 'recovery-and-brain/index.html',
       },
     },
   },

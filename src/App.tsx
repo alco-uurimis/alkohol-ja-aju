@@ -173,6 +173,8 @@ export default function App(){
             <a href="self-control/" onClick={()=>setMenu(false)}>{ru?'Самоконтроль':'Enesekontroll'}</a>
             <a href="alcohol-and-sleep/" onClick={()=>setMenu(false)}>{ru?'Алкоголь и сон':'Alkohol ja uni'}</a>
             <a href="alcohol-and-driving/" onClick={()=>setMenu(false)}>{ru?'Алкоголь и вождение':'Alkohol ja autojuhtimine'}</a>
+            <a href="reward-and-habits/" onClick={()=>setMenu(false)}>{ru?'Вознаграждение и привычки':'Tasu ja harjumused'}</a>
+            <a href="recovery-and-brain/" onClick={()=>setMenu(false)}>{ru?'Восстановление':'Taastumine'}</a>
           </div>
           {navGroups.slice(1).map(group=><div className="nav-group" key={group.label}><span className="nav-group-label">{group.label}</span>{group.items.map(([id,name])=><a key={id} aria-current={active===id?'location':undefined} href={'#'+id} onClick={()=>setMenu(false)}>{name}</a>)}</div>)}
         </div>
@@ -216,6 +218,8 @@ export default function App(){
           <a href="self-control/" className="guide-card"><span>04</span><div className="guide-card-copy"><strong>{ru?'Самоконтроль':'Enesekontroll'}</strong><p>{ru?'Задачи на остановку реакции и метаанализ.':'Reaktsiooni pidurdamise ülesanded ja metaanalüüs.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
           <a href="alcohol-and-sleep/" className="guide-card"><span>05</span><div className="guide-card-copy"><strong>{ru?'Алкоголь и сон':'Alkohol ja uni'}</strong><p>{ru?'Дыхание во сне и метаанализ 14 исследований.':'Uneaegne hingamine ja 14 uuringu metaanalüüs.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
           <a href="alcohol-and-driving/" className="guide-card"><span>06</span><div className="guide-card-copy"><strong>{ru?'Алкоголь и вождение':'Alkohol ja autojuhtimine'}</strong><p>{ru?'Почему самочувствие не измеряет безопасность за рулём.':'Miks enesetunne ei mõõda roolis ohutust.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
+          <a href="reward-and-habits/" className="guide-card"><span>07</span><div className="guide-card-copy"><strong>{ru?'Вознаграждение и привычки':'Tasu ja harjumused'}</strong><p>{ru?'Как среда и повторение участвуют в обучении.':'Kuidas keskkond ja kordamine õppimises osalevad.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
+          <a href="recovery-and-brain/" className="guide-card"><span>08</span><div className="guide-card-copy"><strong>{ru?'Восстановление':'Taastumine'}</strong><p>{ru?'Что долгосрочные исследования говорят о восстановлении.':'Mida pikisuunalised uuringud taastumisest räägivad.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
         </div>
       </section>
 
