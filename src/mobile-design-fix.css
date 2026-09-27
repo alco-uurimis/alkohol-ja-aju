@@ -404,3 +404,79 @@
   .lab-section .game-action.button{width:100%;justify-content:center}
 }
 
+/* Mini-game cards share one calm, readable rhythm on wider screens. */
+@media(min-width:761px){
+  .lab-grid{
+    gap:22px!important;
+    margin-top:34px!important;
+  }
+
+  .lab-card{
+    display:flex;
+    flex-direction:column;
+    min-height:660px;
+    padding:28px!important;
+  }
+
+  .lab-card-top{
+    margin-bottom:22px!important;
+  }
+
+  .lab-card h3{
+    min-height:3.05em;
+    margin-bottom:14px!important;
+    font-size:clamp(1.4rem,1.65vw,1.7rem)!important;
+    line-height:1.15!important;
+  }
+
+  .lab-card>p{
+    min-height:4.9em;
+    margin-bottom:2px!important;
+    font-size:.92rem!important;
+    line-height:1.6!important;
+  }
+
+  .game-meaning{
+    min-height:94px;
+    margin:16px 0 20px!important;
+    padding:13px 14px!important;
+  }
+
+  .game-meaning span{
+    font-size:.8rem!important;
+  }
+
+  .reaction-pad,
+  .signal-board,
+  .stroop-intro,
+  .stroop-stage,
+  .mini-result{
+    min-height:240px;
+  }
+
+  .stroop-intro{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .stroop-intro .game-action{
+    margin-top:auto!important;
+  }
+
+  .reaction-game .game-action,
+  .signal-game .game-action{
+    width:100%;
+    margin-top:auto!important;
+    justify-content:center;
+  }
+
+  .lab-section .game-action.button{
+    min-height:56px;
+    font-size:.9rem;
+  }
+}
+
+@media(min-width:761px) and (max-width:1050px){
+  .lab-card{min-height:0}
+}
+
