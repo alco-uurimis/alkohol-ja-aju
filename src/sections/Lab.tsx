@@ -80,7 +80,7 @@ function ReactionGame({ lang }: { lang: Lang }) {
       <strong>{label}</strong>
       <small>{state === 'waiting' ? (ru ? 'Не нажимай заранее' : 'Ära vajuta enne signaali') : (ru ? 'мс = миллисекунды' : 'ms = millisekundid')}</small>
     </button>
-    {(state === 'idle' || state === 'result' || state === 'false-start') && <button className="button primary" onClick={start}>{state === 'idle' ? (ru ? 'Начать' : 'Alusta') : (ru ? 'Ещё раз' : 'Proovi uuesti')}</button>}
+    {(state === 'idle' || state === 'result' || state === 'false-start') && <button className="button primary game-action" onClick={start}>{state === 'idle' ? (ru ? 'Начать' : 'Alusta') : (ru ? 'Ещё раз' : 'Proovi uuesti')}</button>}
   </article>;
 }
 
@@ -153,7 +153,7 @@ function StroopGame({ lang }: { lang: Lang }) {
     <h3>{ru ? 'Смотри на цвет, а не на слово' : 'Vaata värvi, mitte sõna'}</h3>
     <p>{ru ? 'Назови цвет букв. Само слово специально будет мешать.' : 'Vali tähtede värv. Sõna ise püüab sind meelega eksitada.'}</p>
     <GameMeaning lang={lang}>{ru?'Насколько успешно ты подавляешь автоматическое чтение слова и выбираешь цвет.':'Kui hästi suudad automaatset sõnalugemist pidurdada ja valida värvi.'}</GameMeaning>
-    {!active && !done && <div className="stroop-intro"><span className="stroop-word ink-cyan">{names.violet}</span><p className="small">{ru ? 'Здесь правильный ответ — голубой.' : 'Siin on õige vastus tsüaan.'}</p><button className="button primary" onClick={start}>{ru ? 'Запустить 8 раундов' : 'Alusta 8 vooru'}</button></div>}
+    {!active && !done && <div className="stroop-intro"><span className="stroop-word ink-cyan">{names.violet}</span><p className="small">{ru ? 'Здесь правильный ответ — голубой.' : 'Siin on õige vastus tsüaan.'}</p><button className="button primary game-action" onClick={start}>{ru ? 'Запустить 8 раундов' : 'Alusta 8 vooru'}</button></div>}
     {active && <div className="stroop-stage">
       <div className="stroop-progress"><span>{index + 1} / {rounds.length}</span><span>{ru ? 'Правильно' : 'Õigeid'}: {score}</span></div>
       <div className={`stroop-word ink-${current.ink}`} aria-label={ru ? `Слово ${names[current.word]}, цвет букв ${names[current.ink]}` : `Sõna ${names[current.word]}, tähtede värv ${names[current.ink]}`}>{names[current.word]}</div>
@@ -241,7 +241,7 @@ function SignalGame({ lang }: { lang: Lang }) {
       {signalNodes.map(node => <button key={node} className={`signal-node node-${node} ${activeNode === node ? 'active' : ''}`} disabled={phase !== 'input'} onClick={() => tapNode(node)} aria-label={(ru ? 'Нейрон ' : 'Neuron ') + (node + 1)}><span /></button>)}
       <div className="signal-board-status" aria-live="polite">{phase === 'idle' ? (ru ? 'Готов?' : 'Valmis?') : phase === 'showing' ? (ru ? 'Смотри…' : 'Vaata…') : phase === 'input' ? (ru ? `Твой ход · ${inputIndex + 1}/${sequence.length}` : `Sinu kord · ${inputIndex + 1}/${sequence.length}`) : won ? (ru ? 'Цепочка из 6 сигналов!' : '6 signaali järjest!') : (ru ? 'Цепочка прервалась' : 'Signaal katkes')}</div>
     </div>
-    {(phase === 'idle' || phase === 'result') && <button className="button primary" onClick={start}>{phase === 'idle' ? (ru ? 'Показать последовательность' : 'Näita järjestust') : (ru ? 'Новая цепочка' : 'Uus signaalirada')}</button>}
+    {(phase === 'idle' || phase === 'result') && <button className="button primary game-action" onClick={start}>{phase === 'idle' ? (ru ? 'Показать последовательность' : 'Näita järjestust') : (ru ? 'Новая цепочка' : 'Uus signaalirada')}</button>}
   </article>;
 }
 
@@ -260,3 +260,4 @@ export default function Lab({ lang }: { lang: Lang }) {
     <div className="neuro-marquee" aria-hidden="true"><span>MEMORY · FOCUS · REACTION · SIGNAL · MEMORY · FOCUS · REACTION · SIGNAL · </span></div>
   </Section>;
 }
+

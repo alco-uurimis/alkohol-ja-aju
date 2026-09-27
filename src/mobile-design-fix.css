@@ -374,3 +374,28 @@
     font-size:.7rem!important;
   }
 }
+/* Game actions must retain their high-contrast treatment after every state change. */
+.lab-section .game-action.button{
+  min-height:52px;
+  padding:13px 22px;
+  border:1px solid #d8ff91;
+  background:#c9f574;
+  color:#12172c;
+  font-weight:800;
+  box-shadow:0 6px 0 #8ea948,0 12px 22px rgba(0,0,0,.24);
+}
+.lab-section .game-action.button:hover:not(:disabled),
+.lab-section .game-action.button:focus-visible{
+  border-color:#efffc9;
+  background:#d8ff91;
+  color:#12172c;
+  box-shadow:0 6px 0 #8ea948,0 15px 28px rgba(0,0,0,.32);
+}
+.lab-section .game-action.button:active:not(:disabled){
+  transform:translateY(3px);
+  box-shadow:0 3px 0 #8ea948,0 7px 14px rgba(0,0,0,.25);
+}
+@media(max-width:760px){
+  .lab-section .game-action.button{width:100%;justify-content:center}
+}
+
