@@ -460,7 +460,9 @@
   }
 
   .stroop-intro .game-action{
+    width:100%;
     margin-top:auto!important;
+    justify-content:center;
   }
 
   .reaction-game .game-action,
