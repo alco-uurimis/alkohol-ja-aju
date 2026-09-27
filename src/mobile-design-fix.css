@@ -584,6 +584,8 @@
 .enhanced-science-game>.text-button{margin-top:auto!important;align-self:flex-start}
 
 @media(min-width:761px){
+  .brain-map-visual .point-cerebellum{right:10%}
+
   .takeaways{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}
   .takeaways .info-card{
     min-height:220px!important;
