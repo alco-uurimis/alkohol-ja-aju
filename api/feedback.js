@@ -105,6 +105,43 @@ export default async function handler(req, res) {
   const language=String(body.language??'');
   if(!LANGUAGES.has(language))return res.status(400).json({ok:false,error:'invalid_language'});
 
+  if(body.feedbackVersion==='quick'){
+    const clarity=String(body.clarity??'');
+    const learned=String(body.learned??'');
+    const recommend=String(body.recommend??'');
+    const useful=body.useful===null||body.useful===undefined?'':String(body.useful);
+    const comment=typeof body.comment==='string'?body.comment.trim():'';
+    const gameMetrics=readGameMetrics(body.gameMetrics);
+    if(!['1','2','3','4','5'].includes(clarity))return res.status(400).json({ok:false,error:'invalid_clarity'});
+    if(!LEARNED_VALUES.has(learned))return res.status(400).json({ok:false,error:'invalid_learned'});
+    if(!RECOMMEND_VALUES.has(recommend))return res.status(400).json({ok:false,error:'invalid_recommendation'});
+    if(useful&&!SECTION_VALUES.has(useful))return res.status(400).json({ok:false,error:'invalid_useful_section'});
+    if(comment.length>500)return res.status(400).json({ok:false,error:'comment_too_long'});
+
+    const isRu=language==='ru';
+    const lines=[
+      isRu?'Новый короткий отзыв — «Алкоголь и мозг»':'Uus lühitagasiside — „Alkohol ja aju“',
+      `${isRu?'Язык':'Keel'}: ${language.toUpperCase()}`,
+      `${isRu?'Понятность':'Arusaadavus'}: ${clarity}/5`,
+      `${isRu?'Узнал(а) новое':'Sai midagi uut teada'}: ${optionLabel(learned,language,'learned')}`,
+      `${isRu?'Посоветовал(а) бы':'Soovitaks'}: ${optionLabel(recommend,language,'recommend')}`,
+    ];
+    if(useful)lines.push(`${isRu?'Самый полезный раздел':'Kõige kasulikum osa'}: ${sectionLabel(useful,language)}`);
+    if(gameMetrics.reaction||gameMetrics.stroop||gameMetrics.signal){
+      lines.push('',isRu?'Результаты мини-игр':'Minimängude tulemused');
+      if(gameMetrics.reaction)lines.push(`${isRu?'Реакция':'Reaktsioon'}: ${gameMetrics.reaction.latestMs} ms (${isRu?'лучший':'parim'} ${gameMetrics.reaction.bestMs} ms)`);
+      if(gameMetrics.stroop)lines.push(`Stroop: ${gameMetrics.stroop.score}/${gameMetrics.stroop.rounds} · ${isRu?'среднее':'keskmine'} ${gameMetrics.stroop.averageMs} ms`);
+      if(gameMetrics.signal)lines.push(`${isRu?'Цепочка':'Signaalirada'}: ${isRu?'уровень':'tase'} ${gameMetrics.signal.reachedLength}`);
+    }
+    if(comment)lines.push('',isRu?'Комментарий':'Kommentaar',comment);
+    lines.push('',`${isRu?'Отправлено':'Saadetud'}: ${localTimestamp()} (Tallinn)`);
+    try{
+      const telegram=await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:chatId,text:lines.join('\n'),disable_web_page_preview:true})});
+      if(!telegram.ok)return res.status(502).json({ok:false,error:'telegram_delivery_failed'});
+      return res.status(200).json({ok:true});
+    }catch{return res.status(502).json({ok:false,error:'telegram_unreachable'});}
+  }
+
   const scales={};
   for(const field of SCALE_FIELDS){
     const value=String(body[field]??'');
@@ -171,3 +208,4 @@ export default async function handler(req, res) {
     return res.status(200).json({ok:true});
   }catch{return res.status(502).json({ok:false,error:'telegram_unreachable'});}
 }
+

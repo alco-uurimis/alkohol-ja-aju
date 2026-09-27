@@ -10,20 +10,34 @@ import FinalSummary from './components/FinalSummary';
 import Reflection from './components/Reflection';
 import { Section } from './components/Shared';
 import { Quiz } from './components/Quiz';
+import PathChooser from './components/PathChooser';
+import ClassroomKit from './sections/ClassroomKit';
+import ActionHub from './sections/ActionHub';
 import { questions } from './data/content';
 import { questionsRu } from './data/content.ru';
 
 type Lang='et'|'ru';
 type NavItem=[string,string];
 
-const trackedIds=['aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin','samoprov','obsuzhdenie','tagasiside'];
+const trackedIds=['valik','aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin','samoprov','obsuzhdenie','tegevus','klassiruum','tagasiside'];
 const progressKey='alkohol-ja-aju:visited-sections';
+const savedProgressKey='alkohol-ja-aju:saved-visited-sections';
+const savedProgressEnabledKey='alkohol-ja-aju:save-progress-on-device';
 const languageKey='alkohol-ja-aju:language';
 const quizScoreKey='alkohol-ja-aju:quiz-score';
 
 function readVisited(){
   if(typeof window==='undefined')return new Set<string>();
-  try{return new Set<string>(JSON.parse(window.sessionStorage.getItem(progressKey)??'[]'));}catch{return new Set<string>();}
+  try{
+    const saved=window.localStorage.getItem(savedProgressEnabledKey)==='1';
+    const raw=(saved?window.localStorage.getItem(savedProgressKey):null)??window.sessionStorage.getItem(progressKey)??'[]';
+    return new Set<string>(JSON.parse(raw));
+  }catch{return new Set<string>();}
+}
+
+function readsSavedProgress(){
+  if(typeof window==='undefined')return false;
+  try{return window.localStorage.getItem(savedProgressEnabledKey)==='1';}catch{return false;}
 }
 
 function readLanguage():Lang{
@@ -50,11 +64,17 @@ export default function App(){
   const [lang,setLang]=useState<Lang>(readLanguage);
   const [visited,setVisited]=useState<Set<string>>(readVisited);
   const [quizScore,setQuizScore]=useState<number|null>(readQuizScore);
+  const [progressSaved,setProgressSaved]=useState(readsSavedProgress);
   const [showTop,setShowTop]=useState(false);
   const menuButton=useRef<HTMLButtonElement>(null);
   const ru=lang==='ru';
 
   const navGroups:{label:string;items:NavItem[]}[]=[
+    {label:ru?'НАЧНИ':'ALUSTA',items:[
+      ['valik',ru?'Выбрать маршрут':'Vali teekond'],
+      ['tegevus',ru?'Что делать в ситуации':'Mida teha olukorras'],
+      ['klassiruum',ru?'Материал для урока':'Materjal tunniks'],
+    ]},
     {label:ru?'ИЗУЧИ':'ÕPI',items:[
       ['aju',ru?'Как влияет алкоголь':'Alkoholi mõju'],
       ['infograafika',ru?'Коротко в схемах':'Lühidalt skeemides'],
@@ -108,7 +128,11 @@ export default function App(){
         setVisited(current=>{
           if(current.has(id))return current;
           const next=new Set(current);next.add(id);
-          try{window.sessionStorage.setItem(progressKey,JSON.stringify([...next]));}catch{/* storage can be unavailable */}
+          try{
+            const value=JSON.stringify([...next]);
+            window.sessionStorage.setItem(progressKey,value);
+            if(readsSavedProgress())window.localStorage.setItem(savedProgressKey,value);
+          }catch{/* storage can be unavailable */}
           return next;
         });
       }
@@ -149,6 +173,17 @@ export default function App(){
   const handleQuizComplete=(score:number)=>{
     setQuizScore(score);
     try{window.sessionStorage.setItem(quizScoreKey,String(score));}catch{/* storage can be unavailable */}
+  };
+  const saveProgress=()=>{
+    try{
+      window.localStorage.setItem(savedProgressEnabledKey,'1');
+      window.localStorage.setItem(savedProgressKey,JSON.stringify([...visited]));
+      setProgressSaved(true);
+    }catch{/* storage can be unavailable */}
+  };
+  const clearSavedProgress=()=>{
+    try{window.localStorage.removeItem(savedProgressEnabledKey);window.localStorage.removeItem(savedProgressKey);window.sessionStorage.removeItem(progressKey);}catch{/* storage can be unavailable */}
+    setVisited(new Set());setProgressSaved(false);
   };
 
   return <>
@@ -199,6 +234,8 @@ export default function App(){
         <div className="hero-visual"><div className="visual-top"><span>{ru?'ЧЕТЫРЕ ФУНКЦИИ':'NELI FUNKTSIOONI'}</span><span>{ru?'МОЗГ':'AJU'}</span></div><div className="signal brain-photo-hero" aria-label={ru?'Фотография человеческого мозга с подписями функций':'Inimaju foto koos funktsioonide siltidega'}><span className="signal-label label-one">{ru?'Память':'Mälu'}</span><span className="signal-label label-two">{ru?'Внимание':'Tähelepanu'}</span><span className="signal-label label-three">{ru?'Реакция':'Reaktsioon'}</span><span className="signal-label label-four">{ru?'Решения':'Otsustamine'}</span></div><p>{ru?'Эти функции работают вместе. Дальше сайт показывает, как алкоголь может быть с ними связан.':'Need funktsioonid töötavad koos. Edasi näitab leht, kuidas alkohol võib nendega seotud olla.'}</p><div className="visual-bottom"><span>{ru?'Начать с влияния алкоголя':'Alusta alkoholi mõjust'}</span><a href="#aju" aria-label={ru?'Перейти к разделу о влиянии алкоголя':'Liigu alkoholi mõju osa juurde'}>{ru?'К разделу':'Ava osa'}</a></div></div>
       </section>
 
+      <PathChooser lang={lang}/>
+
       <section id="teejuht" className="site-guide" aria-labelledby="guide-title">
         <div className="site-guide-heading"><p className="eyebrow">{ru?'КАК УСТРОЕН САЙТ':'KUIDAS LEHT TÖÖTAB'}</p><h2 id="guide-title">{ru?'Четыре понятных этапа':'Neli selget etappi'}</h2><p>{ru?'Каждый этап имеет одну задачу. Для полного прохождения двигайся слева направо; для быстрого доступа нажми на нужную карточку.':'Igal etapil on üks eesmärk. Täielikuks läbimiseks liigu vasakult paremale; kiireks ligipääsuks vali sobiv kaart.'}</p></div>
         <div className="guide-grid guide-grid-four">
@@ -237,13 +274,16 @@ export default function App(){
       <Section id="viktoriin" number={ru?'ПРОВЕРЬ ЗНАНИЯ':'KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Для каждого утверждения выбери «миф» или «факт». После ответа сразу появится короткое объяснение.':'Vali iga väite puhul „müüt“ või „fakt“. Pärast vastust näed kohe lühikest selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section>
 
       <Reflection lang={lang}/>
+      <ActionHub lang={lang}/>
+      <ClassroomKit lang={lang}/>
 
       <div className="phase-divider"><span>04</span><div><strong>{ru?'Заверши маршрут':'Lõpeta teekond'}</strong><small>{ru?'Выводы, обратная связь и итог':'Järeldused, tagasiside ja kokkuvõte'}</small></div></div>
-      <Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length}/>}/>
+      <Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length} progressSaved={progressSaved} onSaveProgress={saveProgress} onClearSavedProgress={clearSavedProgress}/>}/>
     </main>
 
     <footer>{ru?'Алкоголь и мозг':'Alkohol ja aju'}<span>{ru?'Практическая работа гимназии':'Gümnaasiumi praktiline töö'}</span></footer>
     <button type="button" className={'back-to-top '+(showTop?'visible':'')} tabIndex={showTop?0:-1} aria-hidden={!showTop} aria-label={ru?'Наверх страницы':'Lehe algusesse'} onClick={goTop}>{ru?'Наверх':'Üles'}</button>
   </>;
 }
+
 

@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import './articles.css';
+import { EvidenceSourceCard } from './articles/EvidenceSourceCard';
+import { RelatedNextSteps } from './articles/RelatedNextSteps';
+import type { EvidenceCitationMetadata } from './articles/types';
 
 type Lang = 'et' | 'ru';
 
@@ -15,6 +18,7 @@ type Article = {
   limits: Record<Lang, string>;
   citation: string;
   url: string;
+  evidence: EvidenceCitationMetadata;
 };
 
 const articles: Article[] = [
@@ -27,7 +31,12 @@ const articles: Article[] = [
     measured: {ru: 'Авторы объединили 32 контролируемых исследования с 1 629 здоровыми взрослыми. В них сравнивали выполнение задач после известной дозы алкоголя и в контрольных условиях.', et: 'Autorid ühendasid 32 kontrollitud uuringut 1629 terve täiskasvanuga. Võrreldi ülesannete sooritust teadaoleva alkoholidoosi järel ja kontrolltingimustes.'},
     found: {ru: 'Средний эффект был небольшим–умеренным, но статистически убедительным. Он различался в зависимости от типа задания и дозы.', et: 'Keskmine efekt oli väike kuni mõõdukas, kuid statistiliselt usaldusväärne. See erines ülesande tüübi ja annuse järgi.'},
     limits: {ru: 'Это не тест для определения состояния конкретного человека. Работа изучала взрослых в контролируемых условиях; веб-игра не измеряет алкогольное опьянение.', et: 'See ei ole test ühe konkreetse inimese seisundi määramiseks. Uuring käsitles täiskasvanuid kontrollitud tingimustes; veebimäng ei mõõda alkoholijoovet.'},
-    citation: 'Psychopharmacology, 2022 · systematic review and meta-analysis', url: 'https://pubmed.ncbi.nlm.nih.gov/35075512/'
+    citation: 'Psychopharmacology, 2022 · systematic review and meta-analysis', url: 'https://pubmed.ncbi.nlm.nih.gov/35075512/',
+    evidence: {
+      kind: {ru: 'Систематический обзор и метаанализ', et: 'Süstemaatiline ülevaade ja metaanalüüs'},
+      sample: {ru: '32 контролируемых исследования · 1 629 здоровых взрослых', et: '32 kontrollitud uuringut · 1629 tervet täiskasvanut'},
+      pmid: '35075512', doi: '10.1007/s00213-022-06060-5',
+    },
   },
   {
     id: 'memory-blackouts', source: 'NIAAA · Alcohol-Induced Blackouts',
@@ -38,7 +47,10 @@ const articles: Article[] = [
     measured: {ru: 'Объяснение опирается на исследования формирования памяти и на данные о связи быстро растущей концентрации алкоголя в крови с риском провалов памяти.', et: 'Selgitus toetub mälestuste kujunemise uuringutele ning andmetele kiiresti tõusva vere alkoholisisalduse ja mälulünkade riski seose kohta.'},
     found: {ru: 'Ключевой момент — запись новых событий, а не попытка позже «вспомнить лучше». Если воспоминание не закрепилось, подсказка не всегда поможет его восстановить.', et: 'Oluline on uute sündmuste talletamine, mitte hilisem püüd „paremini meenutada“. Kui mälestus ei kinnistunud, ei pruugi vihje seda taastada.'},
     limits: {ru: 'Люди различаются по чувствительности, дозе, скорости употребления и другим факторам. Нельзя по одному эпизоду или упражнению сделать медицинский вывод.', et: 'Inimeste tundlikkus, annus, tarvitamise kiirus ja muud tegurid erinevad. Ühe episoodi või harjutuse põhjal ei saa teha meditsiinilist järeldust.'},
-    citation: 'National Institute on Alcohol Abuse and Alcoholism · evidence summary', url: 'https://www.niaaa.nih.gov/publications/brochures-and-fact-sheets/interrupted-memories-alcohol-induced-blackouts'
+    citation: 'National Institute on Alcohol Abuse and Alcoholism · evidence summary', url: 'https://www.niaaa.nih.gov/publications/brochures-and-fact-sheets/interrupted-memories-alcohol-induced-blackouts',
+    evidence: {
+      kind: {ru: 'Официальный обзор доказательств', et: 'Ametlik tõendite ülevaade'},
+    },
   },
   {
     id: 'adolescent-brain', source: 'Karoly et al., 2024',
@@ -49,7 +61,12 @@ const articles: Article[] = [
     measured: {ru: 'Систематический обзор включил 27 исследований больших консорциумов, включая ABCD, ENIGMA, NCANDA и IMAGEN; девять работ рассматривали подростков.', et: 'Süstemaatiline ülevaade hõlmas 27 suurte konsortsiumide uuringut, sealhulgas ABCD, ENIGMA, NCANDA ja IMAGEN; üheksa tööd käsitlesid noorukeid.'},
     found: {ru: 'Авторы обнаружили повторяющиеся связи с меньшим объёмом или толщиной в ряде областей, но результаты неодинаковы между регионами и исследованиями.', et: 'Autorid leidsid korduvaid seoseid väiksema mahu või paksusega mitmes piirkonnas, kuid tulemused ei olnud piirkondade ja uuringute vahel ühesugused.'},
     limits: {ru: 'Наблюдательные данные не доказывают, что алкоголь в одиночку вызвал каждое различие: важны исходные особенности, среда, сон, психическое здоровье и другие факторы.', et: 'Vaatlusandmed ei tõesta, et alkohol üksi põhjustas iga erinevuse: olulised on algsed eripärad, keskkond, uni, vaimne tervis ja muud tegurid.'},
-    citation: 'Addiction Biology, 2024 · systematic review', url: 'https://pubmed.ncbi.nlm.nih.gov/39317645/'
+    citation: 'Addiction Biology, 2024 · systematic review', url: 'https://pubmed.ncbi.nlm.nih.gov/39317645/',
+    evidence: {
+      kind: {ru: 'Систематический обзор', et: 'Süstemaatiline ülevaade'},
+      sample: {ru: '27 исследований крупных консорциумов · 9 исследований подростков', et: '27 suurte konsortsiumide uuringut · 9 noorukite uuringut'},
+      pmid: '39317645',
+    },
   },
   {
     id: 'self-control', source: 'McPhee et al., 2023',
@@ -60,7 +77,11 @@ const articles: Article[] = [
     measured: {ru: 'Авторы объединили исследования с задачами Go/No-Go и Stop Signal: участник должен быстро реагировать, но вовремя остановиться при определённом сигнале.', et: 'Autorid ühendasid Go/No-Go ja Stop Signal ülesannetega uuringud: osaleja peab kiiresti reageerima, kuid kindla signaali korral õigel ajal peatuma.'},
     found: {ru: 'Общий эффект был отрицательным; более высокие концентрации алкоголя были связаны с более выраженным ухудшением в части задач.', et: 'Üldine efekt oli kahjulik; kõrgem alkoholikontsentratsioon seostus osas ülesannetes tugevama halvenemisega.'},
     limits: {ru: 'Это измерение одной когнитивной функции в лаборатории. Оно не определяет характер человека, диагноз или его способность безопасно водить автомобиль.', et: 'See mõõdab laboris üht kognitiivset funktsiooni. See ei määra inimese iseloomu, diagnoosi ega autojuhtimise ohutust.'},
-    citation: 'Neuroscience & Biobehavioral Reviews, 2023 · meta-analysis', url: 'https://pubmed.ncbi.nlm.nih.gov/37277010/'
+    citation: 'Neuroscience & Biobehavioral Reviews, 2023 · meta-analysis', url: 'https://pubmed.ncbi.nlm.nih.gov/37277010/',
+    evidence: {
+      kind: {ru: 'Метаанализ', et: 'Metaanalüüs'},
+      pmid: '37277010',
+    },
   },
   {
     id: 'alcohol-and-sleep', source: 'Kolla et al., 2018',
@@ -71,7 +92,12 @@ const articles: Article[] = [
     measured: {ru: 'Авторы объединили 14 исследований с 422 участниками. Сравнивали объективные показатели дыхания и кислорода во сне до и после приёма алкоголя.', et: 'Autorid ühendasid 14 uuringut 422 osalejaga. Võrreldi uneaegse hingamise ja hapnikusisalduse objektiivseid näitajaid enne ja pärast alkoholi tarvitamist.'},
     found: {ru: 'Эффект был заметнее у людей, которые храпят, и у участников с обструктивным апноэ сна. Это согласуется с тем, что алкоголь может ухудшать уже существующие нарушения дыхания во сне.', et: 'Mõju oli suurem norskavatel inimestel ja obstruktiivse uneapnoega osalejatel. See sobib järeldusega, et alkohol võib olemasolevaid uneaegseid hingamishäireid süvendada.'},
     limits: {ru: 'Обзор не означает, что у каждого человека после одной порции возникнет апноэ сна. Риск зависит от особенностей дыхания, дозы, времени употребления и состояния здоровья.', et: 'Ülevaade ei tähenda, et igal inimesel tekib pärast üht alkoholiannust uneapnoe. Risk sõltub hingamise eripäradest, annusest, tarvitamise ajast ja terviseseisundist.'},
-    citation: 'Sleep Medicine Reviews, 2018 · systematic review and meta-analysis', url: 'https://pubmed.ncbi.nlm.nih.gov/30017492/'
+    citation: 'Sleep Medicine Reviews, 2018 · systematic review and meta-analysis', url: 'https://pubmed.ncbi.nlm.nih.gov/30017492/',
+    evidence: {
+      kind: {ru: 'Систематический обзор и метаанализ', et: 'Süstemaatiline ülevaade ja metaanalüüs'},
+      sample: {ru: '14 исследований · 422 участника', et: '14 uuringut · 422 osalejat'},
+      pmid: '30017492', doi: '10.1016/j.smrv.2018.05.007',
+    },
   },
   {
     id: 'alcohol-and-driving', source: 'NHTSA · Drunk Driving',
@@ -82,7 +108,10 @@ const articles: Article[] = [
     measured: {ru: 'Материал NHTSA обобщает данные о том, как алкоголь влияет на навыки, нужные для вождения: внимание, зрительную обработку, скорость реакции и координацию.', et: 'NHTSA materjal võtab kokku andmeid alkoholi mõjust autojuhtimiseks vajalikele oskustele: tähelepanule, visuaalsele infotöötlusele, reaktsioonikiirusele ja koordinatsioonile.'},
     found: {ru: 'Важен не один навык, а их сочетание. Даже учебная задача на реакцию не показывает, может ли конкретный человек безопасно управлять автомобилем.', et: 'Oluline ei ole üks oskus, vaid nende koosmõju. Isegi õppeotstarbeline reaktsiooniülesanne ei näita, kas konkreetne inimene saab autot ohutult juhtida.'},
     limits: {ru: 'Это образовательное объяснение, а не способ рассчитать личный риск или определить, когда можно садиться за руль. Безопасное решение — не водить после употребления алкоголя.', et: 'See on hariv selgitus, mitte viis isikliku riski arvutamiseks või rooli istumise aja määramiseks. Ohutu otsus on pärast alkoholi tarvitamist mitte juhtida.'},
-    citation: 'National Highway Traffic Safety Administration · evidence summary', url: 'https://www.nhtsa.gov/risky-driving/drunk-driving'
+    citation: 'National Highway Traffic Safety Administration · evidence summary', url: 'https://www.nhtsa.gov/risky-driving/drunk-driving',
+    evidence: {
+      kind: {ru: 'Официальный обзор доказательств', et: 'Ametlik tõendite ülevaade'},
+    },
   },
   {
     id: 'reward-and-habits', source: 'NIAAA · The Brain in Addiction and Recovery',
@@ -93,7 +122,10 @@ const articles: Article[] = [
     measured: {ru: 'Страница NIAAA обобщает нейробиологические исследования систем вознаграждения, привычек, стресса и самоконтроля при расстройстве, связанном с употреблением алкоголя.', et: 'NIAAA leht võtab kokku neurobioloogilisi uuringuid tasu, harjumuste, stressi ja enesekontrolli süsteemidest alkoholi tarvitamise häire korral.'},
     found: {ru: 'Повторяющееся тяжёлое употребление может сопровождаться переходом от поиска награды к привычному поведению и попыткам уменьшить неприятные состояния. Это один из научных механизмов, а не описание каждого человека.', et: 'Korduva rohke tarvitamisega võib kaasneda üleminek tasu otsimiselt harjumuspärasele käitumisele ja ebameeldivate seisundite leevendamise katsetele. See on üks teaduslik mehhanism, mitte iga inimese kirjeldus.'},
     limits: {ru: 'Дофамин не равен «гормону удовольствия», а схема не означает, что зависимость развивается у каждого. На риск влияют биологические, психологические и социальные факторы.', et: 'Dopamiin ei võrdu „naudinguhormooniga“ ning skeem ei tähenda, et sõltuvus kujuneb kõigil. Riski mõjutavad bioloogilised, psühholoogilised ja sotsiaalsed tegurid.'},
-    citation: 'National Institute on Alcohol Abuse and Alcoholism · evidence summary', url: 'https://www.niaaa.nih.gov/health-professionals-communities/core-resource-on-alcohol/neuroscience-brain-addiction-and-recovery'
+    citation: 'National Institute on Alcohol Abuse and Alcoholism · evidence summary', url: 'https://www.niaaa.nih.gov/health-professionals-communities/core-resource-on-alcohol/neuroscience-brain-addiction-and-recovery',
+    evidence: {
+      kind: {ru: 'Официальный обзор доказательств', et: 'Ametlik tõendite ülevaade'},
+    },
   },
   {
     id: 'recovery-and-brain', source: 'Powell et al., 2024',
@@ -104,7 +136,11 @@ const articles: Article[] = [
     measured: {ru: 'Авторы рассматривали исследования взрослых с расстройством, связанным с употреблением алкоголя, в которых когнитивные показатели измеряли повторно после начала воздержания.', et: 'Autorid käsitlesid alkoholi tarvitamise häirega täiskasvanute uuringuid, kus kognitiivseid näitajaid mõõdeti korduvalt pärast karskuse algust.'},
     found: {ru: 'В литературе есть основания говорить о возможном восстановлении части функций, но для разных навыков сроки неодинаковы, а данные по некоторым областям всё ещё ограничены.', et: 'Kirjanduses on alust rääkida osa funktsioonide võimalikust taastumisest, kuid eri oskuste ajakava ei ole sama ning mõne valdkonna andmed on endiselt piiratud.'},
     limits: {ru: 'Это не обещание одинакового восстановления и не руководство по лечению. Участники исследований — взрослые с диагностированным расстройством; индивидуальную помощь планируют со специалистом.', et: 'See ei ole lubadus ühesugusest taastumisest ega ravijuhis. Uuringute osalejad olid diagnoositud häirega täiskasvanud; individuaalset abi planeeritakse koos spetsialistiga.'},
-    citation: 'PLOS ONE, 2024 · systematic review of longitudinal studies', url: 'https://pubmed.ncbi.nlm.nih.gov/38166127/'
+    citation: 'PLOS ONE, 2024 · systematic review of longitudinal studies', url: 'https://pubmed.ncbi.nlm.nih.gov/38166127/',
+    evidence: {
+      kind: {ru: 'Систематический обзор продольных исследований', et: 'Pikisuunaliste uuringute süstemaatiline ülevaade'},
+      pmid: '38166127',
+    },
   }
 ];
 
@@ -150,11 +186,10 @@ export default function ArticleApp(){
       <article><span>02</span><h2>{ru ? 'Что нашли' : 'Mida leiti'}</h2><p>{article.found[lang]}</p></article>
       <article><span>03</span><h2>{ru ? 'Границы вывода' : 'Järelduse piirid'}</h2><p>{article.limits[lang]}</p></article>
     </section>
-    <section className="article-source">
-      <div><span>{ru ? 'ПЕРВОИСТОЧНИК' : 'ALGALLIKAS'}</span><h2>{article.source}</h2><p>{article.citation}</p></div>
-      <a href={article.url} target="_blank" rel="noreferrer">{ru ? 'Открыть в PubMed' : 'Ava PubMedis'}</a>
-    </section>
+    <EvidenceSourceCard article={article} lang={lang}/>
+    <RelatedNextSteps articleId={article.id} topics={articles.map(({id,title})=>({id,title}))} lang={lang}/>
     <footer className="article-footer"><a href="../">{ru ? 'Вернуться к учебному маршруту' : 'Tagasi õpperajale'}</a></footer>
   </main>;
 }
+
 

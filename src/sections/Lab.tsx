@@ -68,7 +68,7 @@ function ReactionGame({ lang }: { lang: Lang }) {
         ? `${result} ms`
         : state === 'false-start'
           ? (ru ? 'Слишком рано' : 'Liiga vara')
-          : (ru ? 'Тест реакции' : 'Reaktsioonitest');
+          : (ru ? 'Готов к старту' : 'Valmis alustama');
 
   return <article className="lab-card reaction-game">
     <div className="lab-card-top"><span>01</span><span>{ru ? 'РЕАКЦИЯ' : 'REAKTSIOON'}</span></div>
@@ -78,9 +78,9 @@ function ReactionGame({ lang }: { lang: Lang }) {
     <button className={`reaction-pad state-${state}`} onClick={tap} disabled={state === 'idle' || state === 'result' || state === 'false-start'} aria-live="polite">
       <span className="reaction-dot" aria-hidden="true" />
       <strong>{label}</strong>
-      <small>{state === 'waiting' ? (ru ? 'Не нажимай заранее' : 'Ära vajuta enne signaali') : (ru ? 'мс = миллисекунды' : 'ms = millisekundid')}</small>
+      <small>{state === 'idle' ? (ru ? 'Сначала нажми яркую кнопку «Начать игру» ниже' : 'Esmalt vajuta all olevat eredat nuppu „Alusta mängu“') : state === 'waiting' ? (ru ? 'Не нажимай заранее' : 'Ära vajuta enne signaali') : (ru ? 'мс = миллисекунды' : 'ms = millisekundid')}</small>
     </button>
-    {(state === 'idle' || state === 'result' || state === 'false-start') && <button className="button primary game-action" onClick={start}>{state === 'idle' ? (ru ? 'Начать' : 'Alusta') : (ru ? 'Ещё раз' : 'Proovi uuesti')}</button>}
+    {(state === 'idle' || state === 'result' || state === 'false-start') && <button className="button primary game-action" onClick={start}>{state === 'idle' ? (ru ? 'Начать игру' : 'Alusta mängu') : (ru ? 'Ещё раз' : 'Proovi uuesti')}</button>}
   </article>;
 }
 
@@ -260,4 +260,5 @@ export default function Lab({ lang }: { lang: Lang }) {
     <div className="neuro-marquee" aria-hidden="true"><span>MEMORY · FOCUS · REACTION · SIGNAL · MEMORY · FOCUS · REACTION · SIGNAL · </span></div>
   </Section>;
 }
+
 

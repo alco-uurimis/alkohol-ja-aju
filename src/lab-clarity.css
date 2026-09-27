@@ -31,3 +31,7 @@
   .signal-board{height:235px}
   .neuro-marquee{display:none}
 }
+
+/* The inactive reaction field is an instruction panel, not a faint disabled control. */
+.reaction-pad.state-idle{background:linear-gradient(145deg,#283052,#1b213d);border-color:#7680ac;box-shadow:inset 0 0 0 1px #ffffff0d,0 8px 20px #080b1c26}.reaction-pad.state-idle .reaction-dot{background:#a9b2d0;box-shadow:0 0 0 9px #a9b2d022}.reaction-pad.state-idle strong{color:#fff}.reaction-pad.state-idle small{max-width:240px;text-align:center;color:#dce1f1;font-weight:650;line-height:1.45}.reaction-game .game-action{min-height:48px;font-weight:800;box-shadow:0 7px 0 #a7d44c,0 15px 25px #c9f57430}.reaction-game .game-action:active{box-shadow:0 2px 0 #a7d44c,0 7px 15px #c9f57422;transform:translateY(4px)}
+

@@ -4,7 +4,7 @@ import { readGameMetrics, type GameMetrics } from '../utils/gameMetrics';
 
 type Lang='et'|'ru';
 
-export default function FinalSummary({lang,quizScore,visitedIds,totalSections}:{lang:Lang;quizScore:number|null;visitedIds:string[];totalSections:number}){
+export default function FinalSummary({lang,quizScore,visitedIds,totalSections,progressSaved,onSaveProgress,onClearSavedProgress}:{lang:Lang;quizScore:number|null;visitedIds:string[];totalSections:number;progressSaved:boolean;onSaveProgress:()=>void;onClearSavedProgress:()=>void}){
   const ru=lang==='ru';
   const [metrics,setMetrics]=useState<GameMetrics>(()=>readGameMetrics());
 
@@ -26,7 +26,7 @@ export default function FinalSummary({lang,quizScore,visitedIds,totalSections}:{
   const nextHref=!quizDone?'#viktoriin':!feedbackDone?'#tagasiside':'#allikad';
   const nextLabel=!quizDone?(ru?'Завершить викторину':'Lõpeta viktoriin'):!feedbackDone?(ru?'Заполнить опрос':'Täida küsitlus'):(ru?'Открыть источники':'Ava allikad');
 
-  return <Section id="isiklik-kokkuvote" number={ru?'09 / ТВОЙ ИТОГ':'09 / SINU KOKKUVÕTE'} title={ru?'Что ты уже прошёл(а)':'Mida oled juba teinud'} intro={ru?'Итог собирает только данные этой вкладки и не является медицинской оценкой.':'Kokkuvõte kasutab ainult selle vahelehe andmeid ega ole tervisehinnang.'} className="personal-summary">
+  return <Section id="isiklik-kokkuvote" number={ru?'15 / ТВОЙ ИТОГ':'15 / SINU KOKKUVÕTE'} title={ru?'Что ты уже прошёл(а)':'Mida oled juba teinud'} intro={progressSaved?(ru?'Прогресс разделов сохранён только в этом браузере на этом устройстве; это не медицинская оценка и не передаётся автору.':'Osade edenemine on salvestatud ainult selle seadme brauserisse; see ei ole tervisehinnang ega jõua autorini.'):(ru?'Итог собирает данные этой вкладки и не является медицинской оценкой.':'Kokkuvõte kasutab selle vahelehe andmeid ega ole tervisehinnang.')} className="personal-summary">
     <div className="summary-stats">
       <article><span>{ru?'Этапы сайта':'Lehe etapid'}</span><strong>{visitedIds.length} / {totalSections}</strong><p>{routeDone&&feedbackDone?(ru?'Основной маршрут завершён':'Põhiteekond on läbitud'):(ru?'Открыто в этой сессии':'Avatud selles seansis')}</p></article>
       <article><span>{ru?'Мини-игры':'Minimängud'}</span><strong>{games} / 3</strong><p>{games===0?(ru?'Пока нет результатов':'Tulemusi veel pole'):(ru?'Результаты сохранены в этой вкладке':'Tulemused on selles vahelehes salvestatud')}</p></article>
@@ -48,6 +48,8 @@ export default function FinalSummary({lang,quizScore,visitedIds,totalSections}:{
         <a className="button" href={nextHref}>{nextLabel}</a>
       </div>
     </div>
+    <div className="summary-progress-controls"><div><h3>{ru?'Продолжить позже?':'Jätkata hiljem?'}</h3><p>{progressSaved?(ru?'Маршрут сохранён только локально в этом браузере. Игровые результаты по-прежнему остаются только в текущей вкладке.':'Teekond on salvestatud ainult selles brauseris. Mängutulemused jäävad endiselt vaid sellesse vahelehte.'):(ru?'Можно сохранить только открытые разделы на этом устройстве. Никакие данные не отправляются.':'Saad salvestada ainult avatud osad sellele seadmele. Andmeid ei saadeta kuhugi.')}</p></div>{progressSaved?<button type="button" className="text-button" onClick={onClearSavedProgress}>{ru?'Удалить сохранённый прогресс':'Kustuta salvestatud edenemine'}</button>:<button type="button" className="button" onClick={onSaveProgress}>{ru?'Сохранить прогресс на устройстве':'Salvesta edenemine seadmesse'}</button>}</div>
   </Section>;
 }
+
 
