@@ -110,7 +110,7 @@ export default function ArticleApp(){
       <div><span>{ru ? 'ПЕРВОИСТОЧНИК' : 'ALGALLIKAS'}</span><h2>{article.source}</h2><p>{article.citation}</p></div>
       <a href={article.url} target="_blank" rel="noreferrer">{ru ? 'Открыть в PubMed / у источника' : 'Ava PubMedis / allika juures'}</a>
     </section>
-    <footer className="article-footer"><a href="../">{ru ? '← Вернуться к учебному маршруту' : '← Tagasi õpperajale'}</a></footer>
+    <footer className="article-footer"><a href="../">{ru ? 'Вернуться к учебному маршруту' : 'Tagasi õpperajale'}</a></footer>
   </main>;
 }
 
