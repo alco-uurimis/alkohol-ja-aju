@@ -124,7 +124,7 @@ export default function ArticleApp(){
     document.title = `${article.title[lang]} — ${ru ? 'Алкоголь и мозг' : 'Alkohol ja aju'}`;
   }, [article, lang, ru]);
 
-  return <main className="article-page">
+  return <main className={`article-page topic-${article.id}`}>
     <header className="article-header">
       <a className="article-brand" href="../"><img src="../logo-mark.svg" alt=""/>{ru ? 'алкоголь и мозг' : 'alkohol ja aju'}</a>
       <div className="article-language" role="group" aria-label={ru ? 'Язык' : 'Keel'}>
