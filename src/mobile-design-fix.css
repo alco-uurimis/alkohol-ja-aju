@@ -395,6 +395,11 @@
   transform:translateY(3px);
   box-shadow:0 3px 0 #8ea948,0 7px 14px rgba(0,0,0,.25);
 }
+
+/* Text labels stay clear without icon-like Unicode symbols. */
+.button > span[aria-hidden="true"]{
+  display:none;
+}
 @media(max-width:760px){
   .lab-section .game-action.button{width:100%;justify-content:center}
 }

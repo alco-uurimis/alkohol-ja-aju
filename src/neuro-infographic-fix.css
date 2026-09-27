@@ -24,7 +24,7 @@
   opacity:.9;
 }
 .infographic-neuro .synapse-visual::after{
-  content:'↓             ↓             ↓';
+  content:'';
   position:absolute;
   inset:auto 13% 78px;
   z-index:3;
@@ -140,3 +140,4 @@
   .infographic-neuro .neuro-item{grid-template-columns:88px 1fr}
   .infographic-neuro .neuro-outcomes span{font-size:.56rem}
 }
+

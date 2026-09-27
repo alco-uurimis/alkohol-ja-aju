@@ -43,8 +43,8 @@ export default function Infographics({lang}:{lang:Lang}){
         <h3>{ru?'Три сигнальные системы — очень упрощённо':'Kolm signaalisüsteemi — väga lihtsustatult'}</h3>
         <div className="synapse-visual" aria-hidden="true"><div className="synapse-top"><i/><i/><i/><i/><i/></div><div className="synapse-gap"><span/><span/><span/><span/><span/><span/></div><div className="synapse-bottom"><i/><i/><i/></div></div>
         <div className="neuro-grid">
-          <div className="neuro-item gaba"><strong>GABA</strong><span>{ru?'тормозный сигнал ↑':'pidurdav signaal ↑'}</span></div>
-          <div className="neuro-item glutamate"><strong>{ru?'Глутамат':'Glutamaat'}</strong><span>{ru?'возбуждающий сигнал ↓':'ergastav signaal ↓'}</span></div>
+          <div className="neuro-item gaba"><strong>GABA</strong><span>{ru?'тормозный сигнал усиливается':'pidurdav signaal tugevneb'}</span></div>
+          <div className="neuro-item glutamate"><strong>{ru?'Глутамат':'Glutamaat'}</strong><span>{ru?'возбуждающий сигнал ослабевает':'ergastav signaal nõrgeneb'}</span></div>
           <div className="neuro-item dopamine"><strong>{ru?'Дофамин':'Dopamiin'}</strong><span>{ru?'система вознаграждения':'tasustamissüsteem'}</span></div>
         </div>
         <div className="neuro-outcomes"><span>{ru?'седативный эффект':'sedatiivne toime'}</span><span>{ru?'обучение и память':'õppimine ja mälu'}</span><span>{ru?'подкрепление поведения':'käitumise kinnistamine'}</span></div>
@@ -53,3 +53,4 @@ export default function Infographics({lang}:{lang:Lang}){
     </div>
   </Section>;
 }
+
