@@ -22,7 +22,7 @@ export default function Closing({lang,summary}:{lang:'et'|'ru';summary?:ReactNod
     </Section>
 
     <Section id="projektist" number={ru?'14 / О ПРОЕКТЕ':'14 / PROJEKTIST'} title={ru?'Как устроен этот проект':'Kuidas see projekt on tehtud'} className="about-section">
-      <div className="about-grid"><div><p>{ru?'«Алкоголь и мозг» — учебный материал о влиянии алкоголя на память, внимание, принятие решений и другие функции, особенно важные в молодом возрасте.':'„Alkohol ja aju“ on õppematerjal alkoholi mõjust mälule, tähelepanule, otsustamisele ja teistele noores eas olulistele funktsioonidele.'}</p><p>{ru?'Упражнения работают в браузере. Результаты мини-игр временно хранятся только в текущей вкладке и могут быть отправлены вместе с финальным опросом только после явного согласия пользователя.':'Harjutused töötavad brauseris. Minimängude tulemusi hoitakse ajutiselt ainult selles vahelehes ning need saab lõpuküsitlusega saata ainult kasutaja selgesõnalisel nõusolekul.'}</p></div><dl><div><dt>{ru?'Формат':'Vorm'}</dt><dd>{ru?'Учебный сайт':'Õppeveeb'}</dd></div><div><dt>{ru?'Языки':'Keeled'}</dt><dd>{ru?'Русский и эстонский':'Vene ja eesti'}</dd></div><div><dt>{ru?'Данные игр':'Mängude andmed'}</dt><dd>{ru?'В текущей вкладке':'Ainult selles vahelehes'}</dd></div><div><dt>{ru?'Год':'Aasta'}</dt><dd>2026</dd></div></dl></div>
+      <div className="about-grid"><div><p>{ru?'«Алкоголь и мозг» — учебный материал о влиянии алкоголя на память, внимание, принятие решений и другие функции, особенно важные в молодом возрасте.':'„Alkohol ja aju“ on õppematerjal alkoholi mõjust mälule, tähelepanule, otsustamisele ja teistele noores eas olulistele funktsioonidele.'}</p><p>{ru?'Упражнения работают в браузере. Результаты мини-игр временно хранятся только в текущей вкладке и могут быть отправлены вместе с финальным опросом только после явного согласия пользователя.':'Harjutused töötavad brauseris. Minimängude tulemusi hoitakse ajutiselt ainult selles vahelehes ning need saab lõpuküsitlusega saata ainult kasutaja selgesõnalisel nõusolekul.'}</p></div><dl><div><dt>{ru?'Автор':'Autor'}</dt><dd>{ru?'София Чайка':'Sofija Tsaika'}</dd></div><div><dt>{ru?'Школа':'Kool'}</dt><dd>Tallinna Laagna Gümnaasium</dd></div><div><dt>{ru?'Формат':'Vorm'}</dt><dd>{ru?'Учебный сайт':'Õppeveeb'}</dd></div><div><dt>{ru?'Языки':'Keeled'}</dt><dd>{ru?'Русский и эстонский':'Vene ja eesti'}</dd></div><div><dt>{ru?'Данные игр':'Mängude andmed'}</dt><dd>{ru?'В текущей вкладке':'Ainult selles vahelehes'}</dd></div><div><dt>{ru?'Год':'Aasta'}</dt><dd>2026</dd></div></dl></div>
     </Section>
 
     {summary}
@@ -35,5 +35,6 @@ export default function Closing({lang,summary}:{lang:'et'|'ru';summary?:ReactNod
     </Section>
   </>;
 }
+
 
 
