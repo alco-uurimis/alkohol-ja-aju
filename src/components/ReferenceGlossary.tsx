@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Section, SourceReference } from './Shared';
 
-type Lang='et'|'ru';
+type Lang='et'|'en'|'ru';
 
 const terms=[
   {term:'GABA',et:'Peamine pidurdav virgatsaine ajus. Alkohol võib võimendada GABA-A retseptoritega seotud pidurdavat signaali.',ru:'Главный тормозный медиатор мозга. Алкоголь может усиливать тормозные сигналы, связанные с GABA-A-рецепторами.',refs:[6,9]},
@@ -48,3 +48,4 @@ export default function ReferenceGlossary({lang}:{lang:Lang}){
     </div>
   </Section>;
 }
+

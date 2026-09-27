@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ExerciseNote, Section } from '../components/Shared';
 import { recordReaction, recordSignal, recordStroop } from '../utils/gameMetrics';
 
-type Lang = 'et' | 'ru';
+type Lang = 'et' | 'en' | 'ru';
 type ReactionState = 'idle' | 'waiting' | 'go' | 'result' | 'false-start';
 type SignalPhase = 'idle' | 'showing' | 'input' | 'result';
 type Ink = 'violet' | 'lime' | 'cyan' | 'coral';

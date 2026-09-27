@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ProgressBar, Section, SourceReference } from '../components/Shared';
 import { readGameMetrics, type GameMetrics } from '../utils/gameMetrics';
 
-type Lang='et'|'ru';
+type Lang='et'|'en'|'ru';
 type Depth='quick'|'deeper'|'science';
 type RegionId='prefrontal'|'hippocampus'|'reward'|'cerebellum'|'brainstem';
 
@@ -79,9 +79,10 @@ function DepthExplainer({lang}:{lang:Lang}){
 
 function BrainMap({lang}:{lang:Lang}){
   const ru=lang==='ru';
+  const displayedLang=lang==='en'?'ru':lang;
   const [selected,setSelected]=useState<RegionId>('prefrontal');
-  const data=brainRegions[selected][lang];
-  return <div className="brain-map-wrap"><div className="brain-map-visual" aria-label={ru?'Интерактивная схема мозга':'Interaktiivne ajuskeem'}><div className="brain-silhouette" aria-hidden="true"><span/><span/><span/></div>{regionOrder.map((id,i)=><button key={id} className={`brain-point point-${id} ${selected===id?'active':''}`} onClick={()=>setSelected(id)} aria-pressed={selected===id}><span>{i+1}</span><b>{brainRegions[id][lang].name}</b></button>)}</div><article className="brain-map-panel" aria-live="polite"><span className="pill">{ru?'ОБЛАСТЬ МОЗГА':'AJUPIIRKOND'}</span><h3>{data.name}</h3><dl><div><dt>{ru?'Что делает':'Mida teeb'}</dt><dd>{data.role}</dd></div><div><dt>{ru?'Связь с алкоголем':'Seos alkoholiga'}</dt><dd>{data.effect} <SourceReference ids={data.refs} lang={lang}/></dd></div></dl><p className="small">{ru?'Схема упрощена: функции мозга распределены по сетям и не ограничиваются одной точкой.':'Skeem on lihtsustatud: ajufunktsioonid jaotuvad võrgustikesse ega piirdu ühe punktiga.'}</p></article></div>;
+  const data=brainRegions[selected][displayedLang];
+  return <div className="brain-map-wrap"><div className="brain-map-visual" aria-label={ru?'Интерактивная схема мозга':'Interaktiivne ajuskeem'}><div className="brain-silhouette" aria-hidden="true"><span/><span/><span/></div>{regionOrder.map((id,i)=><button key={id} className={`brain-point point-${id} ${selected===id?'active':''}`} onClick={()=>setSelected(id)} aria-pressed={selected===id}><span>{i+1}</span><b>{brainRegions[id][displayedLang].name}</b></button>)}</div><article className="brain-map-panel" aria-live="polite"><span className="pill">{ru?'ОБЛАСТЬ МОЗГА':'AJUPIIRKOND'}</span><h3>{data.name}</h3><dl><div><dt>{ru?'Что делает':'Mida teeb'}</dt><dd>{data.role}</dd></div><div><dt>{ru?'Связь с алкоголем':'Seos alkoholiga'}</dt><dd>{data.effect} <SourceReference ids={data.refs} lang={lang}/></dd></div></dl><p className="small">{ru?'Схема упрощена: функции мозга распределены по сетям и не ограничиваются одной точкой.':'Skeem on lihtsustatud: ajufunktsioonid jaotuvad võrgustikesse ega piirdu ühe punktiga.'}</p></article></div>;
 }
 
 function Glossary({lang}:{lang:Lang}){

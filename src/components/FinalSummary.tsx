@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Section } from './Shared';
 import { readGameMetrics, type GameMetrics } from '../utils/gameMetrics';
 
-type Lang='et'|'ru';
+type Lang='et'|'en'|'ru';
 
 export default function FinalSummary({lang,quizScore,visitedIds,totalSections}:{lang:Lang;quizScore:number|null;visitedIds:string[];totalSections:number}){
   const ru=lang==='ru';
@@ -50,3 +50,4 @@ export default function FinalSummary({lang,quizScore,visitedIds,totalSections}:{
     </div>
   </Section>;
 }
+

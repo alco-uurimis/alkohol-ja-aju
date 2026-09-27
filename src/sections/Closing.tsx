@@ -6,7 +6,7 @@ import { InfoCard,Section,SourceReference } from '../components/Shared';
 import FeedbackSurvey from '../components/FeedbackSurvey';
 import ReferenceGlossary from '../components/ReferenceGlossary';
 
-export default function Closing({lang,summary}:{lang:'et'|'ru';summary?:ReactNode}){
+export default function Closing({lang,summary}:{lang:'et'|'en'|'ru';summary?:ReactNode}){
   const ru=lang==='ru';
   const localizedSources=[...(ru?sourcesRu:sources),...(ru?additionalSourcesRu:additionalSourcesEt)];
   const localizedTakeaways=ru?takeawaysRu:takeaways;
