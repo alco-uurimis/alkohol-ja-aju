@@ -158,6 +158,12 @@ export default function App(){
       <nav id="navigation" aria-label={ru?'Главное меню':'Peamenüü'} className={menu?'open':''}>
         <div className="nav-groups">
           {navGroups.map(group=><div className="nav-group" key={group.label}><span className="nav-group-label">{group.label}</span>{group.items.map(([id,name])=><a key={id} aria-current={active===id?'location':undefined} href={'#'+id} onClick={()=>setMenu(false)}>{name}<span aria-hidden="true">→</span></a>)}</div>)}
+          <div className="nav-group"><span className="nav-group-label">{ru?'НАУЧНЫЕ ТЕМЫ':'TEADUSTEEMAD'}</span>
+            <a href="acute-effects/" onClick={()=>setMenu(false)}>{ru?'Острое воздействие':'Äge mõju'}<span aria-hidden="true">→</span></a>
+            <a href="memory-blackouts/" onClick={()=>setMenu(false)}>{ru?'Память и провалы':'Mälu ja mälulüngad'}<span aria-hidden="true">→</span></a>
+            <a href="adolescent-brain/" onClick={()=>setMenu(false)}>{ru?'Подростковый мозг':'Nooruki aju'}<span aria-hidden="true">→</span></a>
+            <a href="self-control/" onClick={()=>setMenu(false)}>{ru?'Самоконтроль':'Enesekontroll'}<span aria-hidden="true">→</span></a>
+          </div>
         </div>
       </nav>
       <div className="header-progress" aria-label={ru?`Изучено этапов: ${visited.size} из ${trackedIds.length}`:`Läbitud etappe: ${visited.size} / ${trackedIds.length}`}>
