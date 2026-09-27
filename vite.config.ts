@@ -13,6 +13,8 @@ export default defineConfig({
         memoryBlackouts: 'memory-blackouts/index.html',
         adolescentBrain: 'adolescent-brain/index.html',
         selfControl: 'self-control/index.html',
+        alcoholAndSleep: 'alcohol-and-sleep/index.html',
+        alcoholAndDriving: 'alcohol-and-driving/index.html',
       },
     },
   },

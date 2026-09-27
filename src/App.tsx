@@ -171,6 +171,8 @@ export default function App(){
             <a href="memory-blackouts/" onClick={()=>setMenu(false)}>{ru?'Память и провалы':'Mälu ja mälulüngad'}</a>
             <a href="adolescent-brain/" onClick={()=>setMenu(false)}>{ru?'Подростковый мозг':'Nooruki aju'}</a>
             <a href="self-control/" onClick={()=>setMenu(false)}>{ru?'Самоконтроль':'Enesekontroll'}</a>
+            <a href="alcohol-and-sleep/" onClick={()=>setMenu(false)}>{ru?'Алкоголь и сон':'Alkohol ja uni'}</a>
+            <a href="alcohol-and-driving/" onClick={()=>setMenu(false)}>{ru?'Алкоголь и вождение':'Alkohol ja autojuhtimine'}</a>
           </div>
           {navGroups.slice(1).map(group=><div className="nav-group" key={group.label}><span className="nav-group-label">{group.label}</span>{group.items.map(([id,name])=><a key={id} aria-current={active===id?'location':undefined} href={'#'+id} onClick={()=>setMenu(false)}>{name}</a>)}</div>)}
         </div>
@@ -212,6 +214,8 @@ export default function App(){
           <a href="memory-blackouts/" className="guide-card"><span>02</span><div className="guide-card-copy"><strong>{ru?'Память и провалы':'Mälu ja mälulüngad'}</strong><p>{ru?'Почему сознание и запись воспоминаний — не одно и то же.':'Miks teadvus ja mälestuste talletamine ei ole sama.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
           <a href="adolescent-brain/" className="guide-card"><span>03</span><div className="guide-card-copy"><strong>{ru?'Подростковый мозг':'Nooruki aju'}</strong><p>{ru?'Что можно и нельзя заключить из больших выборок.':'Mida suurte valimite põhjal saab ja ei saa järeldada.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
           <a href="self-control/" className="guide-card"><span>04</span><div className="guide-card-copy"><strong>{ru?'Самоконтроль':'Enesekontroll'}</strong><p>{ru?'Задачи на остановку реакции и метаанализ.':'Reaktsiooni pidurdamise ülesanded ja metaanalüüs.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
+          <a href="alcohol-and-sleep/" className="guide-card"><span>05</span><div className="guide-card-copy"><strong>{ru?'Алкоголь и сон':'Alkohol ja uni'}</strong><p>{ru?'Дыхание во сне и метаанализ 14 исследований.':'Uneaegne hingamine ja 14 uuringu metaanalüüs.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
+          <a href="alcohol-and-driving/" className="guide-card"><span>06</span><div className="guide-card-copy"><strong>{ru?'Алкоголь и вождение':'Alkohol ja autojuhtimine'}</strong><p>{ru?'Почему самочувствие не измеряет безопасность за рулём.':'Miks enesetunne ei mõõda roolis ohutust.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
         </div>
       </section>
 

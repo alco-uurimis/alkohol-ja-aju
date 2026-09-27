@@ -61,6 +61,28 @@ const articles: Article[] = [
     found: {ru: 'Общий эффект был отрицательным; более высокие концентрации алкоголя были связаны с более выраженным ухудшением в части задач.', et: 'Üldine efekt oli kahjulik; kõrgem alkoholikontsentratsioon seostus osas ülesannetes tugevama halvenemisega.'},
     limits: {ru: 'Это измерение одной когнитивной функции в лаборатории. Оно не определяет характер человека, диагноз или его способность безопасно водить автомобиль.', et: 'See mõõdab laboris üht kognitiivset funktsiooni. See ei määra inimese iseloomu, diagnoosi ega autojuhtimise ohutust.'},
     citation: 'Neuroscience & Biobehavioral Reviews, 2023 · meta-analysis', url: 'https://pubmed.ncbi.nlm.nih.gov/37277010/'
+  },
+  {
+    id: 'alcohol-and-sleep', source: 'Kolla et al., 2018',
+    title: {ru: 'Алкоголь, сон и дыхание', et: 'Alkohol, uni ja hingamine'},
+    lead: {ru: 'Почему более быстрое засыпание не означает более качественный сон?', et: 'Miks ei tähenda kiirem uinumine paremat und?'},
+    question: {ru: 'Как алкоголь связан с дыханием во сне?', et: 'Kuidas on alkohol seotud uneaegse hingamisega?'},
+    answer: {ru: 'В метаанализе контролируемых исследований после алкоголя в среднем возрастало число эпизодов нарушенного дыхания во сне и немного снижалась средняя насыщенность крови кислородом.', et: 'Kontrollitud uuringute metaanalüüsis suurenes pärast alkoholi tarvitamist keskmiselt uneaegsete hingamishäirete episoodide arv ning vere keskmine hapnikuküllastus veidi langes.'},
+    measured: {ru: 'Авторы объединили 14 исследований с 422 участниками. Сравнивали объективные показатели дыхания и кислорода во сне до и после приёма алкоголя.', et: 'Autorid ühendasid 14 uuringut 422 osalejaga. Võrreldi uneaegse hingamise ja hapnikusisalduse objektiivseid näitajaid enne ja pärast alkoholi tarvitamist.'},
+    found: {ru: 'Эффект был заметнее у людей, которые храпят, и у участников с обструктивным апноэ сна. Это согласуется с тем, что алкоголь может ухудшать уже существующие нарушения дыхания во сне.', et: 'Mõju oli suurem norskavatel inimestel ja obstruktiivse uneapnoega osalejatel. See sobib järeldusega, et alkohol võib olemasolevaid uneaegseid hingamishäireid süvendada.'},
+    limits: {ru: 'Обзор не означает, что у каждого человека после одной порции возникнет апноэ сна. Риск зависит от особенностей дыхания, дозы, времени употребления и состояния здоровья.', et: 'Ülevaade ei tähenda, et igal inimesel tekib pärast üht alkoholiannust uneapnoe. Risk sõltub hingamise eripäradest, annusest, tarvitamise ajast ja terviseseisundist.'},
+    citation: 'Sleep Medicine Reviews, 2018 · systematic review and meta-analysis', url: 'https://pubmed.ncbi.nlm.nih.gov/30017492/'
+  },
+  {
+    id: 'alcohol-and-driving', source: 'NHTSA · Drunk Driving',
+    title: {ru: 'Алкоголь и вождение: почему нельзя судить по самочувствию', et: 'Alkohol ja autojuhtimine: miks enesetunde järgi ei saa otsustada'},
+    lead: {ru: 'Почему ощущение бодрости не гарантирует безопасную реакцию за рулём?', et: 'Miks ei taga erksuse tunne roolis ohutut reageerimist?'},
+    question: {ru: 'Может ли человек сам надёжно оценить безопасность вождения после алкоголя?', et: 'Kas inimene saab pärast alkoholi tarvitamist ise usaldusväärselt hinnata autojuhtimise ohutust?'},
+    answer: {ru: 'Нет. Алкоголь может одновременно влиять на реакцию, обработку информации, координацию и принятие решений. Поэтому субъективное ощущение контроля не является проверкой безопасности.', et: 'Ei. Alkohol võib korraga mõjutada reaktsiooni, infotöötlust, koordinatsiooni ja otsustamist. Seetõttu ei ole subjektiivne kontrollitunne ohutuse kontroll.'},
+    measured: {ru: 'Материал NHTSA обобщает данные о том, как алкоголь влияет на навыки, нужные для вождения: внимание, зрительную обработку, скорость реакции и координацию.', et: 'NHTSA materjal võtab kokku andmeid alkoholi mõjust autojuhtimiseks vajalikele oskustele: tähelepanule, visuaalsele infotöötlusele, reaktsioonikiirusele ja koordinatsioonile.'},
+    found: {ru: 'Важен не один навык, а их сочетание. Даже учебная задача на реакцию не показывает, может ли конкретный человек безопасно управлять автомобилем.', et: 'Oluline ei ole üks oskus, vaid nende koosmõju. Isegi õppeotstarbeline reaktsiooniülesanne ei näita, kas konkreetne inimene saab autot ohutult juhtida.'},
+    limits: {ru: 'Это образовательное объяснение, а не способ рассчитать личный риск или определить, когда можно садиться за руль. Безопасное решение — не водить после употребления алкоголя.', et: 'See on hariv selgitus, mitte viis isikliku riski arvutamiseks või rooli istumise aja määramiseks. Ohutu otsus on pärast alkoholi tarvitamist mitte juhtida.'},
+    citation: 'National Highway Traffic Safety Administration · evidence summary', url: 'https://www.nhtsa.gov/risky-driving/drunk-driving'
   }
 ];
 
