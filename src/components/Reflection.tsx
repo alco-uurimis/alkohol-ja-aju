@@ -1,6 +1,6 @@
 import { InfoCard, Section, SourceReference } from './Shared';
 
-export default function Reflection({lang}:{lang:'et'|'en'|'ru'}){
+export default function Reflection({lang}:{lang:'et'|'ru'}){
   const ru=lang==='ru';
   const checks:[string,string][]=ru?[
     ['Отдели факт от вывода','Какая часть утверждения прямо показана исследованием, а где начинается более широкий вывод?'],

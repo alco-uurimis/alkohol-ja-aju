@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { readGameMetrics, gameMetricsCompactText } from '../utils/gameMetrics';
 
-type Lang='et'|'en'|'ru';
+type Lang='et'|'ru';
 type Status='idle'|'sending'|'sent'|'error';
 
 const endpoint='https://alkohol-ja-aju.vercel.app/api/feedback';

@@ -12,9 +12,8 @@ import { Section } from './components/Shared';
 import { Quiz } from './components/Quiz';
 import { questions } from './data/content';
 import { questionsRu } from './data/content.ru';
-import { questionsEn } from './data/content.en';
 
-type Lang='et'|'en'|'ru';
+type Lang='et'|'ru';
 type NavItem=[string,string];
 
 const trackedIds=['aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin','samoprov','obsuzhdenie','tagasiside'];
@@ -31,7 +30,7 @@ function readLanguage():Lang{
   if(typeof window==='undefined')return 'et';
   try{
     const saved=window.localStorage.getItem(languageKey);
-    return saved==='ru'||saved==='en'?saved:'et';
+    return saved==='ru'?'ru':'et';
   }catch{return 'et';}
 }
 
@@ -54,46 +53,44 @@ export default function App(){
   const [showTop,setShowTop]=useState(false);
   const menuButton=useRef<HTMLButtonElement>(null);
   const ru=lang==='ru';
-  const en=lang==='en';
-  const copy=(et:string,russian:string,english:string)=>en?english:ru?russian:et;
 
   const navGroups:{label:string;items:NavItem[]}[]=[
-    {label:copy('ÕPI','ИЗУЧИ','LEARN'),items:[
-      ['aju',copy('Alkoholi mõju','Как влияет алкоголь','How alcohol affects the brain')],
-      ['infograafika',copy('Lühidalt skeemides','Коротко в схемах','Key ideas in diagrams')],
+    {label:ru?'ИЗУЧИ':'ÕPI',items:[
+      ['aju',ru?'Как влияет алкоголь':'Alkoholi mõju'],
+      ['infograafika',ru?'Коротко в схемах':'Lühidalt skeemides'],
     ]},
-    {label:copy('MÕISTA','ПОНИМАЙ','UNDERSTAND'),items:[
-      ['teadmised',copy('Teadusbaas','Научная база','Scientific background')],
-      ['moisted',copy('Mõistete sõnastik','Словарь терминов','Glossary')],
+    {label:ru?'ПОНИМАЙ':'MÕISTA',items:[
+      ['teadmised',ru?'Научная база':'Teadusbaas'],
+      ['moisted',ru?'Словарь терминов':'Mõistete sõnastik'],
     ]},
-    {label:copy('PROOVI','ПОПРОБУЙ','TRY'),items:[
-      ['malu',copy('Mälu','Память','Memory')],
-      ['tahelepanu',copy('Tähelepanu','Внимание','Attention')],
-      ['labor',copy('Minimängud','Мини-игры','Mini-games')],
+    {label:ru?'ПОПРОБУЙ':'PROOVI',items:[
+      ['malu',ru?'Память':'Mälu'],
+      ['tahelepanu',ru?'Внимание':'Tähelepanu'],
+      ['labor',ru?'Мини-игры':'Minimängud'],
     ]},
-    {label:copy('KONTROLLI','ПРОВЕРЬ','CHECK'),items:[
-      ['viktoriin',copy('Teadmiste kontroll','Проверка знаний','Knowledge check')],
-      ['samoprov',copy('Enesekontroll','Самопроверка','Think critically')],
+    {label:ru?'ПРОВЕРЬ':'KONTROLLI',items:[
+      ['viktoriin',ru?'Проверка знаний':'Teadmiste kontroll'],
+      ['samoprov',ru?'Самопроверка':'Enesekontroll'],
     ]},
-    {label:copy('ARUTLE','ОБСУДИ','DISCUSS'),items:[
-      ['obsuzhdenie',copy('Aruteluküsimused','Вопросы для обсуждения','Discussion prompts')],
+    {label:ru?'ОБСУДИ':'ARUTLE',items:[
+      ['obsuzhdenie',ru?'Вопросы для обсуждения':'Aruteluküsimused'],
     ]},
-    {label:copy('LÕPETA','ЗАВЕРШИ','FINISH'),items:[
-      ['tagasiside',copy('Küsitlus','Опрос','Survey')],
-      ['isiklik-kokkuvote',copy('Sinu kokkuvõte','Твой итог','Your summary')],
-      ['allikad',copy('Allikad','Источники','Sources')],
+    {label:ru?'ЗАВЕРШИ':'LÕPETA',items:[
+      ['tagasiside',ru?'Опрос':'Küsitlus'],
+      ['isiklik-kokkuvote',ru?'Твой итог':'Sinu kokkuvõte'],
+      ['allikad',ru?'Источники':'Allikad'],
     ]},
   ];
   const links=navGroups.flatMap(group=>group.items);
-  const currentPhase=navGroups.find(group=>group.items.some(([id])=>id===active))?.label ?? copy('ALGUS','НАЧАЛО','START');
+  const currentPhase=navGroups.find(group=>group.items.some(([id])=>id===active))?.label ?? (ru?'НАЧАЛО':'ALGUS');
 
   useEffect(()=>{
     document.documentElement.lang=lang;
     try{window.localStorage.setItem(languageKey,lang);}catch{/* storage can be unavailable */}
-    document.title=copy('Alkohol ja aju — mälu, tähelepanu ja reaktsioon','Алкоголь и мозг — память, внимание и реакция','Alcohol and the brain — memory, attention and reaction');
-    const description=copy('Õppematerjal alkoholi mõjust ajule: teadusbaas, harjutused, minimängud, teadmiste kontroll ja allikad.','Учебный сайт о влиянии алкоголя на мозг: научная база, упражнения, мини-игры, проверка знаний и источники.','An educational site on alcohol’s effects on the brain: evidence, exercises, mini-games, knowledge checks and sources.');
+    document.title=ru?'Алкоголь и мозг — память, внимание и реакция':'Alkohol ja aju — mälu, tähelepanu ja reaktsioon';
+    const description=ru?'Учебный сайт о влиянии алкоголя на мозг: научная база, упражнения, мини-игры, проверка знаний и источники.':'Õppematerjal alkoholi mõjust ajule: teadusbaas, harjutused, minimängud, teadmiste kontroll ja allikad.';
     document.querySelector('meta[name="description"]')?.setAttribute('content',description);
-  },[lang,ru,en]);
+  },[lang,ru]);
 
   useEffect(()=>{
     const observer=new IntersectionObserver(entries=>{
@@ -160,9 +157,8 @@ export default function App(){
       <a className="brand" href="#avaleht" onClick={()=>setMenu(false)}><img className="brand-mark" src="logo-mark.svg" alt=""/><span>{ru?'алкоголь и мозг':'alkohol ja aju'}</span></a>
       <div className="header-context" aria-hidden="true"><span>{currentPhase}</span></div>
       <div className="header-actions">
-        <div className="language-switch" role="group" aria-label={copy('Keel','Язык','Language')}>
+        <div className="language-switch" role="group" aria-label={ru?'Язык':'Keel'}>
           <button type="button" className={lang==='et'?'active':''} aria-pressed={lang==='et'} onClick={()=>switchLanguage('et')}>ET</button>
-          <button type="button" className={lang==='en'?'active':''} aria-pressed={lang==='en'} onClick={()=>switchLanguage('en')}>EN</button>
           <button type="button" className={lang==='ru'?'active':''} aria-pressed={lang==='ru'} onClick={()=>switchLanguage('ru')}>RU</button>
         </div>
         <button type="button" ref={menuButton} className="menu-toggle" aria-expanded={menu} aria-controls="navigation" aria-label={menu?(ru?'Закрыть меню':'Sulge menüü'):(ru?'Открыть меню':'Ava menüü')} onClick={()=>setMenu(v=>!v)}>{menu?(ru?'Закрыть':'Sulge'):(ru?'Меню':'Menüü')}</button>
@@ -230,7 +226,7 @@ export default function App(){
       <Lab lang={lang}/>
 
       <div className="phase-divider"><span>03</span><div><strong>{ru?'Проверь знания':'Kontrolli teadmisi'}</strong><small>{ru?'Миф или факт — 10 вопросов':'Müüt või fakt — 10 küsimust'}</small></div></div>
-      <Section id="viktoriin" number={copy('KONTROLLI TEADMISI','ПРОВЕРЬ ЗНАНИЯ','CHECK YOUR KNOWLEDGE')} title={copy('Mida sa meelde jätsid?','Что ты запомнил(а)?','What do you remember?')} intro={copy('Vali iga väite puhul „müüt“ või „fakt“. Pärast vastust näed kohe lühikest selgitust.','Для каждого утверждения выбери «миф» или «факт». После ответа сразу появится короткое объяснение.','For each statement, choose “myth” or “fact”. A short explanation appears straight away.')} className="quiz-section"><Quiz questions={en?questionsEn:ru?questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section>
+      <Section id="viktoriin" number={ru?'ПРОВЕРЬ ЗНАНИЯ':'KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Для каждого утверждения выбери «миф» или «факт». После ответа сразу появится короткое объяснение.':'Vali iga väite puhul „müüt“ või „fakt“. Pärast vastust näed kohe lühikest selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section>
 
       <Reflection lang={lang}/>
 

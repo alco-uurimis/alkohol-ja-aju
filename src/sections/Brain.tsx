@@ -1,23 +1,23 @@
 import { useState } from 'react';
 import { topics,science,knowledgeCards } from '../data/content';
 import { topicsRu,scienceRu,knowledgeCardsRu } from '../data/content.ru';
-import { topicsEn,scienceEn,knowledgeCardsEn } from '../data/content.en';
 import { InfoCard,Section,SourceReference } from '../components/Shared';
 
-export default function Brain({lang}:{lang:'et'|'en'|'ru'}){
+export default function Brain({lang}:{lang:'et'|'ru'}){
   const [active,setActive]=useState(0);
   const ru=lang==='ru';
-  const en=lang==='en';
-  const localizedTopics=en?topicsEn:ru?topicsRu:topics;
-  const localizedScience=en?scienceEn:ru?scienceRu:science;
-  const localizedKnowledge=en?knowledgeCardsEn:ru?knowledgeCardsRu:knowledgeCards;
+  const localizedTopics=ru?topicsRu:topics;
+  const localizedScience=ru?scienceRu:science;
+  const localizedKnowledge=ru?knowledgeCardsRu:knowledgeCards;
   const topic=localizedTopics[active];
 
   return <Section
     id="aju"
-    number={en?'01 / UNDERSTAND':ru?'01 / ПОЙМИ':'01 / MÕISTA'}
-    title={en?'What does alcohol change in the brain?':ru?'Что алкоголь меняет в мозге?':'Mida alkohol ajus muudab?'}
-    intro={en?'Start with four functions that are easy to notice in behaviour. Then explore neurotransmitters, memory, reward, the developing brain, sleep, tolerance and recovery.':ru?'Сначала — четыре функции, которые легко заметить в поведении. Ниже — более глубокое объяснение: нейромедиаторы, память, система вознаграждения, развивающийся мозг, сон, толерантность и восстановление.':'Kõigepealt neli võimet, mille muutusi on käitumises lihtne märgata. Allpool on sügavam selgitus: virgatsained, mälu, tasusüsteem, arenev aju, uni, tolerants ja taastumine.'}
+    number={ru?'01 / ПОЙМИ':'01 / MÕISTA'}
+    title={ru?'Что алкоголь меняет в мозге?':'Mida alkohol ajus muudab?'}
+    intro={ru
+      ?'Сначала — четыре функции, которые легко заметить в поведении. Ниже — более глубокое объяснение: нейромедиаторы, память, система вознаграждения, развивающийся мозг, сон, толерантность и восстановление.'
+      :'Kõigepealt neli võimet, mille muutusi on käitumises lihtne märgata. Allpool on sügavam selgitus: virgatsained, mälu, tasusüsteem, arenev aju, uni, tolerants ja taastumine.'}
   >
     <div className="brain-layout">
       <div className="topic-buttons" aria-label={ru?'Темы о мозге и алкоголе':'Aju ja alkoholi teemad'}>

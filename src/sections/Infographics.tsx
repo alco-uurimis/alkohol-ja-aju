@@ -1,6 +1,6 @@
 import { Section, SourceReference } from '../components/Shared';
 
-type Lang='et'|'en'|'ru';
+type Lang='et'|'ru';
 type IconType='clock'|'eye'|'balance'|'control'|'memory'|'tolerance'|'link'|'sleep';
 
 const Icon=({type}:{type:IconType})=>{
