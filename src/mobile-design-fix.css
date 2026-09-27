@@ -607,3 +607,16 @@
   .enhanced-science-game>p{min-height:0}
 }
 
+/* The brain overview needs more room than the two-column layout has at
+   intermediate desktop widths. Keep every card inside the reading column. */
+@media (min-width:761px) and (max-width:1280px){
+  #aju .section-heading{max-width:100%}
+  #aju .section-intro{max-width:760px;overflow-wrap:anywhere}
+  #aju .brain-layout{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:18px!important;
+  }
+  #aju .topic-buttons{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #aju .topic-panel{min-width:0!important}
+}
+
