@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Section, SourceReference } from '../components/Shared';
+import { ProgressBar, Section, SourceReference } from '../components/Shared';
 import { readGameMetrics, type GameMetrics } from '../utils/gameMetrics';
 
 type Lang='et'|'ru';
@@ -141,6 +141,59 @@ function ResearchLimits({lang}:{lang:Lang}){
   return <div className="method-card"><div><span className="pill">{ru?'КАК ЧИТАТЬ НАУКУ':'KUIDAS TEADUST LUGEDA'}</span><h3>{ru?'Четыре ограничения, которые важно помнить':'Neli piirangut, mida tasub meeles pidada'}</h3></div><div className="method-grid">{rows.map(([title,text])=><article key={title}><strong>{title}</strong><p>{text}</p></article>)}</div><p className="small">{ru?'Эти принципы особенно важны при интерпретации исследований подростков и долгосрочных последствий.':'Need põhimõtted on eriti olulised noorukite ja pikaajaliste mõjude uuringute tõlgendamisel.'} <SourceReference ids={[10]} lang={lang}/></p></div>;
 }
 
+function shuffle<T>(items:T[]){
+  return [...items].sort(()=>Math.random()-.5);
+}
+
+function MemoryPathPlus({lang}:{lang:Lang}){
+  const ru=lang==='ru';
+  const rounds=ru?[
+    {title:'Уровень 1: как возникает воспоминание',steps:['Событие','Внимание к событию','Кодирование информации','Закрепление воспоминания','Позднее воспроизведение']},
+    {title:'Уровень 2: путь учебного материала',steps:['Новая информация','Удержание внимания','Осмысленное кодирование','Пауза и закрепление','Узнавание позже']},
+    {title:'Уровень 3: найди слабое звено',steps:['Сигнал','Выбор важного','Запись нового опыта','Формирование следа','Воспоминание по подсказке']},
+  ]:[
+    {title:'1. tase: kuidas mälestus tekib',steps:['Sündmus','Tähelepanu sündmusele','Info kodeerimine','Mälestuse kinnistumine','Hilisem meenutamine']},
+    {title:'2. tase: õppematerjali teekond',steps:['Uus teave','Tähelepanu hoidmine','Mõtestatud kodeerimine','Paus ja kinnistumine','Hilisem äratundmine']},
+    {title:'3. tase: leia nõrk lüli',steps:['Signaal','Olulise valimine','Uue kogemuse talletamine','Mälestusjälje kujunemine','Vihjega meenutamine']},
+  ];
+  const [round,setRound]=useState(0); const [step,setStep]=useState(0); const [used,setUsed]=useState<string[]>([]); const [feedback,setFeedback]=useState('');
+  const options=useMemo(()=>shuffle(rounds[round].steps),[round,lang]);
+  const restart=()=>{setRound(0);setStep(0);setUsed([]);setFeedback('');};
+  const choose=(choice:string)=>{
+    if(used.includes(choice))return;
+    if(choice!==rounds[round].steps[step]){setFeedback(ru?'Попробуй ещё раз: сначала выбери этап, который идёт следующим.':'Proovi uuesti: vali kõigepealt järgmine õige etapp.');return;}
+    const next=[...used,choice];setUsed(next);
+    if(next.length===rounds[round].steps.length){setFeedback(round===rounds.length-1?(ru?'Все уровни пройдены. Путь показывает, что воспоминание формируется поэтапно.':'Kõik tasemed on läbitud. Teekond näitab, et mälestus kujuneb etappide kaupa.'):(ru?'Уровень пройден. Открой следующий вариант.':'Tase on läbitud. Ava järgmine variant.'));}else setStep(v=>v+1);
+  };
+  const complete=used.length===rounds[round].steps.length;
+  return <article className="science-game enhanced-science-game"><div className="science-game-top"><span className="pill">{ru?'ПАМЯТЬ':'MÄLU'}</span><span>{round+1} / {rounds.length}</span></div><h3>{ru?'Собери путь воспоминания':'Pane kokku mälestuse teekond'}</h3><p>{ru?'Три варианта задания: выбери каждый этап в правильном порядке.':'Kolm ülesande varianti: vali iga etapp õiges järjekorras.'}</p><div className="science-game-level"><strong>{rounds[round].title}</strong><span>{step} / {rounds[round].steps.length}</span></div><ProgressBar value={step} max={rounds[round].steps.length} label={ru?'Этапы уровня':'Taseme etapid'}/><div className="path-options enhanced-path-options">{options.map(option=><button key={option} className={used.includes(option)?'used':''} disabled={used.includes(option)} onClick={()=>choose(option)}><span>{used.indexOf(option)>=0?used.indexOf(option)+1:ru?'?' :'?'}</span>{option}</button>)}</div>{feedback&&<p className="science-game-feedback" role="status">{feedback} <SourceReference ids={[2]} lang={lang}/></p>}{complete&&round<rounds.length-1&&<button className="button primary science-next" onClick={()=>{setRound(v=>v+1);setStep(0);setUsed([]);setFeedback('');}}>{ru?'Следующий уровень':'Järgmine tase'}</button>}<button className="text-button" onClick={restart}>{ru?'Начать заново':'Alusta uuesti'}</button></article>;
+}
+
+function NeuroMatchPlus({lang}:{lang:Lang}){
+  const ru=lang==='ru';
+  const items=ru?[
+    {q:'Какой медиатор в этой модели связан прежде всего с торможением?',a:'GABA',opts:['GABA','Глутамат','Дофамин']},
+    {q:'Какой медиатор связан с возбуждающей NMDA-передачей?',a:'Глутамат',opts:['Дофамин','Глутамат','GABA']},
+    {q:'Какой сигнал важен для обучения на вознаграждении?',a:'Дофамин',opts:['Глутамат','GABA','Дофамин']},
+    {q:'Какую систему алкоголь может усиливать в упрощённой модели?',a:'GABA',opts:['GABA','Глутамат','Дофамин']},
+    {q:'Какую передачу алкоголь может ослаблять в упрощённой модели?',a:'Глутамат',opts:['Дофамин','Глутамат','GABA']},
+    {q:'Какой сигнал связывает опыт с мотивацией повторить его?',a:'Дофамин',opts:['Глутамат','GABA','Дофамин']},
+  ]:[
+    {q:'Milline virgatsaine seostub selles mudelis eeskätt pidurdusega?',a:'GABA',opts:['GABA','Glutamaat','Dopamiin']},
+    {q:'Milline virgatsaine seostub ergastava NMDA-ülekandega?',a:'Glutamaat',opts:['Dopamiin','Glutamaat','GABA']},
+    {q:'Milline signaal on oluline tasupõhises õppimises?',a:'Dopamiin',opts:['Glutamaat','GABA','Dopamiin']},
+    {q:'Millist süsteemi võib alkohol lihtsustatud mudelis võimendada?',a:'GABA',opts:['GABA','Glutamaat','Dopamiin']},
+    {q:'Millist ülekannet võib alkohol lihtsustatud mudelis nõrgendada?',a:'Glutamaat',opts:['Dopamiin','Glutamaat','GABA']},
+    {q:'Milline signaal seob kogemuse motivatsiooniga seda korrata?',a:'Dopamiin',opts:['Glutamaat','GABA','Dopamiin']},
+  ];
+  const [index,setIndex]=useState(0);const [score,setScore]=useState(0);const [picked,setPicked]=useState<string|null>(null);const [done,setDone]=useState(false);
+  const choose=(value:string)=>{if(picked)return;setPicked(value);if(value===items[index].a)setScore(v=>v+1);};
+  const next=()=>{if(index===items.length-1)setDone(true);else{setIndex(v=>v+1);setPicked(null);}};
+  const restart=()=>{setIndex(0);setScore(0);setPicked(null);setDone(false);};
+  const level=Math.floor(index/3)+1;
+  return <article className="science-game enhanced-science-game"><div className="science-game-top"><span className="pill">{ru?'СИГНАЛЫ':'SIGNAALID'}</span><span>{done?items.length:index+1} / {items.length}</span></div><h3>{ru?'Сопоставь систему сигналов':'Sobita signaalisüsteem'}</h3>{done?<div className="science-mini-result"><strong>{score} / {items.length}</strong><p>{ru?'Ты прошёл(ла) два уровня. Это проверка терминов, а не оценка мозга или здоровья.':'Läbisid kaks taset. See kontrollib mõisteid, mitte aju ega tervist.'}</p><button className="button primary science-next" onClick={restart}>{ru?'Пройти снова':'Proovi uuesti'}</button></div>:<><p>{ru?'Шесть вариантов в двух уровнях: выбери наиболее точный ответ.':'Kuus varianti kahes tasemes: vali kõige täpsem vastus.'}</p><div className="science-game-level"><strong>{ru?'Уровень':'Tase'} {level} / 2</strong><span>{items[index].q}</span></div><ProgressBar value={index%3} max={3} label={ru?'Вопросы уровня':'Taseme küsimused'}/><div className="neuro-options enhanced-neuro-options">{items[index].opts.map(opt=><button key={opt} disabled={picked!==null} className={picked===opt?(opt===items[index].a?'correct':'incorrect'):''} onClick={()=>choose(opt)}>{opt}</button>)}</div>{picked&&<div className="science-game-feedback" role="status"><strong>{picked===items[index].a?(ru?'Верно.':'Õige.'):(ru?`Правильный ответ: ${items[index].a}.`:`Õige vastus: ${items[index].a}.`)}</strong> <SourceReference ids={[6,9]} lang={lang}/><button className="button primary science-next" onClick={next}>{index===items.length-1?(ru?'Показать результат':'Vaata tulemust'):(ru?'Следующий вопрос':'Järgmine küsimus')}</button></div>}</>}</article>;
+}
+
 export default function LearningCenter({lang}:{lang:Lang}){
   const ru=lang==='ru';
   return <Section id="teadmised" number={ru?'01A / НАУЧНАЯ БАЗА':'01A / TEADUSLIK ALUS'} title={ru?'Разберись глубже — без стены текста':'Mõista sügavamalt, ilma tekstiseinata'} intro={ru?'Выбери нужную глубину: быстрые факты, интерактивная карта мозга, термины и короткие задания. Научные утверждения связаны с источниками в конце страницы.':'Vali sobiv sügavus: kiired faktid, interaktiivne ajukaart, mõisted ja lühikesed ülesanded. Teadusväited on seotud lehe lõpus olevate allikatega.'} className="learning-section">
@@ -149,7 +202,7 @@ export default function LearningCenter({lang}:{lang:Lang}){
     <div className="learning-subhead"><span className="eyebrow">{ru?'ИНТЕРАКТИВНАЯ КАРТА':'INTERAKTIIVNE KAART'}</span><h3>{ru?'Нажми на область мозга':'Vali ajupiirkond'}</h3><p>{ru?'Это учебная схема, а не анатомический атлас. Она показывает, с какими функциями чаще связывают разные области.':'See on õppemudel, mitte anatoomiline atlas. See näitab, milliste funktsioonidega eri piirkondi sageli seostatakse.'}</p></div>
     <BrainMap lang={lang}/>
     <Glossary lang={lang}/>
-    <div className="science-games-grid"><MemoryPath lang={lang}/><NeuroMatch lang={lang}/></div>
+    <div className="science-games-grid"><MemoryPathPlus lang={lang}/><NeuroMatchPlus lang={lang}/></div>
     <ResearchLimits lang={lang}/>
   </Section>;
 }
@@ -164,3 +217,4 @@ export function FinalSummary({lang,quizScore,visited,totalSections}:{lang:Lang;q
     <div className="summary-detail"><div><h3>{ru?'Результаты игр':'Mängude tulemused'}</h3>{games===0?<p>{ru?'Пока нет результатов. Сыграй хотя бы в одну игру в лаборатории.':'Tulemusi veel pole. Proovi vähemalt üht mängu mängulaboris.'}</p>:<ul>{metrics.reaction&&<li>{ru?'Реакция':'Reaktsioon'}: <strong>{metrics.reaction.latestMs} ms</strong> · {ru?'лучшее':'parim'} {metrics.reaction.bestMs} ms</li>}{metrics.stroop&&<li>Stroop: <strong>{metrics.stroop.score}/{metrics.stroop.rounds}</strong> · {ru?'среднее':'keskmine'} {metrics.stroop.averageMs} ms</li>}{metrics.signal&&<li>{ru?'Цепочка':'Signaalirada'}: <strong>{ru?'уровень':'tase'} {metrics.signal.reachedLength}</strong> · {metrics.signal.completed?(ru?'завершено':'läbitud'):(ru?'не завершено':'pooleli')}</li>}</ul>}</div><div className="summary-next"><h3>{ru?'Что дальше?':'Mis edasi?'}</h3><p>{quizScore===null?(ru?'Пройди «Миф или факт», затем вернись сюда — итог обновится автоматически.':'Tee „Müüt või fakt“ läbi ja tule siia tagasi — kokkuvõte uueneb automaatselt.'):(ru?'Просмотри объяснения к ошибкам и источники. Если хочешь, затем заполни анонимный опрос.':'Vaata üle vigade selgitused ja allikad. Soovi korral täida seejärel anonüümne küsitlus.')}</p><a className="button" href={quizScore===null?'#viktoriin':'#tagasiside'}>{quizScore===null?(ru?'К викторине':'Viktoriini juurde'):(ru?'К опросу':'Küsitluse juurde')}</a></div></div>
   </Section>;
 }
+

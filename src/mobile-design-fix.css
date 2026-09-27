@@ -482,3 +482,126 @@
   .lab-card{min-height:0}
 }
 
+/* Learning mini-interactives and final takeaways need the same visual weight as the games. */
+.science-games-grid{
+  gap:24px!important;
+  align-items:stretch;
+}
+
+.enhanced-science-game{
+  display:flex;
+  flex-direction:column;
+  min-height:510px;
+  padding:28px!important;
+  border:1px solid #d8d4ed!important;
+  border-radius:22px!important;
+  background:linear-gradient(145deg,#ffffff 0%,#f3f0ff 100%)!important;
+  box-shadow:0 14px 34px rgba(46,35,100,.08)!important;
+}
+
+.science-game-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:#655c87;
+  font-size:.76rem;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+
+.enhanced-science-game h3{
+  margin:18px 0 9px!important;
+  font-size:clamp(1.35rem,2vw,1.75rem)!important;
+  line-height:1.15!important;
+}
+
+.enhanced-science-game>p{
+  min-height:3.4em;
+  margin-bottom:18px!important;
+  font-size:.95rem!important;
+  line-height:1.55!important;
+}
+
+.science-game-level{
+  display:grid;
+  gap:4px;
+  margin:0 0 4px;
+  padding:13px 14px;
+  border-radius:13px;
+  background:#191d3a;
+  color:#fff;
+}
+
+.science-game-level strong{font-size:.82rem;letter-spacing:.04em;color:#d7ff8c}
+.science-game-level span{font-size:.86rem;line-height:1.4}
+.enhanced-science-game .progress-wrap{margin:12px 0 16px}
+.enhanced-science-game .progress-wrap label{font-size:.72rem;font-weight:700;color:#615a7e}
+
+.enhanced-path-options{
+  display:grid!important;
+  gap:9px!important;
+  margin:0!important;
+}
+
+.enhanced-path-options button{
+  min-height:50px;
+  padding:10px 13px!important;
+  border:1px solid #d8d3eb!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  color:#23243b!important;
+  font-weight:700;
+  text-align:left;
+}
+
+.enhanced-path-options button:hover:not(:disabled){border-color:#7562d1!important;background:#f4f1ff!important}
+.enhanced-path-options button.used{background:#e9f7c6!important;border-color:#a7cd59!important;color:#273314!important}
+.enhanced-path-options button span{display:grid!important;place-items:center;width:25px;height:25px;border-radius:50%;background:#e9e5fb!important;color:#5847b2!important;font-weight:800}
+.enhanced-path-options button.used span{background:#89ad45!important;color:#fff!important}
+
+.enhanced-neuro-options{
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+  margin-top:18px!important;
+}
+
+.enhanced-neuro-options button{
+  min-height:52px;
+  border-radius:12px!important;
+  font-weight:800;
+  font-size:.92rem!important;
+}
+
+.enhanced-science-game .science-game-feedback{
+  margin:16px 0 0!important;
+  padding:13px 14px;
+  border-radius:12px;
+  background:#ece9fa;
+}
+
+.science-next{width:100%;margin-top:14px!important;justify-content:center}
+.enhanced-science-game>.text-button{margin-top:auto!important;align-self:flex-start}
+
+@media(min-width:761px){
+  .takeaways{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}
+  .takeaways .info-card{
+    min-height:220px!important;
+    padding:58px 26px 26px!important;
+    border:1px solid #ddd9ed!important;
+    border-radius:18px!important;
+    background:linear-gradient(145deg,#fff 0%,#f7f6fc 100%)!important;
+    box-shadow:0 10px 28px rgba(23,27,55,.055)!important;
+  }
+  .takeaways .info-card:last-child{grid-column:1/-1;min-height:0!important}
+  .takeaways .info-card h3{font-size:1.25rem!important;margin-bottom:12px!important}
+  .takeaways .info-card p{font-size:.98rem!important;line-height:1.65!important}
+  .takeaways .takeaway-number{top:18px!important;left:22px!important;padding:5px 8px;border-radius:8px;background:#171b37;color:#d7ff8c!important;font-weight:800}
+  .closing-note{margin-top:24px!important;border:1px solid #d8d3eb;background:linear-gradient(110deg,#eeeaff,#f8f7fd)!important}
+}
+
+@media(max-width:760px){
+  .enhanced-science-game{min-height:0;padding:22px!important;border-radius:18px!important}
+  .enhanced-science-game>p{min-height:0}
+}
+

@@ -58,7 +58,10 @@ export default function App(){
     {label:ru?'ИЗУЧИ':'ÕPI',items:[
       ['aju',ru?'Как влияет алкоголь':'Alkoholi mõju'],
       ['infograafika',ru?'Коротко в схемах':'Lühidalt skeemides'],
+    ]},
+    {label:ru?'ПОНИМАЙ':'MÕISTA',items:[
       ['teadmised',ru?'Научная база':'Teadusbaas'],
+      ['moisted',ru?'Словарь терминов':'Mõistete sõnastik'],
     ]},
     {label:ru?'ПОПРОБУЙ':'PROOVI',items:[
       ['malu',ru?'Память':'Mälu'],
