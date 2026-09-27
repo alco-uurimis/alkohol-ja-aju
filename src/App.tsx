@@ -190,6 +190,16 @@ export default function App(){
         </div>
       </section>
 
+      <section className="site-guide science-topics" aria-labelledby="science-topics-title">
+        <div className="site-guide-heading"><p className="eyebrow">{ru?'ЧИТАЙ ИССЛЕДОВАНИЯ':'LOE UURINGUID'}</p><h2 id="science-topics-title">{ru?'Научные темы без стены текста':'Teadusteemad ilma tekstimüürideta'}</h2><p>{ru?'Каждая тема объясняет один вопрос, дизайн исследования, результат и границы вывода.':'Iga teema selgitab ühe küsimuse, uuringu ülesehituse, tulemuse ja järelduse piirid.'}</p></div>
+        <div className="guide-grid guide-grid-four">
+          <a href="acute-effects/" className="guide-card"><span>01</span><div className="guide-card-copy"><strong>{ru?'Острое воздействие':'Äge mõju'}</strong><p>{ru?'Рабочая память и метаанализ 32 исследований.':'Töömälu ja 32 uuringu metaanalüüs.'}</p></div><em>{ru?'Читать →':'Loe →'}</em></a>
+          <a href="memory-blackouts/" className="guide-card"><span>02</span><div className="guide-card-copy"><strong>{ru?'Память и провалы':'Mälu ja mälulüngad'}</strong><p>{ru?'Почему сознание и запись воспоминаний — не одно и то же.':'Miks teadvus ja mälestuste talletamine ei ole sama.'}</p></div><em>{ru?'Читать →':'Loe →'}</em></a>
+          <a href="adolescent-brain/" className="guide-card"><span>03</span><div className="guide-card-copy"><strong>{ru?'Подростковый мозг':'Nooruki aju'}</strong><p>{ru?'Что можно и нельзя заключить из больших выборок.':'Mida suurte valimite põhjal saab ja ei saa järeldada.'}</p></div><em>{ru?'Читать →':'Loe →'}</em></a>
+          <a href="self-control/" className="guide-card"><span>04</span><div className="guide-card-copy"><strong>{ru?'Самоконтроль':'Enesekontroll'}</strong><p>{ru?'Задачи на остановку реакции и метаанализ.':'Reaktsiooni pidurdamise ülesanded ja metaanalüüs.'}</p></div><em>{ru?'Читать →':'Loe →'}</em></a>
+        </div>
+      </section>
+
       <div className="phase-divider"><span>01</span><div><strong>{ru?'Изучи тему':'Õpi teemat'}</strong><small>{ru?'Сначала факты и объяснения':'Esmalt faktid ja selgitused'}</small></div></div>
       <Brain lang={lang}/>
       <Infographics lang={lang}/>
@@ -211,3 +221,4 @@ export default function App(){
     <button type="button" className={'back-to-top '+(showTop?'visible':'')} tabIndex={showTop?0:-1} aria-hidden={!showTop} aria-label={ru?'Наверх страницы':'Lehe algusesse'} onClick={goTop}><span aria-hidden="true">↑</span></button>
   </>;
 }
+

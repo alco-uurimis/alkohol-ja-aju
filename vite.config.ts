@@ -9,7 +9,12 @@ export default defineConfig({
       input: {
         main: 'index.html',
         science: 'science/index.html',
+        acuteEffects: 'acute-effects/index.html',
+        memoryBlackouts: 'memory-blackouts/index.html',
+        adolescentBrain: 'adolescent-brain/index.html',
+        selfControl: 'self-control/index.html',
       },
     },
   },
 });
+
