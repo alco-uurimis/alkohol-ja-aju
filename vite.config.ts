@@ -24,6 +24,7 @@ export default defineConfig({
         worksheet: 'worksheet/index.html',
         worksheetEt: 'worksheet/et/index.html',
         worksheetRu: 'worksheet/ru/index.html',
+        admin: 'admin/index.html',
         acuteEffects: 'acute-effects/index.html',
         memoryBlackouts: 'memory-blackouts/index.html',
         adolescentBrain: 'adolescent-brain/index.html',
