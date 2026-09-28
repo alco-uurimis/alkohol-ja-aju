@@ -9,6 +9,13 @@ export default defineConfig({
       input: {
         main: 'index.html',
         science: 'science/index.html',
+        scienceResults: 'science/results/index.html',
+        topics: 'topics/index.html',
+        methodology: 'methodology/index.html',
+        dataPolicy: 'data-policy/index.html',
+        factCheck: 'fact-check/index.html',
+        changelog: 'changelog/index.html',
+        worksheet: 'worksheet/index.html',
         acuteEffects: 'acute-effects/index.html',
         memoryBlackouts: 'memory-blackouts/index.html',
         adolescentBrain: 'adolescent-brain/index.html',
@@ -21,4 +28,3 @@ export default defineConfig({
     },
   },
 });
-

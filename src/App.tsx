@@ -18,7 +18,6 @@ import { questionsRu } from './data/content.ru';
 
 type Lang='et'|'ru';
 type NavItem=[string,string];
-
 const trackedIds=['valik','aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin','samoprov','obsuzhdenie','tegevus','klassiruum','tagasiside'];
 const progressKey='alkohol-ja-aju:visited-sections';
 const savedProgressKey='alkohol-ja-aju:saved-visited-sections';
@@ -26,37 +25,10 @@ const savedProgressEnabledKey='alkohol-ja-aju:save-progress-on-device';
 const languageKey='alkohol-ja-aju:language';
 const quizScoreKey='alkohol-ja-aju:quiz-score';
 
-function readVisited(){
-  if(typeof window==='undefined')return new Set<string>();
-  try{
-    const saved=window.localStorage.getItem(savedProgressEnabledKey)==='1';
-    const raw=(saved?window.localStorage.getItem(savedProgressKey):null)??window.sessionStorage.getItem(progressKey)??'[]';
-    return new Set<string>(JSON.parse(raw));
-  }catch{return new Set<string>();}
-}
-
-function readsSavedProgress(){
-  if(typeof window==='undefined')return false;
-  try{return window.localStorage.getItem(savedProgressEnabledKey)==='1';}catch{return false;}
-}
-
-function readLanguage():Lang{
-  if(typeof window==='undefined')return 'et';
-  try{
-    const saved=window.localStorage.getItem(languageKey);
-    return saved==='ru'?'ru':'et';
-  }catch{return 'et';}
-}
-
-function readQuizScore(){
-  if(typeof window==='undefined')return null;
-  try{
-    const raw=window.sessionStorage.getItem(quizScoreKey);
-    if(raw===null)return null;
-    const value=Number(raw);
-    return Number.isInteger(value)&&value>=0&&value<=10?value:null;
-  }catch{return null;}
-}
+function readVisited(){if(typeof window==='undefined')return new Set<string>();try{const saved=window.localStorage.getItem(savedProgressEnabledKey)==='1';const raw=(saved?window.localStorage.getItem(savedProgressKey):null)??window.sessionStorage.getItem(progressKey)??'[]';return new Set<string>(JSON.parse(raw));}catch{return new Set<string>();}}
+function readsSavedProgress(){if(typeof window==='undefined')return false;try{return window.localStorage.getItem(savedProgressEnabledKey)==='1';}catch{return false;}}
+function readLanguage():Lang{if(typeof window==='undefined')return'et';try{return window.localStorage.getItem(languageKey)==='ru'?'ru':'et';}catch{return'et';}}
+function readQuizScore(){if(typeof window==='undefined')return null;try{const raw=window.sessionStorage.getItem(quizScoreKey);if(raw===null)return null;const value=Number(raw);return Number.isInteger(value)&&value>=0&&value<=10?value:null;}catch{return null;}}
 
 export default function App(){
   const [menu,setMenu]=useState(false);
@@ -65,225 +37,57 @@ export default function App(){
   const [visited,setVisited]=useState<Set<string>>(readVisited);
   const [quizScore,setQuizScore]=useState<number|null>(readQuizScore);
   const [progressSaved,setProgressSaved]=useState(readsSavedProgress);
-  const [showTop,setShowTop]=useState(false);
   const menuButton=useRef<HTMLButtonElement>(null);
   const ru=lang==='ru';
-
   const navGroups:{label:string;items:NavItem[]}[]=[
-    {label:ru?'НАЧНИ':'ALUSTA',items:[
-      ['valik',ru?'Выбрать маршрут':'Vali teekond'],
-      ['tegevus',ru?'Что делать в ситуации':'Mida teha olukorras'],
-      ['klassiruum',ru?'Материал для урока':'Materjal tunniks'],
-    ]},
-    {label:ru?'ИЗУЧИ':'ÕPI',items:[
-      ['aju',ru?'Как влияет алкоголь':'Alkoholi mõju'],
-      ['infograafika',ru?'Коротко в схемах':'Lühidalt skeemides'],
-    ]},
-    {label:ru?'ПОНИМАЙ':'MÕISTA',items:[
-      ['teadmised',ru?'Научная база':'Teadusbaas'],
-      ['moisted',ru?'Словарь терминов':'Mõistete sõnastik'],
-    ]},
-    {label:ru?'ПОПРОБУЙ':'PROOVI',items:[
-      ['malu',ru?'Память':'Mälu'],
-      ['tahelepanu',ru?'Внимание':'Tähelepanu'],
-      ['labor',ru?'Мини-игры':'Minimängud'],
-    ]},
-    {label:ru?'ПРОВЕРЬ':'KONTROLLI',items:[
-      ['viktoriin',ru?'Проверка знаний':'Teadmiste kontroll'],
-      ['samoprov',ru?'Самопроверка':'Enesekontroll'],
-    ]},
-    {label:ru?'ОБСУДИ':'ARUTLE',items:[
-      ['obsuzhdenie',ru?'Вопросы для обсуждения':'Aruteluküsimused'],
-    ]},
-    {label:ru?'ЗАВЕРШИ':'LÕPETA',items:[
-      ['tagasiside',ru?'Опрос':'Küsitlus'],
-      ['isiklik-kokkuvote',ru?'Твой итог':'Sinu kokkuvõte'],
-      ['allikad',ru?'Источники':'Allikad'],
-    ]},
+    {label:ru?'НАЧАТЬ':'ALUSTA',items:[['valik',ru?'Выбрать формат':'Vali vorm'],['tegevus',ru?'Что делать в ситуации':'Mida teha olukorras'],['klassiruum',ru?'Для урока':'Tunniks']]},
+    {label:ru?'ИЗУЧИТЬ':'ÕPI',items:[['aju',ru?'Влияние на мозг':'Mõju ajule'],['infograafika',ru?'Схемы':'Skeemid'],['teadmised',ru?'Научная база':'Teadusbaas']]},
+    {label:ru?'ПОПРОБОВАТЬ':'PROOVI',items:[['malu',ru?'Память':'Mälu'],['tahelepanu',ru?'Внимание':'Tähelepanu'],['labor',ru?'Мини-игры':'Minimängud']]},
+    {label:ru?'ПРОВЕРИТЬ':'KONTROLLI',items:[['viktoriin',ru?'Миф или факт':'Müüt või fakt'],['samoprov',ru?'Самопроверка':'Enesekontroll']]},
+    {label:ru?'ЗАВЕРШИТЬ':'LÕPETA',items:[['obsuzhdenie',ru?'Обсуждение':'Arutelu'],['tagasiside',ru?'Опрос':'Küsitlus'],['isiklik-kokkuvote',ru?'Итог':'Kokkuvõte'],['allikad',ru?'Источники':'Allikad']]}
   ];
-  const links=navGroups.flatMap(group=>group.items);
-  const currentPhase=navGroups.find(group=>group.items.some(([id])=>id===active))?.label ?? (ru?'НАЧАЛО':'ALGUS');
+  const links=navGroups.flatMap(g=>g.items);
+  const currentPhase=navGroups.find(g=>g.items.some(([id])=>id===active))?.label??(ru?'НАЧАЛО':'ALGUS');
 
-  useEffect(()=>{
-    document.documentElement.lang=lang;
-    try{window.localStorage.setItem(languageKey,lang);}catch{/* storage can be unavailable */}
-    document.title=ru?'Алкоголь и мозг — память, внимание и реакция':'Alkohol ja aju — mälu, tähelepanu ja reaktsioon';
-    const description=ru?'Учебный сайт о влиянии алкоголя на мозг: научная база, упражнения, мини-игры, проверка знаний и источники.':'Õppematerjal alkoholi mõjust ajule: teadusbaas, harjutused, minimängud, teadmiste kontroll ja allikad.';
-    document.querySelector('meta[name="description"]')?.setAttribute('content',description);
-  },[lang,ru]);
-
-  useEffect(()=>{
-    const observer=new IntersectionObserver(entries=>{
-      for(const entry of entries)if(entry.isIntersecting)setActive(entry.target.id);
-    },{rootMargin:'-18% 0px -68% 0px'});
-    links.forEach(([id])=>{const el=document.getElementById(id);if(el)observer.observe(el);});
-    return()=>observer.disconnect();
-  },[lang]);
-
-  useEffect(()=>{
-    const observer=new IntersectionObserver(entries=>{
-      for(const entry of entries){
-        if(!entry.isIntersecting)continue;
-        const id=entry.target.id;
-        setVisited(current=>{
-          if(current.has(id))return current;
-          const next=new Set(current);next.add(id);
-          try{
-            const value=JSON.stringify([...next]);
-            window.sessionStorage.setItem(progressKey,value);
-            if(readsSavedProgress())window.localStorage.setItem(savedProgressKey,value);
-          }catch{/* storage can be unavailable */}
-          return next;
-        });
-      }
-    },{threshold:.28});
-    trackedIds.forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el);});
-    return()=>observer.disconnect();
-  },[]);
-
-  useEffect(()=>{
-    if(!menu)return;
-    const previousOverflow=document.body.style.overflow;
-    document.body.style.overflow='hidden';
-    const onKey=(event:KeyboardEvent)=>{
-      if(event.key==='Escape'){
-        setMenu(false);
-        window.requestAnimationFrame(()=>menuButton.current?.focus());
-      }
-    };
-    const onResize=()=>{if(window.innerWidth>1100)setMenu(false);};
-    window.addEventListener('keydown',onKey);
-    window.addEventListener('resize',onResize,{passive:true});
-    return()=>{
-      document.body.style.overflow=previousOverflow;
-      window.removeEventListener('keydown',onKey);
-      window.removeEventListener('resize',onResize);
-    };
-  },[menu]);
-
-  useEffect(()=>{
-    const sync=()=>setShowTop(window.scrollY>900);
-    sync();
-    window.addEventListener('scroll',sync,{passive:true});
-    return()=>window.removeEventListener('scroll',sync);
-  },[]);
-
+  useEffect(()=>{document.documentElement.lang=lang;try{window.localStorage.setItem(languageKey,lang);}catch{}document.title=ru?'Алкоголь и мозг — научный учебный сайт':'Alkohol ja aju — teaduspõhine õppeveeb';const d=ru?'Учебный сайт о влиянии алкоголя на мозг: научные источники, упражнения, мини-игры и исследовательский опрос.':'Teaduspõhine õppematerjal alkoholi mõjust ajule: allikad, harjutused, minimängud ja uurimisküsitlus.';document.querySelector('meta[name="description"]')?.setAttribute('content',d);},[lang,ru]);
+  useEffect(()=>{const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting)setActive(entry.target.id);},{rootMargin:'-18% 0px -68% 0px'});links.forEach(([id])=>{const el=document.getElementById(id);if(el)observer.observe(el);});return()=>observer.disconnect();},[lang]);
+  useEffect(()=>{const observer=new IntersectionObserver(entries=>{for(const entry of entries){if(!entry.isIntersecting)continue;const id=entry.target.id;setVisited(current=>{if(current.has(id))return current;const next=new Set(current);next.add(id);try{const value=JSON.stringify([...next]);window.sessionStorage.setItem(progressKey,value);if(readsSavedProgress())window.localStorage.setItem(savedProgressKey,value);}catch{}return next;});}},{threshold:.28});trackedIds.forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el);});return()=>observer.disconnect();},[]);
+  useEffect(()=>{if(!menu)return;const previous=document.body.style.overflow;document.body.style.overflow='hidden';const onKey=(e:KeyboardEvent)=>{if(e.key==='Escape'){setMenu(false);requestAnimationFrame(()=>menuButton.current?.focus());}};const onResize=()=>{if(innerWidth>1100)setMenu(false);};addEventListener('keydown',onKey);addEventListener('resize',onResize,{passive:true});return()=>{document.body.style.overflow=previous;removeEventListener('keydown',onKey);removeEventListener('resize',onResize);};},[menu]);
   const switchLanguage=(next:Lang)=>{setLang(next);setMenu(false);};
-  const goTop=()=>window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
-  const handleQuizComplete=(score:number)=>{
-    setQuizScore(score);
-    try{window.sessionStorage.setItem(quizScoreKey,String(score));}catch{/* storage can be unavailable */}
-  };
-  const saveProgress=()=>{
-    try{
-      window.localStorage.setItem(savedProgressEnabledKey,'1');
-      window.localStorage.setItem(savedProgressKey,JSON.stringify([...visited]));
-      setProgressSaved(true);
-    }catch{/* storage can be unavailable */}
-  };
-  const clearSavedProgress=()=>{
-    try{window.localStorage.removeItem(savedProgressEnabledKey);window.localStorage.removeItem(savedProgressKey);window.sessionStorage.removeItem(progressKey);}catch{/* storage can be unavailable */}
-    setVisited(new Set());setProgressSaved(false);
-  };
+  const handleQuizComplete=(score:number)=>{setQuizScore(score);try{sessionStorage.setItem(quizScoreKey,String(score));}catch{}};
+  const saveProgress=()=>{try{localStorage.setItem(savedProgressEnabledKey,'1');localStorage.setItem(savedProgressKey,JSON.stringify([...visited]));setProgressSaved(true);}catch{}};
+  const clearSavedProgress=()=>{try{localStorage.removeItem(savedProgressEnabledKey);localStorage.removeItem(savedProgressKey);sessionStorage.removeItem(progressKey);}catch{}setVisited(new Set());setProgressSaved(false);};
 
   return <>
     <a className="skip" href="#sisu">{ru?'Перейти к содержанию':'Liigu põhisisu juurde'}</a>
     <header className="header">
       <a className="brand" href="#avaleht" onClick={()=>setMenu(false)}><img className="brand-mark" src="logo-mark.svg" alt=""/><span>{ru?'алкоголь и мозг':'alkohol ja aju'}</span></a>
       <div className="header-context" aria-hidden="true"><span>{currentPhase}</span></div>
-      <div className="header-actions">
-        <div className="language-switch" role="group" aria-label={ru?'Язык':'Keel'}>
-          <button type="button" className={lang==='et'?'active':''} aria-pressed={lang==='et'} onClick={()=>switchLanguage('et')}>ET</button>
-          <button type="button" className={lang==='ru'?'active':''} aria-pressed={lang==='ru'} onClick={()=>switchLanguage('ru')}>RU</button>
-        </div>
-        <button type="button" ref={menuButton} className="menu-toggle" aria-expanded={menu} aria-controls="navigation" aria-label={menu?(ru?'Закрыть меню':'Sulge menüü'):(ru?'Открыть меню':'Ava menüü')} onClick={()=>setMenu(v=>!v)}>{menu?(ru?'Закрыть':'Sulge'):(ru?'Меню':'Menüü')}</button>
-      </div>
-      <nav id="navigation" aria-label={ru?'Главное меню':'Peamenüü'} className={menu?'open':''}>
-        <div className="nav-groups">
-          {navGroups.slice(0,1).map(group=><div className="nav-group" key={group.label}><span className="nav-group-label">{group.label}</span>{group.items.map(([id,name])=><a key={id} aria-current={active===id?'location':undefined} href={'#'+id} onClick={()=>setMenu(false)}>{name}</a>)}</div>)}
-          <div className="nav-group"><span className="nav-group-label">{ru?'НАУЧНЫЕ ТЕМЫ':'TEADUSTEEMAD'}</span>
-            <a href="acute-effects/" onClick={()=>setMenu(false)}>{ru?'Острое воздействие':'Äge mõju'}</a>
-            <a href="memory-blackouts/" onClick={()=>setMenu(false)}>{ru?'Память и провалы':'Mälu ja mälulüngad'}</a>
-            <a href="adolescent-brain/" onClick={()=>setMenu(false)}>{ru?'Подростковый мозг':'Nooruki aju'}</a>
-            <a href="self-control/" onClick={()=>setMenu(false)}>{ru?'Самоконтроль':'Enesekontroll'}</a>
-            <a href="alcohol-and-sleep/" onClick={()=>setMenu(false)}>{ru?'Алкоголь и сон':'Alkohol ja uni'}</a>
-            <a href="alcohol-and-driving/" onClick={()=>setMenu(false)}>{ru?'Алкоголь и вождение':'Alkohol ja autojuhtimine'}</a>
-            <a href="reward-and-habits/" onClick={()=>setMenu(false)}>{ru?'Вознаграждение и привычки':'Tasu ja harjumused'}</a>
-            <a href="recovery-and-brain/" onClick={()=>setMenu(false)}>{ru?'Восстановление':'Taastumine'}</a>
-          </div>
-          {navGroups.slice(1).map(group=><div className="nav-group" key={group.label}><span className="nav-group-label">{group.label}</span>{group.items.map(([id,name])=><a key={id} aria-current={active===id?'location':undefined} href={'#'+id} onClick={()=>setMenu(false)}>{name}</a>)}</div>)}
-        </div>
-      </nav>
-      <div className="header-progress" aria-label={ru?`Изучено этапов: ${visited.size} из ${trackedIds.length}`:`Läbitud etappe: ${visited.size} / ${trackedIds.length}`}>
-        <span className="header-progress-label">{currentPhase} · {visited.size}/{trackedIds.length}</span>
-        <div className="header-progress-track" aria-hidden="true"/>
-      </div>
+      <div className="header-actions"><div className="language-switch" role="group" aria-label={ru?'Язык':'Keel'}><button type="button" className={lang==='et'?'active':''} aria-pressed={lang==='et'} onClick={()=>switchLanguage('et')}>ET</button><button type="button" className={lang==='ru'?'active':''} aria-pressed={lang==='ru'} onClick={()=>switchLanguage('ru')}>RU</button></div><button ref={menuButton} type="button" className="menu-toggle" aria-expanded={menu} aria-controls="navigation" onClick={()=>setMenu(v=>!v)}>{menu?(ru?'Закрыть':'Sulge'):(ru?'Меню':'Menüü')}</button></div>
+      <nav id="navigation" className={menu?'open':''} aria-label={ru?'Главное меню':'Peamenüü'}><div className="nav-groups">
+        {navGroups.map(group=><div className="nav-group" key={group.label}><span className="nav-group-label">{group.label}</span>{group.items.map(([id,name])=><a key={id} href={'#'+id} aria-current={active===id?'location':undefined} onClick={()=>setMenu(false)}>{name}</a>)}</div>)}
+        <div className="nav-group nav-project"><span className="nav-group-label">{ru?'ПРОЕКТ':'PROJEKT'}</span><a href="topics/">{ru?'Научные темы':'Teadusteemad'}</a><a href="science/">{ru?'Помоги науке':'Aita teadust'}</a><a href="methodology/">{ru?'Методология':'Metoodika'}</a><a href="fact-check/">{ru?'Как проверялись факты':'Kuidas fakte kontrolliti'}</a><a href="data-policy/">{ru?'Данные и приватность':'Andmed ja privaatsus'}</a></div>
+      </div></nav>
+      <div className="header-progress" aria-label={ru?`Изучено: ${visited.size} из ${trackedIds.length}`:`Läbitud: ${visited.size}/${trackedIds.length}`}><span className="header-progress-label">{currentPhase} · {visited.size}/{trackedIds.length}</span><div className="header-progress-track" aria-hidden="true"/></div>
     </header>
 
     <main id="sisu" tabIndex={-1}>
-      <section id="avaleht" className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow">{ru?'УЧЕБНЫЙ МАРШРУТ: ОТ ФАКТОВ К ПРАКТИКЕ':'ÕPPERADA: FAKTIDEST PRAKTIKANI'}</p>
-          <h1>{ru?'Алкоголь':'Alkohol'}<br/>{ru?'и ':'ja '}<span>{ru?'мозг.':'aju.'}</span></h1>
-          <h2>{ru?'Пойми влияние, попробуй задания и проверь знания.':'Mõista mõju, proovi ülesandeid ja kontrolli teadmisi.'}</h2>
-          <p>{ru?'Сайт устроен как последовательный маршрут из четырёх этапов. Можно идти по порядку или открыть нужный раздел через меню.':'Leht on üles ehitatud nelja järjestikuse etapina. Võid liikuda järjekorras või avada vajaliku osa menüüst.'}</p>
-          <div className="actions"><a className="button primary" href="#teejuht">{ru?'Показать маршрут':'Vaata teekonda'}</a><a className="text-link" href="#aju">{ru?'Сразу начать':'Alusta kohe'}</a></div>
-          <div className="hero-facts" aria-label={ru?'Структура сайта':'Lehe struktuur'}><span><b>01</b>{ru?'Изучи':'Õpi'}</span><span><b>02</b>{ru?'Попробуй':'Proovi'}</span><span><b>03</b>{ru?'Проверь':'Kontrolli'}</span><span><b>04</b>{ru?'Заверши':'Lõpeta'}</span></div>
-          <p className="hero-note">{ru?'Учебный материал · упражнения не являются медицинской оценкой':'Õppematerjal · harjutused ei ole tervisehinnang'}</p>
-        </div>
-        <div className="hero-visual"><div className="visual-top"><span>{ru?'ЧЕТЫРЕ ФУНКЦИИ':'NELI FUNKTSIOONI'}</span><span>{ru?'МОЗГ':'AJU'}</span></div><div className="signal brain-photo-hero" aria-label={ru?'Фотография человеческого мозга с подписями функций':'Inimaju foto koos funktsioonide siltidega'}><span className="signal-label label-one">{ru?'Память':'Mälu'}</span><span className="signal-label label-two">{ru?'Внимание':'Tähelepanu'}</span><span className="signal-label label-three">{ru?'Реакция':'Reaktsioon'}</span><span className="signal-label label-four">{ru?'Решения':'Otsustamine'}</span></div><p>{ru?'Эти функции работают вместе. Дальше сайт показывает, как алкоголь может быть с ними связан.':'Need funktsioonid töötavad koos. Edasi näitab leht, kuidas alkohol võib nendega seotud olla.'}</p><div className="visual-bottom"><span>{ru?'Начать с влияния алкоголя':'Alusta alkoholi mõjust'}</span><a href="#aju" aria-label={ru?'Перейти к разделу о влиянии алкоголя':'Liigu alkoholi mõju osa juurde'}>{ru?'К разделу':'Ava osa'}</a></div></div>
-      </section>
+      <section id="avaleht" className="hero hero-simple"><div className="hero-copy"><p className="eyebrow">{ru?'НАУЧНЫЙ УЧЕБНЫЙ САЙТ':'TEADUSPÕHINE ÕPPEVEEB'}</p><h1>{ru?'Алкоголь':'Alkohol'}<br/>{ru?'и ':'ja '}<span>{ru?'мозг.':'aju.'}</span></h1><h2>{ru?'Пойми, что показывают исследования — и чего они не доказывают.':'Mõista, mida uuringud näitavad ja mida need ei tõesta.'}</h2><p>{ru?'Короткие объяснения, научные источники, упражнения и отдельный исследовательский опрос. Выбери формат и двигайся в своём темпе.':'Lühikesed selgitused, teadusallikad, harjutused ja eraldi uurimisküsitlus. Vali vorm ja liigu omas tempos.'}</p><div className="actions"><a className="button primary" href="#valik">{ru?'Начать':'Alusta'}</a><a className="text-link" href="science/">{ru?'Помоги науке':'Aita teadust'}</a></div><p className="hero-note">{ru?'Учебный материал · не медицинская оценка':'Õppematerjal · mitte meditsiiniline hinnang'}</p></div><div className="hero-visual"><div className="visual-top"><span>{ru?'КЛЮЧЕВЫЕ ФУНКЦИИ':'PÕHIFUNKTSIOONID'}</span><span>{ru?'МОЗГ':'AJU'}</span></div><div className="signal brain-photo-hero" aria-label={ru?'Схема областей мозга':'Ajupiirkondade skeem'}/><p>{ru?'Память, внимание, реакция и принятие решений работают как сети. Ни одна функция не находится в одной точке мозга.':'Mälu, tähelepanu, reaktsioon ja otsustamine toimivad võrgustikena. Ükski funktsioon ei asu ainult ühes ajupunktis.'}</p></div></section>
 
-      <PathChooser lang={lang}/>
+      <PathChooser lang={lang} visitedIds={[...visited]}/>
 
-      <section id="teejuht" className="site-guide" aria-labelledby="guide-title">
-        <div className="site-guide-heading"><p className="eyebrow">{ru?'КАК УСТРОЕН САЙТ':'KUIDAS LEHT TÖÖTAB'}</p><h2 id="guide-title">{ru?'Четыре понятных этапа':'Neli selget etappi'}</h2><p>{ru?'Каждый этап имеет одну задачу. Для полного прохождения двигайся слева направо; для быстрого доступа нажми на нужную карточку.':'Igal etapil on üks eesmärk. Täielikuks läbimiseks liigu vasakult paremale; kiireks ligipääsuks vali sobiv kaart.'}</p></div>
-        <div className="guide-grid guide-grid-four">
-          <a href="#aju" className="guide-card"><span>01</span><div className="guide-card-copy"><strong>{ru?'Изучи':'Õpi'}</strong><p>{ru?'Влияние алкоголя, две инфографики и научная база.':'Alkoholi mõju, kaks infograafikut ja teadusbaas.'}</p><small>{ru?'Разделы 01–03':'Osad 01–03'}</small></div><em>{ru?'Начать':'Alusta'}</em></a>
-          <a href="#malu" className="guide-card"><span>02</span><div className="guide-card-copy"><strong>{ru?'Попробуй':'Proovi'}</strong><p>{ru?'Упражнения на память и внимание плюс три мини-игры.':'Mälu- ja tähelepanuharjutused ning kolm minimängu.'}</p><small>{ru?'Разделы 04–06':'Osad 04–06'}</small></div><em>{ru?'К практике':'Praktikasse'}</em></a>
-          <a href="#viktoriin" className="guide-card"><span>03</span><div className="guide-card-copy"><strong>{ru?'Проверь':'Kontrolli'}</strong><p>{ru?'Десять утверждений «миф или факт» с объяснениями.':'Kümme „müüt või fakt“ väidet koos selgitustega.'}</p><small>{ru?'Раздел 07':'Osa 07'}</small></div><em>{ru?'Проверить':'Kontrolli'}</em></a>
-          <a href="#meelespea" className="guide-card"><span>04</span><div className="guide-card-copy"><strong>{ru?'Заверши':'Lõpeta'}</strong><p>{ru?'Ключевые выводы, опрос, итог прохождения и источники.':'Põhijäreldused, küsitlus, kokkuvõte ja allikad.'}</p><small>{ru?'Разделы 08–12':'Osad 08–12'}</small></div><em>{ru?'К финалу':'Lõppu'}</em></a>
-        </div>
-      </section>
+      <section className="site-guide science-topics featured-topics" aria-labelledby="science-topics-title"><div className="site-guide-heading"><p className="eyebrow">{ru?'НАУЧНЫЕ ТЕМЫ':'TEADUSTEEMAD'}</p><h2 id="science-topics-title">{ru?'Начни с четырёх вопросов':'Alusta neljast küsimusest'}</h2><p>{ru?'На отдельных страницах: что изучали, сколько было участников, что нашли и где заканчивается вывод.':'Eraldi lehtedel: mida uuriti, kui suur oli valim, mida leiti ja kus järeldus lõpeb.'}</p></div><div className="guide-grid guide-grid-four">
+        <a href="acute-effects/" className="guide-card"><span>01</span><div className="guide-card-copy"><strong>{ru?'Рабочая память':'Töömälu'}</strong><p>{ru?'Метаанализ контролируемых исследований.':'Kontrollitud uuringute metaanalüüs.'}</p></div></a>
+        <a href="adolescent-brain/" className="guide-card"><span>02</span><div className="guide-card-copy"><strong>{ru?'Подростковый мозг':'Nooruki aju'}</strong><p>{ru?'Большие выборки и ограничения причинных выводов.':'Suured valimid ja põhjuslike järelduste piirid.'}</p></div></a>
+        <a href="alcohol-and-sleep/" className="guide-card"><span>03</span><div className="guide-card-copy"><strong>{ru?'Сон':'Uni'}</strong><p>{ru?'Почему быстро уснуть не значит лучше спать.':'Miks kiire uinumine ei tähenda paremat und.'}</p></div></a>
+        <a href="alcohol-and-driving/" className="guide-card"><span>04</span><div className="guide-card-copy"><strong>{ru?'Вождение':'Autojuhtimine'}</strong><p>{ru?'Почему субъективное самочувствие не измеряет безопасность.':'Miks enesetunne ei mõõda ohutust.'}</p></div></a>
+      </div><a className="all-topics-link" href="topics/">{ru?'Открыть все 8 научных тем':'Ava kõik 8 teadusteemat'}</a></section>
 
-      <section className="site-guide science-topics" aria-labelledby="science-topics-title">
-        <div className="site-guide-heading"><p className="eyebrow">{ru?'ЧИТАЙ ИССЛЕДОВАНИЯ':'LOE UURINGUID'}</p><h2 id="science-topics-title">{ru?'Научные темы без стены текста':'Teadusteemad ilma tekstimüürideta'}</h2><p>{ru?'Каждая тема объясняет один вопрос, дизайн исследования, результат и границы вывода.':'Iga teema selgitab ühe küsimuse, uuringu ülesehituse, tulemuse ja järelduse piirid.'}</p></div>
-        <div className="guide-grid guide-grid-four">
-          <a href="acute-effects/" className="guide-card"><span>01</span><div className="guide-card-copy"><strong>{ru?'Острое воздействие':'Äge mõju'}</strong><p>{ru?'Рабочая память и метаанализ 32 исследований.':'Töömälu ja 32 uuringu metaanalüüs.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
-          <a href="memory-blackouts/" className="guide-card"><span>02</span><div className="guide-card-copy"><strong>{ru?'Память и провалы':'Mälu ja mälulüngad'}</strong><p>{ru?'Почему сознание и запись воспоминаний — не одно и то же.':'Miks teadvus ja mälestuste talletamine ei ole sama.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
-          <a href="adolescent-brain/" className="guide-card"><span>03</span><div className="guide-card-copy"><strong>{ru?'Подростковый мозг':'Nooruki aju'}</strong><p>{ru?'Что можно и нельзя заключить из больших выборок.':'Mida suurte valimite põhjal saab ja ei saa järeldada.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
-          <a href="self-control/" className="guide-card"><span>04</span><div className="guide-card-copy"><strong>{ru?'Самоконтроль':'Enesekontroll'}</strong><p>{ru?'Задачи на остановку реакции и метаанализ.':'Reaktsiooni pidurdamise ülesanded ja metaanalüüs.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
-          <a href="alcohol-and-sleep/" className="guide-card"><span>05</span><div className="guide-card-copy"><strong>{ru?'Алкоголь и сон':'Alkohol ja uni'}</strong><p>{ru?'Дыхание во сне и метаанализ 14 исследований.':'Uneaegne hingamine ja 14 uuringu metaanalüüs.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
-          <a href="alcohol-and-driving/" className="guide-card"><span>06</span><div className="guide-card-copy"><strong>{ru?'Алкоголь и вождение':'Alkohol ja autojuhtimine'}</strong><p>{ru?'Почему самочувствие не измеряет безопасность за рулём.':'Miks enesetunne ei mõõda roolis ohutust.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
-          <a href="reward-and-habits/" className="guide-card"><span>07</span><div className="guide-card-copy"><strong>{ru?'Вознаграждение и привычки':'Tasu ja harjumused'}</strong><p>{ru?'Как среда и повторение участвуют в обучении.':'Kuidas keskkond ja kordamine õppimises osalevad.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
-          <a href="recovery-and-brain/" className="guide-card"><span>08</span><div className="guide-card-copy"><strong>{ru?'Восстановление':'Taastumine'}</strong><p>{ru?'Что долгосрочные исследования говорят о восстановлении.':'Mida pikisuunalised uuringud taastumisest räägivad.'}</p></div><em>{ru?'Читать':'Loe'}</em></a>
-        </div>
-      </section>
-
-      <div className="phase-divider"><span>01</span><div><strong>{ru?'Изучи тему':'Õpi teemat'}</strong><small>{ru?'Сначала факты и объяснения':'Esmalt faktid ja selgitused'}</small></div></div>
-      <Brain lang={lang}/>
-      <Infographics lang={lang}/>
-      <LearningCenter lang={lang}/>
-
-      <div className="phase-divider"><span>02</span><div><strong>{ru?'Попробуй на практике':'Proovi praktikas'}</strong><small>{ru?'Учебные упражнения и игры':'Õppeharjutused ja mängud'}</small></div></div>
-      <Memory lang={lang}/>
-      <Attention lang={lang}/>
-      <Lab lang={lang}/>
-
-      <div className="phase-divider"><span>03</span><div><strong>{ru?'Проверь знания':'Kontrolli teadmisi'}</strong><small>{ru?'Миф или факт — 10 вопросов':'Müüt või fakt — 10 küsimust'}</small></div></div>
-      <Section id="viktoriin" number={ru?'ПРОВЕРЬ ЗНАНИЯ':'KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Для каждого утверждения выбери «миф» или «факт». После ответа сразу появится короткое объяснение.':'Vali iga väite puhul „müüt“ või „fakt“. Pärast vastust näed kohe lühikest selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section>
-
-      <Reflection lang={lang}/>
-      <ActionHub lang={lang}/>
-      <ClassroomKit lang={lang}/>
-
-      <div className="phase-divider"><span>04</span><div><strong>{ru?'Заверши маршрут':'Lõpeta teekond'}</strong><small>{ru?'Выводы, обратная связь и итог':'Järeldused, tagasiside ja kokkuvõte'}</small></div></div>
-      <Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length} progressSaved={progressSaved} onSaveProgress={saveProgress} onClearSavedProgress={clearSavedProgress}/>}/>
+      <div className="phase-divider"><span>01</span><div><strong>{ru?'Изучи':'Õpi'}</strong><small>{ru?'Факты, механизмы и ограничения':'Faktid, mehhanismid ja piirangud'}</small></div></div><Brain lang={lang}/><Infographics lang={lang}/><LearningCenter lang={lang}/>
+      <div className="phase-divider"><span>02</span><div><strong>{ru?'Попробуй':'Proovi'}</strong><small>{ru?'Учебные упражнения, не медицинские тесты':'Õppeharjutused, mitte meditsiinilised testid'}</small></div></div><Memory lang={lang}/><Attention lang={lang}/><Lab lang={lang}/>
+      <div className="phase-divider"><span>03</span><div><strong>{ru?'Проверь':'Kontrolli'}</strong><small>{ru?'Знание и уверенность в ответе':'Teadmised ja vastuse kindlus'}</small></div></div><Section id="viktoriin" number={ru?'ПРОВЕРЬ ЗНАНИЯ':'KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Выбери «миф» или «факт», оцени уверенность и прочитай объяснение со ссылкой на источник.':'Vali „müüt“ või „fakt“, hinda oma kindlust ja loe selgitust koos allikaga.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section><Reflection lang={lang}/><ActionHub lang={lang}/><ClassroomKit lang={lang}/>
+      <div className="phase-divider"><span>04</span><div><strong>{ru?'Заверши':'Lõpeta'}</strong><small>{ru?'Выводы, обратная связь и источники':'Järeldused, tagasiside ja allikad'}</small></div></div><Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length} progressSaved={progressSaved} onSaveProgress={saveProgress} onClearSavedProgress={clearSavedProgress}/>}/>
     </main>
-
-    <footer>{ru?'Алкоголь и мозг':'Alkohol ja aju'}<span>{ru?'Практическая работа гимназии':'Gümnaasiumi praktiline töö'}</span></footer>
-    <button type="button" className={'back-to-top '+(showTop?'visible':'')} tabIndex={showTop?0:-1} aria-hidden={!showTop} aria-label={ru?'Наверх страницы':'Lehe algusesse'} onClick={goTop}>{ru?'Наверх':'Üles'}</button>
+    <footer className="site-footer"><div><strong>{ru?'Алкоголь и мозг':'Alkohol ja aju'}</strong><span>v2.0 · 2026</span></div><nav aria-label={ru?'Информация о проекте':'Projekti info'}><a href="methodology/">{ru?'Методология':'Metoodika'}</a><a href="fact-check/">{ru?'Проверка фактов':'Faktikontroll'}</a><a href="data-policy/">{ru?'Данные':'Andmed'}</a><a href="changelog/">Changelog</a></nav></footer>
   </>;
 }
-
-
