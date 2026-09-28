@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import ProjectPagesApp from './ProjectPagesApp';
+import ProjectPagesAppV2 from './ProjectPagesAppV2';
 import './project-pages.css';
 import './mobile-simple.css';
-ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><ProjectPagesApp/></React.StrictMode>);
+import './quality-pass.css';
+ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><ProjectPagesAppV2/></React.StrictMode>);
