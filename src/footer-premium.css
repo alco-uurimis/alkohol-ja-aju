@@ -139,3 +139,32 @@
 @media(prefers-reduced-motion:reduce){
   .site-footer nav a,.site-footer nav a::after{transition:none!important}
 }
+
+/* Compact footer layout: the previous decorative grid took too much vertical space. */
+.site-footer{
+  display:grid!important;
+  grid-template-columns:minmax(220px,1.1fr) minmax(310px,1fr) minmax(180px,.65fr);
+  gap:30px!important;
+  align-items:start!important;
+  padding:38px max(22px,6vw)!important;
+  border-top:5px solid #c9f574!important;
+  background:#171b37!important;
+}
+.site-footer::before,.site-footer::after{display:none!important}
+.site-footer .footer-brand{display:grid!important;gap:9px!important;align-content:start}
+.site-footer .footer-brand strong{font-size:1.45rem!important;line-height:1.05!important;letter-spacing:-.04em!important}
+.site-footer .footer-brand p{max-width:310px;margin:0!important;color:#cbd1e2!important;font-size:.84rem!important;line-height:1.55!important}
+.site-footer .footer-brand span{width:auto!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;color:#9fa9c4!important;font-size:.7rem!important;font-weight:800!important;letter-spacing:.08em;text-transform:uppercase}
+.site-footer nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important;width:100%}
+.site-footer nav a{min-height:42px!important;padding:9px 11px!important;border:1px solid #3d4567!important;border-radius:9px!important;background:#202747!important;color:#f5f7fc!important;font-size:.8rem!important}
+.site-footer nav a::after{display:none!important}
+.site-footer nav a:hover{transform:none!important;border-color:#c9f574!important;background:#293052!important}
+.site-footer>.footer-support{display:grid!important;gap:5px!important;align-content:start;padding-left:22px!important;border-left:1px solid #3d4567!important}
+.site-footer>.footer-support strong{font-size:.75rem!important;letter-spacing:.05em;color:#cbd1e2!important;text-transform:uppercase}
+.site-footer>.footer-support a{width:max-content;color:#c9f574!important;font-size:1.05rem!important;font-weight:850!important;text-decoration-thickness:1px;text-underline-offset:4px}
+.site-footer>.footer-support span{width:auto!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;color:#cbd1e2!important;font-size:.76rem!important;text-transform:none!important;letter-spacing:normal!important}
+/* Hide the legacy copy that SiteEnhancements may append after the static block. */
+.site-footer>.footer-support:not(.footer-support-static):last-child:not(:only-child){display:none!important}
+.site-footer>.footer-brand~.footer-support{display:grid!important}
+@media(max-width:900px){.site-footer{grid-template-columns:1fr 1fr!important}.site-footer>.footer-support{padding-left:0!important;border-left:0!important;border-top:1px solid #3d4567!important;padding-top:18px!important;grid-column:1/-1}}
+@media(max-width:560px){.site-footer{grid-template-columns:1fr!important;gap:22px!important;padding:30px 15px 28px!important}.site-footer nav{grid-template-columns:1fr!important}.site-footer>.footer-support{grid-column:auto}.site-footer .footer-brand strong{font-size:1.7rem!important}.site-footer nav a{min-height:44px!important}}
