@@ -7,6 +7,9 @@ export default defineConfig({
   // A relative base breaks nested pages such as science/results by resolving
   // their bundles to /assets instead of /alkohol-ja-aju/assets.
   base: (globalThis as {process?:{env?:Record<string,string|undefined>}}).process?.env?.GITHUB_ACTIONS ? '/alkohol-ja-aju/' : './',
+  test: {
+    include: ['src/**/*.test.ts'],
+  },
   build: {
     rollupOptions: {
       input: {
