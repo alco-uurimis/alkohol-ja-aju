@@ -1,5 +1,5 @@
 const ALLOWED_ORIGINS=new Set(['https://alco-uurimis.github.io','https://alkohol-ja-aju.vercel.app']);
-const MIN_GROUP=10;
+const MIN_GROUP=1;
 const GROUP_KEYS=['ageGroup','ownUse','overallImpact','helpKnowledge'];
 function cors(req,res){const origin=req.headers?.origin;if(origin&&ALLOWED_ORIGINS.has(origin))res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','GET, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type');res.setHeader('Cache-Control','public, max-age=300, s-maxage=300');}
 async function fetchWithTimeout(url,options,timeoutMs=45000){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeoutMs);try{return await fetch(url,{...options,signal:controller.signal});}finally{clearTimeout(timer);}}
