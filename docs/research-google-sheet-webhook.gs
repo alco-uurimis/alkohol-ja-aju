@@ -1,13 +1,14 @@
 const SPREADSHEET_ID = '1U4vVdsnYMPq-CZRbXxm_rqNk-n9kF4Chtu-wl5pz7Lg';
 const SHEET_NAME = 'Responses';
 const PUBLIC_MIN_N = 10;
+const CURRENT_SCHEMA_VERSION = '4';
 
 function json(data) {
   return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
 }
 
 function doGet() {
-  return json({ ok: true, service: 'research-sheet-webhook', version: 5 });
+  return json({ ok: true, service: 'research-sheet-webhook', version: 6 });
 }
 
 function requireSecret(body) {
@@ -17,41 +18,48 @@ function requireSecret(body) {
   return '';
 }
 
-function countColumn(rows, index, labels) {
+function countColumn(rows, index) {
   const counts = {};
   rows.forEach(row => {
-    const raw = String(row[index] || '').trim();
-    if (!raw) return;
-    const label = labels && labels[raw] ? labels[raw] : raw;
-    counts[label] = (counts[label] || 0) + 1;
+    const code = String(row[index] || '').trim();
+    if (!code) return;
+    counts[code] = (counts[code] || 0) + 1;
   });
   const published = {};
-  Object.keys(counts).sort().forEach(key => {
-    if (counts[key] >= PUBLIC_MIN_N) published[key] = counts[key];
+  Object.keys(counts).sort().forEach(code => {
+    if (counts[code] >= PUBLIC_MIN_N) published[code] = counts[code];
   });
   return published;
 }
 
+function isValidCurrentResponse(row) {
+  return String(row[3] || '').trim() === CURRENT_SCHEMA_VERSION &&
+    String(row[4] || '').trim() === 'yes' &&
+    String(row[5] || '').trim() === 'yes' &&
+    Boolean(String(row[1] || '').trim());
+}
+
 function aggregate(sheet) {
   const lastRow = sheet.getLastRow();
-  const n = Math.max(0, lastRow - 1);
-  if (n < PUBLIC_MIN_N) return { ok: true, n, publishable: false, minimumGroupSize: PUBLIC_MIN_N, lastUpdated: new Date().toISOString() };
-  const rows = sheet.getRange(2, 1, n, 31).getDisplayValues();
-  const ageLabels = {'15_17':'15–17','18_20':'18–20','21_25':'21–25','26_35':'26–35','36_plus':'36+','prefer_not':'Prefer not to answer'};
-  const useLabels = {never:'Never',less_monthly:'Less than monthly',monthly:'About monthly',two_four_month:'2–4 times/month',two_three_week:'2–3 times/week',four_plus_week:'4+ times/week',prefer_not:'Prefer not to answer'};
-  const impactLabels = {none:'None',slight:'Slight',moderate:'Moderate',strong:'Strong',very_strong:'Very strong',prefer_not:'Prefer not to answer'};
-  const helpLabels = {yes:'Yes',partly:'Partly',no:'No',prefer_not:'Prefer not to answer'};
-  return {
+  const totalStoredRows = Math.max(0, lastRow - 1);
+  const allRows = totalStoredRows ? sheet.getRange(2, 1, totalStoredRows, 31).getDisplayValues() : [];
+  const rows = allRows.filter(isValidCurrentResponse);
+  const n = rows.length;
+  const base = {
     ok: true,
+    schemaVersion: Number(CURRENT_SCHEMA_VERSION),
     n,
-    publishable: true,
+    publishable: n >= PUBLIC_MIN_N,
     minimumGroupSize: PUBLIC_MIN_N,
-    lastUpdated: new Date().toISOString(),
-    ageGroup: countColumn(rows, 6, ageLabels),
-    ownUse: countColumn(rows, 7, useLabels),
-    overallImpact: countColumn(rows, 25, impactLabels),
-    helpKnowledge: countColumn(rows, 28, helpLabels)
+    lastUpdated: new Date().toISOString()
   };
+  if (n < PUBLIC_MIN_N) return base;
+  return Object.assign(base, {
+    ageGroup: countColumn(rows, 6),
+    ownUse: countColumn(rows, 7),
+    overallImpact: countColumn(rows, 25),
+    helpKnowledge: countColumn(rows, 28)
+  });
 }
 
 function doPost(e) {
@@ -61,7 +69,7 @@ function doPost(e) {
 
   const authError = requireSecret(body);
   if (authError) return json({ ok: false, error: authError });
-  if (body.health === true) return json({ ok: true, health: true, version: 5 });
+  if (body.health === true) return json({ ok: true, health: true, version: 6 });
 
   const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = spreadsheet.getSheetByName(SHEET_NAME);
@@ -69,7 +77,7 @@ function doPost(e) {
   if (body.aggregate === true) return json(aggregate(sheet));
 
   const r = body.response || {};
-  const responseId = String(r.response_id || '');
+  const responseId = String(r.response_id || '').trim();
   if (!responseId) return json({ ok: false, error: 'missing_response_id' });
 
   const lock = LockService.getScriptLock();
@@ -91,6 +99,8 @@ function doPost(e) {
       r.minorConsent || ''
     ]);
     SpreadsheetApp.flush();
-    return json({ ok: true, duplicate: false });
-  } finally { lock.releaseLock(); }
+    return json({ ok: true, duplicate: false, version: 6 });
+  } finally {
+    lock.releaseLock();
+  }
 }
