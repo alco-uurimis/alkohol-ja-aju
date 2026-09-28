@@ -404,6 +404,28 @@
   .lab-section .game-action.button{width:100%;justify-content:center}
 }
 
+/* Reserve a clear row below the anatomy for the two lower controls.
+   Move the cerebellum left consistently without covering the brainstem. */
+.brain-map-visual{
+  background-size:100% calc(100% - 140px)!important;
+  background-position:center top!important;
+}
+.brain-map-visual .point-cerebellum{
+  left:48%;
+  right:auto;
+  bottom:50px;
+  max-width:42%;
+}
+.brain-map-visual .point-brainstem{
+  left:8%;
+  bottom:50px;
+  max-width:34%;
+}
+.brain-map-visual .point-cerebellum b,
+.brain-map-visual .point-brainstem b{min-width:0;white-space:normal}
+.brain-map-visual .point-cerebellum span,
+.brain-map-visual .point-brainstem span{flex-shrink:0}
+
 /* Mini-game cards share one calm, readable rhythm on wider screens. */
 @media(min-width:761px){
   .lab-grid{
@@ -584,8 +606,6 @@
 .enhanced-science-game>.text-button{margin-top:auto!important;align-self:flex-start}
 
 @media(min-width:761px){
-  .brain-map-visual .point-cerebellum{right:10%}
-
   .takeaways{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}
   .takeaways .info-card{
     min-height:220px!important;

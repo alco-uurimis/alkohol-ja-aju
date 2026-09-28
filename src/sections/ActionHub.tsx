@@ -147,8 +147,8 @@ function HelpLinks({ lang }: { lang: Lang }) {
   const ru = lang === 'ru';
 
   return (
-    <div className="action-hub-help">
-      <div>
+    <section className="action-hub-help" aria-label={ru ? 'Контакты помощи' : 'Abi kontaktid'}>
+      <div className="action-hub-help-intro">
         <p className="action-hub-kicker">{ru ? 'ПОДДЕРЖКА' : 'TOETUS'}</p>
         <h3>{ru ? 'Где искать надёжную помощь' : 'Kust leida usaldusväärset abi'}</h3>
         <p>
@@ -157,15 +157,34 @@ function HelpLinks({ lang }: { lang: Lang }) {
             : 'Kui olukord ei ole erakorraline, alusta perearsti või -õe, kooliõe, psühholoogi või alkoholitarvitamise vähendamise teenusega. Nõu võib küsida ka lähedase inimese pärast.'}
         </p>
       </div>
-      <a
-        className="action-hub-help-link"
-        href="https://selge.alkoinfo.ee/kuhupoorduda"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-          {ru ? 'Открыть официальный справочник помощи в Эстонии' : 'Ava Eesti ametlik abiinfo'}
-      </a>
-    </div>
+      <div className="action-hub-contacts">
+        <a className="action-hub-contact action-hub-contact--primary" href="https://noustamine.peaasi.ee/kysi-noustajalt" target="_blank" rel="noopener noreferrer">
+          <strong>Peaasi.ee</strong>
+          <span>{ru ? 'Бесплатная онлайн-консультация и помощь молодёжи 16–26 лет' : 'Tasuta e-nõustamine ja abi 16–26-aastastele noortele'}</span>
+        </a>
+        <a className="action-hub-contact" href="tel:116123">
+          <strong>116 123</strong>
+          <span>{ru ? 'Эмоциональная поддержка: ежедневно 10:00–24:00, эстонский, русский и английский' : 'Emotsionaalne tugi: iga päev 10–24, eesti, vene ja inglise keeles'}</span>
+        </a>
+        <a className="action-hub-contact" href="https://www.palunabi.ee/" target="_blank" rel="noopener noreferrer">
+          <strong>116 006</strong>
+          <span>{ru ? 'Кризисная линия помощи жертвам: круглосуточно' : 'Ohvriabi kriisitelefon: ööpäev läbi'}</span>
+        </a>
+        <a className="action-hub-contact" href="tel:6172650">
+          <strong>{ru ? 'Таллин: 6172 650' : 'Tallinn: 6172 650'}</strong>
+          <span>{ru ? 'Дежурная психиатрическая служба, Paldiski mnt 52' : 'Psühhiaatriakliiniku valvetuba, Paldiski mnt 52'}</span>
+        </a>
+        <a className="action-hub-contact" href="tel:7318764">
+          <strong>{ru ? 'Тарту: 731 8764' : 'Tartu: 731 8764'}</strong>
+          <span>{ru ? 'Дежурная психиатрическая служба, Raja tn 31' : 'Psühhiaatriakliiniku valvetuba, Raja tn 31'}</span>
+        </a>
+        <a className="action-hub-contact action-hub-contact--directory" href="https://selge.alkoinfo.ee/kuhupoorduda" target="_blank" rel="noopener noreferrer">
+          <strong>{ru ? 'Полный справочник' : 'Täielik abiinfo'}</strong>
+          <span>{ru ? 'Официальные услуги поддержки и снижения употребления алкоголя' : 'Ametlikud toe- ja alkoholitarvitamise vähendamise teenused'}</span>
+        </a>
+      </div>
+      <p className="action-hub-help-note">{ru ? 'При непосредственной опасности или угрозе жизни звони 112.' : 'Vahetu ohu või eluohtliku olukorra korral helista 112.'}</p>
+    </section>
   );
 }
 

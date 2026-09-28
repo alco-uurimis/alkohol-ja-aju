@@ -143,6 +143,25 @@ export default function ClassroomKit({lang}:{lang:Lang}){
     }
   };
 
+  const handlePrintTicket=()=>{
+    const clearPrintMode=()=>document.body.classList.remove('printing-exit-ticket');
+    document.body.classList.add('printing-exit-ticket');
+    window.addEventListener('afterprint',clearPrintMode,{once:true});
+    window.print();
+  };
+
+  const ticketQuestions=ru?[
+    'Один факт или вывод, который я могу объяснить:',
+    'Какой источник или раздел сайта помог мне это понять:',
+    'Ограничение: чего этот факт или упражнение НЕ доказывает:',
+    'В вымышленной ситуации безопасное действие может быть таким:',
+  ]:[
+    'Üks fakt või järeldus, mida oskan selgitada:',
+    'Milline allikas või veebilehe osa aitas mul sellest aru saada:',
+    'Piirang: mida see fakt või harjutus EI tõesta:',
+    'Väljamõeldud olukorras võib turvaline tegu olla:',
+  ];
+
   return <Section
     id="klassiruum"
     number={ru?'ДЛЯ УРОКА':'KLASSIRUUMI JAOKS'}
@@ -199,11 +218,15 @@ export default function ClassroomKit({lang}:{lang:Lang}){
             </div>
             <span>{ru?'3–4 минуты':'3–4 minutit'}</span>
           </div>
-          <p>{ru?'Скопируй в документ или распечатай. Работа может быть анонимной.':'Kopeeri dokumenti või prindi välja. Töö võib olla anonüümne.'}</p>
-          <textarea aria-label={ru?'Текст билета выхода':'Väljumispileti tekst'} readOnly value={activityText}/>
+          <p>{ru?'Готовый лист для печати. Работу можно сдать анонимно.':'Valmis leht printimiseks. Töö võib olla anonüümne.'}</p>
+          <div className="classroom-kit__ticket" aria-label={ru?'Билет выхода для заполнения':'Täidetav väljumispilet'}>
+            <strong>{ru?'ВЫХОДНОЙ БИЛЕТ · «АЛКОГОЛЬ И МОЗГ»':'VÄLJUMISPILET · „ALKOHOL JA AJU“'}</strong>
+            <ol>{ticketQuestions.map(question=><li key={question}><span>{question}</span><i aria-hidden="true"/></li>)}</ol>
+            <small>{ru?'Личные истории, имена и сведения о здоровье писать не нужно.':'Isiklikke lugusid, nimesid ega terviseandmeid ei ole vaja kirjutada.'}</small>
+          </div>
           <div className="classroom-kit__worksheet-actions">
             <button type="button" className="button primary" onClick={handleCopy}>{copyState==='copied'?(ru?'Скопировано':'Kopeeritud'):(ru?'Скопировать текст':'Kopeeri tekst')}</button>
-            <button type="button" className="text-button" onClick={()=>window.print()}>{ru?'Распечатать маршрут':'Prindi tunnirada'}</button>
+            <button type="button" className="text-button" onClick={handlePrintTicket}>{ru?'Распечатать билет':'Prindi pilet'}</button>
           </div>
           <p className="sr-only" aria-live="polite">{copyState==='copied'?(ru?'Текст скопирован в буфер обмена.':'Tekst kopeeriti lõikelauale.'):copyState==='manual'?(ru?'Выдели текст в поле и скопируй его вручную.':'Vali väljal olev tekst ning kopeeri see käsitsi.'):''}</p>
         </article>

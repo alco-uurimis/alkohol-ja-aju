@@ -23,14 +23,16 @@
   width:100%!important;
   height:auto!important;
   min-height:0!important;
-  aspect-ratio:800 / 560!important;
+  aspect-ratio:800 / 640!important;
   padding:0!important;
   overflow:hidden!important;
   border-radius:18px!important;
   background-color:#11162d!important;
   background-repeat:no-repeat!important;
-  background-position:center center,center center!important;
-  background-size:100% 100%,66% auto!important;
+  /* Keep the anatomy in its original 800 x 560 coordinate space, with
+     the added 80 units reserved for labels below it, at every viewport. */
+  background-position:center center,center top!important;
+  background-size:100% 100%,66% 87.5%!important;
 }
 
 html[lang="ru"] .hero-visual .brain-photo-hero,
@@ -80,8 +82,6 @@ html[lang="et"] .brain-map-stage.brain-static-diagram{
 @media(max-width:760px){
   .hero-visual .brain-photo-hero,
   .brain-map-stage.brain-static-diagram{
-    aspect-ratio:4 / 3!important;
-    background-size:100% 100%,62% auto!important;
     border-radius:16px!important;
   }
 
@@ -95,12 +95,6 @@ html[lang="et"] .brain-map-stage.brain-static-diagram{
 }
 
 @media(max-width:420px){
-  .hero-visual .brain-photo-hero,
-  .brain-map-stage.brain-static-diagram{
-    aspect-ratio:1 / 1!important;
-    background-size:100% 100%,58% auto!important;
-  }
-
   .hero-visual .brain-photo-hero::after,
   .brain-map-stage.brain-static-diagram::after{
     font-size:5.5px!important;
