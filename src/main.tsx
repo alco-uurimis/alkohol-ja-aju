@@ -29,4 +29,5 @@ import './footer-premium.css';
 import './quick-reference-mobile.css';
 import './research-visibility.css';
 import './quality-pass.css';
+import './desktop-menu.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><ResearchPortal/><SiteEnhancements/></React.StrictMode>);
