@@ -1,5 +1,3 @@
-import SiteSearch from './SiteSearch';
-
 type Lang='et'|'ru';
 
 export default function PathChooser({lang,visitedIds=[]}:{lang:Lang;visitedIds?:string[]}){
@@ -14,9 +12,9 @@ export default function PathChooser({lang,visitedIds=[]}:{lang:Lang;visitedIds?:
     {href:'#klassiruum',time:ru?'45 мин':'45 min',title:ru?'Для урока':'Tunniks',text:ru?'Готовый сценарий занятия, вопросы, рабочий лист и материалы для обсуждения.':'Valmis tunnikava, küsimused, tööleht ja arutelumaterjalid.',accent:'class'}
   ];
   return <section id="valik" className="intent-routes" aria-labelledby="intent-routes-title">
-    <div className="intent-routes-heading"><p className="eyebrow">{ru?'ВЫБЕРИ ФОРМАТ':'VALI VORM'}</p><h2 id="intent-routes-title">{ru?'Как ты хочешь пройти сайт?':'Kuidas soovid lehte kasutada?'}</h2><p>{ru?'Три понятных режима вместо длинного списка разделов. В любой момент можно открыть меню или поиск.':'Kolm selget režiimi pika jaotiste loendi asemel. Menüüd või otsingut saab alati kasutada.'}</p></div>
+    <div className="intent-routes-heading"><p className="eyebrow">{ru?'ВЫБЕРИ ФОРМАТ':'VALI VORM'}</p><h2 id="intent-routes-title">{ru?'Как ты хочешь пройти сайт?':'Kuidas soovid lehte kasutada?'}</h2><p>{ru?'Три понятных режима вместо длинного списка разделов. В любой момент можно открыть меню.':'Kolm selget režiimi pika jaotiste loendi asemel. Menüü saab igal ajal avada.'}</p></div>
     {completed.size>0&&<a className="continue-card" href={'#'+nextId}><span>{ru?'ПРОДОЛЖИТЬ':'JÄTKA'}</span><strong>{nextNames[nextId]?.[ru?0:1]??nextId}</strong><small>{ru?`Пройдено разделов: ${completed.size}`:`Läbitud osi: ${completed.size}`}</small></a>}
     <div className="intent-routes-grid intent-routes-simple">{routes.map(route=><a href={route.href} className={'intent-route mode-'+route.accent} key={route.title}><span>{route.time}</span><div><h3>{route.title}</h3><p>{route.text}</p></div><b>{ru?'Начать':'Alusta'}</b></a>)}</div>
-    <div className="route-tools"><SiteSearch lang={lang}/><div className="route-links"><a href="topics/">{ru?'Все научные темы':'Kõik teadusteemad'}</a><a href="methodology/">{ru?'Методология':'Metoodika'}</a><a href="science/">{ru?'Помоги науке':'Aita teadust'}</a></div></div>
+    <div className="route-tools route-tools-no-search"><div className="route-links"><a className="route-link-featured" href="topics/">{ru?'Научные темы':'Teadusteemad'}</a><a className="route-link-science" href="science/">{ru?'Помоги науке':'Aita teadust'}</a><a href="methodology/">{ru?'Методология':'Metoodika'}</a></div></div>
   </section>;
 }
