@@ -16,6 +16,8 @@ export default defineConfig({
         factCheck: 'fact-check/index.html',
         changelog: 'changelog/index.html',
         worksheet: 'worksheet/index.html',
+        worksheetEt: 'worksheet/et/index.html',
+        worksheetRu: 'worksheet/ru/index.html',
         acuteEffects: 'acute-effects/index.html',
         memoryBlackouts: 'memory-blackouts/index.html',
         adolescentBrain: 'adolescent-brain/index.html',
