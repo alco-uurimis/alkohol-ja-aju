@@ -18,6 +18,7 @@ import { questionsRu } from './data/content.ru';
 
 type Lang='et'|'ru';
 type NavItem=[string,string];
+type ReturnPoint={id:string;y:number;label:string};
 const trackedIds=['valik','aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin','samoprov','obsuzhdenie','tegevus','klassiruum','tagasiside'];
 const progressKey='alkohol-ja-aju:visited-sections';
 const savedProgressKey='alkohol-ja-aju:saved-visited-sections';
@@ -33,11 +34,13 @@ function readQuizScore(){if(typeof window==='undefined')return null;try{const ra
 export default function App(){
   const [menu,setMenu]=useState(false);
   const [active,setActive]=useState('avaleht');
+  const [returnPoint,setReturnPoint]=useState<ReturnPoint|null>(null);
   const [lang,setLang]=useState<Lang>(readLanguage);
   const [visited,setVisited]=useState<Set<string>>(readVisited);
   const [quizScore,setQuizScore]=useState<number|null>(readQuizScore);
   const [progressSaved,setProgressSaved]=useState(readsSavedProgress);
   const menuButton=useRef<HTMLButtonElement>(null);
+  const activeSection=useRef('avaleht');
   const ru=lang==='ru';
   const navGroups:{label:string;items:NavItem[]}[]=[
     {label:ru?'НАЧАТЬ':'ALUSTA',items:[['valik',ru?'Выбрать формат':'Vali vorm'],['tegevus',ru?'Что делать в ситуации':'Mida teha olukorras'],['klassiruum',ru?'Для урока':'Tunniks']]},
@@ -47,16 +50,19 @@ export default function App(){
     {label:ru?'ЗАВЕРШИТЬ':'LÕPETA',items:[['obsuzhdenie',ru?'Обсуждение':'Arutelu'],['tagasiside',ru?'Опрос':'Küsitlus'],['isiklik-kokkuvote',ru?'Итог':'Kokkuvõte'],['allikad',ru?'Источники':'Allikad']]}
   ];
   const links=navGroups.flatMap(g=>g.items);
+  const sectionNames=Object.fromEntries([['avaleht',ru?'Главная':'Avaleht'],...links]);
   const currentPhase=navGroups.find(g=>g.items.some(([id])=>id===active))?.label??(ru?'НАЧАЛО':'ALGUS');
 
   useEffect(()=>{document.documentElement.lang=lang;try{window.localStorage.setItem(languageKey,lang);}catch{}document.title=ru?'Алкоголь и мозг — научный учебный сайт':'Alkohol ja aju — teaduspõhine õppeveeb';const d=ru?'Учебный сайт о влиянии алкоголя на мозг: научные источники, упражнения, мини-игры и исследовательский опрос.':'Teaduspõhine õppematerjal alkoholi mõjust ajule: allikad, harjutused, minimängud ja uurimisküsitlus.';document.querySelector('meta[name="description"]')?.setAttribute('content',d);},[lang,ru]);
-  useEffect(()=>{const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting)setActive(entry.target.id);},{rootMargin:'-18% 0px -68% 0px'});links.forEach(([id])=>{const el=document.getElementById(id);if(el)observer.observe(el);});return()=>observer.disconnect();},[lang]);
+  useEffect(()=>{const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){activeSection.current=entry.target.id;setActive(entry.target.id);}}, {rootMargin:'-18% 0px -68% 0px'});links.forEach(([id])=>{const el=document.getElementById(id);if(el)observer.observe(el);});return()=>observer.disconnect();},[lang]);
+  useEffect(()=>{const captureJump=(event:MouseEvent)=>{const target=event.target;if(!(target instanceof Element))return;const link=target.closest('a[href]') as HTMLAnchorElement|null;if(!link)return;const destination=new URL(link.href,window.location.href);if(destination.origin!==window.location.origin||destination.pathname!==window.location.pathname||!destination.hash)return;const nextId=decodeURIComponent(destination.hash.slice(1));const previousId=activeSection.current;if(!nextId||nextId===previousId)return;setReturnPoint({id:previousId,y:window.scrollY,label:sectionNames[previousId]??(ru?'предыдущему месту':'eelmise koha')});};document.addEventListener('click',captureJump,true);return()=>document.removeEventListener('click',captureJump,true);},[lang]);
   useEffect(()=>{const observer=new IntersectionObserver(entries=>{for(const entry of entries){if(!entry.isIntersecting)continue;const id=entry.target.id;setVisited(current=>{if(current.has(id))return current;const next=new Set(current);next.add(id);try{const value=JSON.stringify([...next]);window.sessionStorage.setItem(progressKey,value);if(readsSavedProgress())window.localStorage.setItem(savedProgressKey,value);}catch{}return next;});}},{threshold:.28});trackedIds.forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el);});return()=>observer.disconnect();},[]);
   useEffect(()=>{if(!menu)return;const previous=document.body.style.overflow;document.body.style.overflow='hidden';const onKey=(e:KeyboardEvent)=>{if(e.key==='Escape'){setMenu(false);requestAnimationFrame(()=>menuButton.current?.focus());}};const onResize=()=>{if(innerWidth>1100)setMenu(false);};addEventListener('keydown',onKey);addEventListener('resize',onResize,{passive:true});return()=>{document.body.style.overflow=previous;removeEventListener('keydown',onKey);removeEventListener('resize',onResize);};},[menu]);
   const switchLanguage=(next:Lang)=>{setLang(next);setMenu(false);};
   const handleQuizComplete=(score:number)=>{setQuizScore(score);try{sessionStorage.setItem(quizScoreKey,String(score));}catch{}};
   const saveProgress=()=>{try{localStorage.setItem(savedProgressEnabledKey,'1');localStorage.setItem(savedProgressKey,JSON.stringify([...visited]));setProgressSaved(true);}catch{}};
   const clearSavedProgress=()=>{try{localStorage.removeItem(savedProgressEnabledKey);localStorage.removeItem(savedProgressKey);sessionStorage.removeItem(progressKey);}catch{}setVisited(new Set());setProgressSaved(false);};
+  const returnToReadingPlace=()=>{if(!returnPoint)return;const {id,y}=returnPoint;setReturnPoint(null);history.replaceState(null,'','#'+id);window.scrollTo({top:y,behavior:'smooth'});};
 
   return <>
     <a className="skip" href="#sisu">{ru?'Перейти к содержанию':'Liigu põhisisu juurde'}</a>
@@ -88,6 +94,7 @@ export default function App(){
       <div className="phase-divider"><span>03</span><div><strong>{ru?'Проверь':'Kontrolli'}</strong><small>{ru?'Знание и уверенность в ответе':'Teadmised ja vastuse kindlus'}</small></div></div><Section id="viktoriin" number={ru?'ПРОВЕРЬ ЗНАНИЯ':'KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Выбери «миф» или «факт», оцени уверенность и прочитай объяснение со ссылкой на источник.':'Vali „müüt“ või „fakt“, hinda oma kindlust ja loe selgitust koos allikaga.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section><Reflection lang={lang}/><ActionHub lang={lang}/><ClassroomKit lang={lang}/>
       <div className="phase-divider"><span>04</span><div><strong>{ru?'Заверши':'Lõpeta'}</strong><small>{ru?'Выводы, обратная связь и источники':'Järeldused, tagasiside ja allikad'}</small></div></div><Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length} progressSaved={progressSaved} onSaveProgress={saveProgress} onClearSavedProgress={clearSavedProgress}/>}/>
     </main>
+    {returnPoint&&<button type="button" className="reading-return" onClick={returnToReadingPlace} aria-label={ru?`Вернуться к месту: ${returnPoint.label}`:`Naase kohta: ${returnPoint.label}`}><span aria-hidden="true"/><b>{ru?'Вернуться':'Tagasi'}</b><small>{returnPoint.label}</small></button>}
     <footer className="site-footer"><div><strong>{ru?'Алкоголь и мозг':'Alkohol ja aju'}</strong><span>v2.0 · 2026</span></div><nav aria-label={ru?'Информация о проекте':'Projekti info'}><a href="methodology/">{ru?'Методология':'Metoodika'}</a><a href="fact-check/">{ru?'Проверка фактов':'Faktikontroll'}</a><a href="data-policy/">{ru?'Данные':'Andmed'}</a><a href="changelog/">Changelog</a></nav></footer>
   </>;
 }
