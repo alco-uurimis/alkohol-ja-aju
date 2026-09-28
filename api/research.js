@@ -25,7 +25,8 @@ const VALUE_LABELS={
   et:{yes:'Jah',no:'Ei','15_17':'15–17','18_20':'18–20','21_25':'21–25','26_35':'26–35','36_plus':'36+',prefer_not:'Eelistan mitte vastata',never:'Mitte kunagi',once:'Mõnel korral',rare:'Harva',less_monthly:'Harvem kui kord kuus',monthly:'Umbes kord kuus',two_four_month:'2–4 korda kuus',two_three_week:'2–3 korda nädalas',four_plus_week:'4 korda nädalas või sagedamini',weekly_plus:'Kord nädalas või sagedamini','0':'0','1_2':'1–2','3_5':'3–5','6_plus':'6+','3_4':'3–4','5_6':'5–6','7_9':'7–9',10_plus:'10+',weekly:'Umbes kord nädalas',daily_almost:'Iga päev või peaaegu iga päev',friends:'Sõpradega',family:'Pere/sugulastega',event:'Pidu/üritus',alone:'Üksi',other:'Muu',some:'Osal inimestest',common:'Üsna levinud',very_common:'Väga levinud',unsure:'Ei tea / pole kindel',sometimes:'Mõnikord',often:'Sageli',partner:'Partner',friend:'Sõber',mostly:'Pigem normaalne',mostly_no:'Pigem keeruline',partly:'Umbes tean',school:'Kooli/ülikooli spetsialist',doctor:'Tervishoiu-/vaimse tervise spetsialist',helpline:'Anonüümne abiteenus',none:'Mitte kellegi nimetatu poole',slight:'Vähesel määral',moderate:'Mõõdukalt',strong:'Tugevalt',very_strong:'Väga tugevalt'}
 };
 
-function applyCors(req,res){const origin=req.headers?.origin;if(origin&&ALLOWED_ORIGINS.has(origin))res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type');res.setHeader('Cache-Control','no-store');}
+function isAllowedOrigin(origin){return !origin||ALLOWED_ORIGINS.has(origin)||/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);}
+function applyCors(req,res){const origin=req.headers?.origin;if(origin&&isAllowedOrigin(origin))res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type');res.setHeader('Access-Control-Max-Age','86400');res.setHeader('Cache-Control','no-store');}
 function readBody(req){if(req.body&&typeof req.body==='object')return req.body;if(typeof req.body==='string')return JSON.parse(req.body);return{};}
 function scalar(value,allowed,optional=false){if(value===undefined||value===null||value==='')return optional?'':null;const v=String(value);return allowed.has(v)?v:null;}
 function list(value,allowed){if(value===undefined||value===null)return[];if(!Array.isArray(value)||value.length>10)return null;const out=[];for(const item of value){const v=String(item);if(!allowed.has(v))return null;if(!out.includes(v))out.push(v);}return out.includes('prefer_not')?['prefer_not']:out;}
@@ -66,7 +67,7 @@ export default async function handler(req,res){
   try{
     if(req.method==='OPTIONS')return res.status(204).end();
     if(req.method!=='POST')return res.status(405).json({ok:false,error:'method_not_allowed'});
-    const origin=req.headers?.origin;if(origin&&!ALLOWED_ORIGINS.has(origin))return res.status(403).json({ok:false,error:'origin_not_allowed'});
+    const origin=req.headers?.origin;if(origin&&!isAllowedOrigin(origin))return res.status(403).json({ok:false,error:'origin_not_allowed'});
     if(Number(req.headers?.['content-length']||0)>18000)return res.status(413).json({ok:false,error:'payload_too_large'});
     let body;try{body=readBody(req);}catch{return res.status(400).json({ok:false,error:'invalid_json'});}
     const language=String(body.language??'');if(!LANGUAGES.has(language))return res.status(400).json({ok:false,error:'invalid_language'});
