@@ -3,7 +3,10 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  // GitHub Pages serves this repository beneath /alkohol-ja-aju/.
+  // A relative base breaks nested pages such as science/results by resolving
+  // their bundles to /assets instead of /alkohol-ja-aju/assets.
+  base: (globalThis as {process?:{env?:Record<string,string|undefined>}}).process?.env?.GITHUB_ACTIONS ? '/alkohol-ja-aju/' : './',
   build: {
     rollupOptions: {
       input: {
@@ -30,3 +33,4 @@ export default defineConfig({
     },
   },
 });
+
