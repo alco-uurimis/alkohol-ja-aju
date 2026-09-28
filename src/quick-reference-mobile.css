@@ -1,0 +1,156 @@
+/* Mobile-only refinement for the quick reference glossary. */
+@media (max-width: 760px) {
+  .reference-glossary-section {
+    padding-inline: 14px !important;
+  }
+
+  .reference-glossary-section .section-head,
+  .reference-glossary-section .section-heading {
+    margin-bottom: 18px !important;
+  }
+
+  .reference-glossary {
+    margin-bottom: 18px !important;
+    padding: 14px !important;
+    border-radius: 16px !important;
+    box-shadow: none !important;
+  }
+
+  .reference-glossary .glossary-tools {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .reference-glossary .glossary-tools > div {
+    min-width: 0;
+  }
+
+  .reference-glossary .glossary-tools .pill {
+    display: inline-flex;
+    width: fit-content;
+    max-width: 100%;
+    padding: 6px 9px !important;
+    border-radius: 999px !important;
+    font-size: .68rem !important;
+    line-height: 1.1 !important;
+    letter-spacing: .055em !important;
+    white-space: normal;
+  }
+
+  .reference-glossary .glossary-tools h3 {
+    margin: 8px 0 0 !important;
+    font-size: 1.35rem !important;
+    line-height: 1.15 !important;
+    letter-spacing: -.025em;
+  }
+
+  .reference-glossary .glossary-tools label {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .reference-glossary .glossary-tools input {
+    box-sizing: border-box;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 48px;
+    padding: 12px 14px !important;
+    border-radius: 12px !important;
+    background: #f7f8fc !important;
+    font-size: 16px !important;
+  }
+
+  .reference-glossary .glossary-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .reference-glossary .glossary-grid details {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    border: 1px solid var(--line) !important;
+    border-radius: 12px !important;
+    background: #fff;
+  }
+
+  .reference-glossary .glossary-grid summary {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+    padding: 12px 42px 12px 13px !important;
+    cursor: pointer;
+    list-style: none;
+    font-size: .95rem !important;
+    line-height: 1.25 !important;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+  }
+
+  .reference-glossary .glossary-grid summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .reference-glossary .glossary-grid summary::after {
+    content: '+';
+    position: absolute;
+    right: 13px;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #efecff;
+    color: #4d3eb0;
+    font-size: 1rem;
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  .reference-glossary .glossary-grid details[open] summary {
+    background: #f7f6fc;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .reference-glossary .glossary-grid details[open] summary::after {
+    content: '–';
+  }
+
+  .reference-glossary .glossary-grid details p {
+    margin: 0 !important;
+    padding: 12px 13px 14px !important;
+    color: var(--muted);
+    font-size: .86rem !important;
+    line-height: 1.58 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .reference-glossary .empty-state {
+    margin: 0 !important;
+    padding: 14px !important;
+    border-radius: 12px;
+    background: #f7f8fc;
+    color: var(--muted);
+    font-size: .86rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .reference-glossary {
+    padding: 12px !important;
+  }
+
+  .reference-glossary .glossary-tools h3 {
+    font-size: 1.22rem !important;
+  }
+
+  .reference-glossary .glossary-grid summary {
+    font-size: .9rem !important;
+  }
+}
