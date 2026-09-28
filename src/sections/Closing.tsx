@@ -17,7 +17,7 @@ export default function Closing({lang,summary}:{lang:'et'|'ru';summary?:ReactNod
       <div className="closing-note"><strong>{ru?'Результат упражнения — не диагноз.':'Harjutuse tulemus ei ole diagnoos.'}</strong><p>{ru?'Здесь можно заметить собственный опыт и проверить знания. Выводы о влиянии алкоголя основаны на учебнике, обзорах организаций здравоохранения и научных публикациях, а не на одной сумме баллов.':'Siin saad oma kogemust märgata ja teadmisi kontrollida. Alkoholi mõju käsitlevad järeldused põhinevad õpikul, terviseasutuste ülevaadetel ja teaduspublikatsioonidel, mitte ühel punktisummal.'}</p></div>
     </Section>
 
-    <Section id="tagasiside" number={ru?'13 / ОБРАТНАЯ СВЯЗЬ':'13 / TAGASISIDE'} title={ru?'Анонимный опрос о сайте':'Anonüümne küsitlus veebilehe kohta'} intro={ru?'Теперь основной материал завершён. Оцени понятность, интерес, сложность заданий и удобство сайта. Не указывай имя, контакты, сведения о здоровье или другую личную информацию.':'Põhimaterjal on nüüd läbitud. Hinda arusaadavust, huvi, ülesannete raskust ja veebilehe kasutusmugavust. Ära lisa nime, kontaktandmeid, terviseandmeid ega muud isiklikku teavet.'}>
+    <Section id="tagasiside" number={ru?'13 / ОБРАТНАЯ СВЯЗЬ':'13 / TAGASISIDE'} title={ru?'Короткий опрос о сайте':'Lühike küsitlus veebilehe kohta'} intro={ru?'Теперь основной материал завершён. Оцени понятность, интерес, сложность заданий и удобство сайта. Не указывай имя, контакты, сведения о здоровье или другую личную информацию.':'Põhimaterjal on nüüd läbitud. Hinda arusaadavust, huvi, ülesannete raskust ja veebilehe kasutusmugavust. Ära lisa nime, kontaktandmeid, terviseandmeid ega muud isiklikku teavet.'}>
       <FeedbackSurvey lang={lang}/>
     </Section>
 
@@ -35,6 +35,3 @@ export default function Closing({lang,summary}:{lang:'et'|'ru';summary?:ReactNod
     </Section>
   </>;
 }
-
-
-
