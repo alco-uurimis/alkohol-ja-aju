@@ -33,7 +33,8 @@ function list(value,allowed){if(value===undefined||value===null)return[];if(!Arr
 function makeId(){return`research_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,12)}`;}
 function readSubmissionId(value){const v=String(value??'');return /^research_[a-z0-9_-]{8,90}$/i.test(v)?v:makeId();}
 function answerLabel(value,language,key){if(key==='overallImpact'&&value==='none')return language==='ru'?'Не повлияло':'Ei mõjutanud';if(key==='closeHousehold'&&value==='sometimes')return language==='ru'?'Часть времени':'Osa ajast';if(Array.isArray(value))return value.map(v=>VALUE_LABELS[language]?.[v]??v).join(', ');return VALUE_LABELS[language]?.[value]??value;}
-async function fetchWithTimeout(url,options,timeoutMs=8000){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeoutMs);try{return await fetch(url,{...options,signal:controller.signal});}finally{clearTimeout(timer);}}
+async function fetchWithTimeout(url,options,timeoutMs=45000){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeoutMs);try{return await fetch(url,{...options,signal:controller.signal});}finally{clearTimeout(timer);}}
+async function postToAppsScript(url,body){const options={method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),redirect:'manual'};const first=await fetchWithTimeout(url,options);if(![301,302,303,307,308].includes(first.status))return first;const location=first.headers.get('location');if(!location)throw new Error('apps_script_redirect_missing');const destination=new URL(location,url).toString();return [307,308].includes(first.status)?fetchWithTimeout(destination,options):fetchWithTimeout(destination,{method:'GET',headers:{accept:'application/json'}});}
 
 async function deliverSheet(response){
   const url=process.env.SHEET_WEBHOOK_URL,secret=process.env.SHEET_WEBHOOK_SECRET;
@@ -41,7 +42,7 @@ async function deliverSheet(response){
   try{
     const parsed=new URL(String(url).trim());
     if(parsed.protocol!=='https:')return{ok:false,configured:true,error:'sheet_url_invalid'};
-    const result=await fetchWithTimeout(parsed.toString(),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({secret,response})});
+    const result=await postToAppsScript(parsed.toString(),{secret,response});
     const text=await result.text();let data={};try{data=JSON.parse(text);}catch{}
     if(!result.ok||data.ok!==true)return{ok:false,configured:true,error:'sheet_delivery_failed',status:result.status};
     return{ok:true,configured:true,duplicate:data.duplicate===true};
@@ -110,3 +111,4 @@ export default async function handler(req,res){
     return res.status(error==='server_not_configured'?500:502).json({ok:false,error,responseId,channels,configured,warnings,delivery:{sheet,telegram}});
   }catch(error){console.error('research_handler_failed',error?.name||'Error');return res.status(500).json({ok:false,error:'internal_error'});}
 }
+
