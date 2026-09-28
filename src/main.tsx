@@ -25,4 +25,5 @@ import './paths.css';
 import './mobile-simple.css';
 import './product-v2.css';
 import './enhancements.css';
+import './footer-premium.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><ResearchPortal/><SiteEnhancements/></React.StrictMode>);
