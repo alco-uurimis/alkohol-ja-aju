@@ -8,7 +8,7 @@ function json(data) {
 }
 
 function doGet() {
-  return json({ ok: true, service: 'research-sheet-webhook', version: 6 });
+  return json({ ok: true, service: 'research-sheet-webhook', version: 7 });
 }
 
 function requireSecret(body) {
@@ -18,10 +18,20 @@ function requireSecret(body) {
   return '';
 }
 
-function countColumn(rows, index) {
+function headerIndex(headers, name) {
+  const index = headers.indexOf(name);
+  return index >= 0 ? index : -1;
+}
+
+function readCell(row, headers, name) {
+  const index = headerIndex(headers, name);
+  return index >= 0 ? String(row[index] || '').trim() : '';
+}
+
+function countField(rows, headers, name) {
   const counts = {};
   rows.forEach(row => {
-    const code = String(row[index] || '').trim();
+    const code = readCell(row, headers, name);
     if (!code) return;
     counts[code] = (counts[code] || 0) + 1;
   });
@@ -32,18 +42,28 @@ function countColumn(rows, index) {
   return published;
 }
 
-function isValidCurrentResponse(row) {
-  return String(row[3] || '').trim() === CURRENT_SCHEMA_VERSION &&
-    String(row[4] || '').trim() === 'yes' &&
-    String(row[5] || '').trim() === 'yes' &&
-    Boolean(String(row[1] || '').trim());
+function isValidCurrentResponse(row, headers) {
+  return readCell(row, headers, 'version') === CURRENT_SCHEMA_VERSION &&
+    readCell(row, headers, 'ageEligible15Plus') === 'yes' &&
+    readCell(row, headers, 'consent') === 'yes' &&
+    Boolean(readCell(row, headers, 'response_id'));
 }
 
 function aggregate(sheet) {
+  const lastColumn = sheet.getLastColumn();
   const lastRow = sheet.getLastRow();
+  if (lastColumn < 1 || lastRow < 1) {
+    return { ok: true, schemaVersion: 4, n: 0, publishable: false, minimumGroupSize: PUBLIC_MIN_N, lastUpdated: new Date().toISOString() };
+  }
+
+  const headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0].map(v => String(v || '').trim());
+  const requiredHeaders = ['response_id','version','ageEligible15Plus','consent','ageGroup','ownUse','overallImpact','helpKnowledge'];
+  const missing = requiredHeaders.filter(name => headerIndex(headers, name) < 0);
+  if (missing.length) return { ok: false, error: 'missing_headers', missing };
+
   const totalStoredRows = Math.max(0, lastRow - 1);
-  const allRows = totalStoredRows ? sheet.getRange(2, 1, totalStoredRows, 31).getDisplayValues() : [];
-  const rows = allRows.filter(isValidCurrentResponse);
+  const allRows = totalStoredRows ? sheet.getRange(2, 1, totalStoredRows, lastColumn).getDisplayValues() : [];
+  const rows = allRows.filter(row => isValidCurrentResponse(row, headers));
   const n = rows.length;
   const base = {
     ok: true,
@@ -54,11 +74,12 @@ function aggregate(sheet) {
     lastUpdated: new Date().toISOString()
   };
   if (n < PUBLIC_MIN_N) return base;
+
   return Object.assign(base, {
-    ageGroup: countColumn(rows, 6),
-    ownUse: countColumn(rows, 7),
-    overallImpact: countColumn(rows, 25),
-    helpKnowledge: countColumn(rows, 28)
+    ageGroup: countField(rows, headers, 'ageGroup'),
+    ownUse: countField(rows, headers, 'ownUse'),
+    overallImpact: countField(rows, headers, 'overallImpact'),
+    helpKnowledge: countField(rows, headers, 'helpKnowledge')
   });
 }
 
@@ -69,7 +90,7 @@ function doPost(e) {
 
   const authError = requireSecret(body);
   if (authError) return json({ ok: false, error: authError });
-  if (body.health === true) return json({ ok: true, health: true, version: 6 });
+  if (body.health === true) return json({ ok: true, health: true, version: 7 });
 
   const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = spreadsheet.getSheetByName(SHEET_NAME);
@@ -83,23 +104,56 @@ function doPost(e) {
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
+    const lastColumn = sheet.getLastColumn();
+    const headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0].map(v => String(v || '').trim());
+    const idIndex = headerIndex(headers, 'response_id');
+    if (idIndex < 0) return json({ ok: false, error: 'missing_response_id_header' });
+
     const lastRow = sheet.getLastRow();
     if (lastRow > 1) {
-      const ids = sheet.getRange(2, 2, lastRow - 1, 1).getDisplayValues().flat();
-      if (ids.includes(responseId)) return json({ ok: true, duplicate: true });
+      const ids = sheet.getRange(2, idIndex + 1, lastRow - 1, 1).getDisplayValues().flat();
+      if (ids.includes(responseId)) return json({ ok: true, duplicate: true, version: 7 });
     }
+
     const joinList = value => Array.isArray(value) ? value.join(' | ') : (value ?? '');
-    sheet.appendRow([
-      r.submitted_at || new Date().toISOString(), responseId, r.language || '', r.version || '',
-      r.ageEligible15Plus || r.adult || '', r.consent || '', r.ageGroup || '', r.ownUse || '', r.last30 || '',
-      r.typicalUnits || '', r.sixPlus || '', joinList(r.contexts), r.peerNorm || '', r.closeExposure || '',
-      joinList(r.closeRelations), r.closeHousehold || '', r.closeConflict || '', r.closeUnsafe || '', r.worry || '',
-      r.sleep || '', r.study || '', r.mood || '', r.avoid || '', r.unsafe || '', r.extraResponsibility || '',
-      r.overallImpact || '', r.pressure || '', r.refusalNormal || '', r.helpKnowledge || '', r.supportChoice || '',
-      r.minorConsent || ''
-    ]);
+    const valuesByHeader = {
+      submitted_at: r.submitted_at || new Date().toISOString(),
+      response_id: responseId,
+      language: r.language || '',
+      version: r.version || '',
+      ageEligible15Plus: r.ageEligible15Plus || r.adult || '',
+      consent: r.consent || '',
+      ageGroup: r.ageGroup || '',
+      ownUse: r.ownUse || '',
+      last30_legacy: r.last30 || '',
+      typicalUnits: r.typicalUnits || '',
+      sixPlus: r.sixPlus || '',
+      contexts: joinList(r.contexts),
+      peerNorm: r.peerNorm || '',
+      closeExposure: r.closeExposure || '',
+      closeRelations: joinList(r.closeRelations),
+      closeHousehold: r.closeHousehold || '',
+      closeConflict: r.closeConflict || '',
+      closeUnsafe: r.closeUnsafe || '',
+      worry: r.worry || '',
+      sleep: r.sleep || '',
+      study: r.study || '',
+      mood: r.mood || '',
+      avoid: r.avoid || '',
+      unsafe: r.unsafe || '',
+      extraResponsibility: r.extraResponsibility || '',
+      overallImpact: r.overallImpact || '',
+      pressure: r.pressure || '',
+      refusalNormal: r.refusalNormal || '',
+      helpKnowledge: r.helpKnowledge || '',
+      supportChoice: r.supportChoice || '',
+      minorConsent: r.minorConsent || ''
+    };
+
+    const row = headers.map(header => Object.prototype.hasOwnProperty.call(valuesByHeader, header) ? valuesByHeader[header] : '');
+    sheet.appendRow(row);
     SpreadsheetApp.flush();
-    return json({ ok: true, duplicate: false, version: 6 });
+    return json({ ok: true, duplicate: false, version: 7 });
   } finally {
     lock.releaseLock();
   }
