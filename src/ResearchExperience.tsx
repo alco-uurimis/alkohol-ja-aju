@@ -6,7 +6,8 @@ const languageKey='alkohol-ja-aju:language';
 function readLang():Lang{try{return localStorage.getItem(languageKey)==='ru'?'ru':'et';}catch{return'et';}}
 
 export default function ResearchExperience(){
-  const [started,setStarted]=useState(()=>new URLSearchParams(location.search).get('start')==='1');
+  const openSurvey=location.search.includes('start=1');
+  const [started,setStarted]=useState(()=>openSurvey);
   const [lang,setLang]=useState<Lang>(readLang);
   const ru=lang==='ru';
   useEffect(()=>{document.documentElement.classList.toggle('research-started',started);return()=>document.documentElement.classList.remove('research-started');},[started]);
