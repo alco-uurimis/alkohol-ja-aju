@@ -4,6 +4,7 @@ import App from './App';
 import ResearchPortal from './components/ResearchPortal';
 import SiteEnhancements from './components/SiteEnhancements';
 import './scrollProgress';
+// Base styles load first; component and responsive refinements follow.
 import './styles.css';
 import './features.css';
 import './visuals.css';
