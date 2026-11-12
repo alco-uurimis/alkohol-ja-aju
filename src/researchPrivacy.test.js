@@ -64,13 +64,22 @@ describe('skipped questions (answered base)', () => {
     expect(r.answered).toEqual({ overallImpact: 22 });
   });
 
-  it('still withholds when a small category was hidden upstream', () => {
-    // 22 answered, only 12 shown: the missing 10 would include a hidden small group.
-    expect(publicSummary({ n: 30, overallImpact: { none: 12 }, answered: { overallImpact: 22 } }).overallImpact).toEqual({});
-    expect(publicSummary({ n: 30, overallImpact: { none: 12, slight: 10 }, answered: { overallImpact: 25 } }).overallImpact).toEqual({});
+  it('merges hidden small categories into one row when together they reach the threshold', () => {
+    expect(publicSummary({ n: 30, overallImpact: { none: 12 }, answered: { overallImpact: 22 } }).overallImpact).toEqual({ none: 12, other_small: 10 });
+  });
+
+  it('never exposes a remainder below the threshold: the smallest shown category joins it', () => {
+    const r = publicSummary({ n: 40, ageGroup: { '18_20': 12, '21_25': 15 }, answered: { ageGroup: 31 } });
+    expect(r.ageGroup).toEqual({ '21_25': 15, other_small: 16 });
+    for (const count of Object.values(r.ageGroup)) expect(count).toBeGreaterThanOrEqual(10);
+  });
+
+  it('withholds when nothing would remain besides the merged row', () => {
+    expect(publicSummary({ n: 40, ageGroup: { '18_20': 12 }, answered: { ageGroup: 15 } }).ageGroup).toEqual({});
   });
 
   it('keeps the old behaviour when the upstream sends no answered counts', () => {
     expect(publicSummary({ n: 30, overallImpact: { none: 12, slight: 10 } }).overallImpact).toEqual({});
+    expect(publicSummary({ n: 30, overallImpact: { none: 12 } }).overallImpact).toEqual({});
   });
 });
