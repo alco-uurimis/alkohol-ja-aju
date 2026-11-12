@@ -21,14 +21,12 @@ export default function FinalSummary({lang,quizScore,visitedIds,totalSections,pr
   const visited=new Set(visitedIds);
   const games=[metrics.reaction,metrics.stroop,metrics.signal].filter(Boolean).length;
   const quizDone=quizScore!==null;
-  const feedbackDone=visited.has('tagasiside');
-  const routeDone=visitedIds.filter(id=>id!=='tagasiside').length>=totalSections-1;
-  const nextHref=!quizDone?'#viktoriin':!feedbackDone?'#tagasiside':'#allikad';
-  const nextLabel=!quizDone?(ru?'Завершить викторину':'Lõpeta viktoriin'):!feedbackDone?(ru?'Заполнить опрос':'Täida küsitlus'):(ru?'Открыть источники':'Ava allikad');
+  const nextHref=quizDone?'#allikad':'#viktoriin';
+  const nextLabel=quizDone?(ru?'Открыть источники':'Ava allikad'):(ru?'Завершить викторину':'Lõpeta viktoriin');
 
   return <Section id="isiklik-kokkuvote" number={ru?'15 / ТВОЙ ИТОГ':'15 / SINU KOKKUVÕTE'} title={ru?'Что ты уже прошёл(а)':'Mida oled juba teinud'} intro={progressSaved?(ru?'Прогресс разделов сохранён только в этом браузере на этом устройстве; это не медицинская оценка и не передаётся автору.':'Osade edenemine on salvestatud ainult selle seadme brauserisse; see ei ole tervisehinnang ega jõua autorini.'):(ru?'Итог собирает данные этой вкладки и не является медицинской оценкой.':'Kokkuvõte kasutab selle vahelehe andmeid ega ole tervisehinnang.')} className="personal-summary">
     <div className="summary-stats">
-      <article><span>{ru?'Этапы сайта':'Lehe etapid'}</span><strong>{visitedIds.length} / {totalSections}</strong><p>{routeDone&&feedbackDone?(ru?'Основной маршрут завершён':'Põhiteekond on läbitud'):(ru?'Открыто в этой сессии':'Avatud selles seansis')}</p></article>
+      <article><span>{ru?'Этапы сайта':'Lehe etapid'}</span><strong>{visitedIds.length} / {totalSections}</strong><p>{ru?'Открытые разделы':'Avatud osad'}</p></article>
       <article><span>{ru?'Мини-игры':'Minimängud'}</span><strong>{games} / 3</strong><p>{games===0?(ru?'Пока нет результатов':'Tulemusi veel pole'):(ru?'Результаты сохранены в этой вкладке':'Tulemused on selles vahelehes salvestatud')}</p></article>
       <article><span>{ru?'Викторина':'Viktoriin'}</span><strong>{quizScore===null?'—':`${quizScore} / 10`}</strong><p>{quizScore===null?(ru?'Ещё не завершена':'Veel lõpetamata'):(ru?'Последняя завершённая попытка':'Viimane lõpetatud katse')}</p></article>
     </div>
@@ -44,8 +42,8 @@ export default function FinalSummary({lang,quizScore,visitedIds,totalSections,pr
       </div>
       <div className="summary-next">
         <h3>{ru?'Последний шаг':'Viimane samm'}</h3>
-        <p>{!quizDone?(ru?'Викторина ещё не завершена. Пройди её, чтобы итог показывал полный результат.':'Viktoriin on veel lõpetamata. Tee see läbi, et kokkuvõte näitaks täielikku tulemust.') : !feedbackDone?(ru?'Основной материал пройден. Осталось заполнить анонимный опрос.':'Põhimaterjal on läbitud. Jäänud on anonüümne küsitlus.') : (ru?'Основной маршрут завершён. Ниже осталась только библиография и научные источники.':'Põhiteekond on läbitud. Allpool on veel bibliograafia ja teadusallikad.')}</p>
-        <a className="button" href={nextHref}>{nextLabel}</a>
+        <p>{quizDone?(ru?'Сформулируй один факт и назови одно ограничение исследования.':'Sõnasta üks fakt ja nimeta üks uuringu piirang.'):(ru?'Пройди викторину, чтобы проверить понимание.':'Kontrolli oma arusaamist viktoriiniga.')}</p>
+        <a className="button" href={nextHref}>{nextLabel}</a> {quizDone&&<a href="#tagasiside">{ru?"Оставить отзыв (по желанию)":"Anna soovi korral tagasisidet"}</a>}
       </div>
     </div>
     <div className="summary-progress-controls"><div><h3>{ru?'Продолжить позже?':'Jätkata hiljem?'}</h3><p>{progressSaved?(ru?'Маршрут сохранён только локально в этом браузере. Игровые результаты по-прежнему остаются только в текущей вкладке.':'Teekond on salvestatud ainult selles brauseris. Mängutulemused jäävad endiselt vaid sellesse vahelehte.'):(ru?'Можно сохранить только открытые разделы на этом устройстве. Никакие данные не отправляются.':'Saad salvestada ainult avatud osad sellele seadmele. Andmeid ei saadeta kuhugi.')}</p></div>{progressSaved?<button type="button" className="text-button" onClick={onClearSavedProgress}>{ru?'Удалить сохранённый прогресс':'Kustuta salvestatud edenemine'}</button>:<button type="button" className="button" onClick={onSaveProgress}>{ru?'Сохранить прогресс на устройстве':'Salvesta edenemine seadmesse'}</button>}</div>

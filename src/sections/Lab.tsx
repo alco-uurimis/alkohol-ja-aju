@@ -247,17 +247,15 @@ function SignalGame({ lang }: { lang: Lang }) {
 
 export default function Lab({ lang }: { lang: Lang }) {
   const ru = lang === 'ru';
-  const [glow, setGlow] = useState(false);
 
-  return <Section id="labor" number={ru ? '04 / ИГРОВАЯ ЛАБОРАТОРИЯ' : '04 / MÄNGULABOR'} title={ru ? 'Три коротких игры для мозга' : 'Kolm lühikest ajumängu'} intro={ru ? 'Пройди три задания по порядку: реакция, конфликт цвета и слова, затем последовательность. Результаты описывают только конкретную попытку.' : 'Läbi kolm ülesannet järjest: reaktsioon, värvi ja sõna konflikt ning seejärel järjestus. Tulemused kirjeldavad ainult konkreetset katset.'} className={`lab-section ${glow ? 'glow-mode' : ''}`}>
+  return <Section id="labor" number={ru ? '04 / ИГРОВАЯ ЛАБОРАТОРИЯ' : '04 / MÄNGULABOR'} title={ru ? 'Три коротких игры для мозга' : 'Kolm lühikest ajumängu'} intro={ru ? 'Пройди три задания по порядку: реакция, конфликт цвета и слова, затем последовательность. Результаты описывают только конкретную попытку.' : 'Läbi kolm ülesannet järjest: reaktsioon, värvi ja sõna konflikt ning seejärel järjestus. Tulemused kirjeldavad ainult konkreetset katset.'} className="lab-section">
     <div className="lab-steps" aria-label={ru?'Порядок мини-игр':'Minimängude järjekord'}><span><b>01</b>{ru?'Реакция':'Reaktsioon'}</span><span><b>02</b>Stroop</span><span><b>03</b>{ru?'Последовательность':'Järjestus'}</span></div>
     <div className="lab-toolbar">
-      <div><span className="pill">{ru ? 'ИНТЕРАКТИВ' : 'INTERAKTIIVNE'}</span><p>{ru ? 'Результаты игр хранятся только в этой вкладке. Они отправятся автору только вместе с финальным опросом и после твоего согласия.' : 'Mängutulemused säilivad ainult selles vahelehes. Need saadetakse autorile ainult koos lõpuküsitlusega ja pärast sinu nõusolekut.'}</p></div>
-      <div className="visual-effect-control"><button className={`glow-toggle ${glow?'effect-on':''}`} aria-pressed={glow} onClick={() => setGlow(v => !v)}>{glow ? (ru ? 'Выключить визуальный эффект' : 'Lülita visuaalne efekt välja') : (ru ? 'Включить визуальный эффект' : 'Lülita visuaalne efekt sisse')}</button><small aria-live="polite">{glow?(ru?'Эффект включён: усилены свечение, контраст и подсветка игровых элементов.':'Efekt on sees: tugevam helendus, kontrast ja mänguelementide esiletõst.'):(ru?'Только оформление — на игры и результаты не влияет.':'Ainult kujundus — ei mõjuta mänge ega tulemusi.')}</small></div>
+      <div><span className="pill">{ru ? 'ИНТЕРАКТИВ' : 'INTERAKTIIVNE'}</span><p>{ru ? 'Результаты игр хранятся только в этой вкладке. Они отправятся автору только вместе с отзывом о сайте и после твоего согласия.' : 'Mängutulemused säilivad ainult selles vahelehes. Need saadetakse autorile ainult koos veebilehe tagasisidega ja pärast sinu nõusolekut.'}</p></div>
     </div>
     <ExerciseNote lang={lang} />
     <div className="lab-grid"><ReactionGame lang={lang} /><StroopGame lang={lang} /><SignalGame lang={lang} /></div>
-    <div className="neuro-marquee" aria-hidden="true"><span>MEMORY · FOCUS · REACTION · SIGNAL · MEMORY · FOCUS · REACTION · SIGNAL · </span></div>
+    <p className="exercise-note">{ru?"Подумай: что могло повлиять на результат этой попытки — устройство, усталость или знакомство с заданием?":"Mõtle: mis võis selle katse tulemust mõjutada – seade, väsimus või ülesande varasem tundmine?"}</p>
   </Section>;
 }
 

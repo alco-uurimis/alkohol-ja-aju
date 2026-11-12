@@ -29,7 +29,7 @@ const articles: Article[] = [
     question: {ru: 'Влияет ли алкоголь на рабочую память?', et: 'Kas alkohol mõjutab töömälu?'},
     answer: {ru: 'В лабораторных исследованиях острое воздействие алкоголя статистически ухудшало рабочую память, особенно задачи, где нужно не только удерживать, но и преобразовывать информацию.', et: 'Laboriuuringutes halvendas alkoholi äge toime statistiliselt töömälu, eriti ülesandeid, kus infot ei tulnud ainult meeles hoida, vaid ka töödelda.'},
     measured: {ru: 'Авторы объединили 32 контролируемых исследования с 1 629 здоровыми взрослыми. В них сравнивали выполнение задач после известной дозы алкоголя и в контрольных условиях.', et: 'Autorid ühendasid 32 kontrollitud uuringut 1629 terve täiskasvanuga. Võrreldi ülesannete sooritust teadaoleva alkoholidoosi järel ja kontrolltingimustes.'},
-    found: {ru: 'Средний эффект был небольшим–умеренным, но статистически убедительным. Он различался в зависимости от типа задания и дозы.', et: 'Keskmine efekt oli väike kuni mõõdukas, kuid statistiliselt usaldusväärne. See erines ülesande tüübi ja annuse järgi.'},
+    found: {ru: 'В среднем выполнение заданий ухудшилось примерно на 0,3 стандартного отклонения (g = −0,30). Это средняя разница по разным заданиям, а не снижение памяти на 30%. Результат различался в зависимости от задания и дозы.', et: 'Sooritus halvenes keskmiselt umbes 0,3 standardhälbe võrra (g = −0,30). See on eri ülesannete keskmine erinevus, mitte mälu 30% halvenemine. Tulemus erines ülesande ja annuse järgi.'},
     limits: {ru: 'Это не тест для определения состояния конкретного человека. Работа изучала взрослых в контролируемых условиях; веб-игра не измеряет алкогольное опьянение.', et: 'See ei ole test ühe konkreetse inimese seisundi määramiseks. Uuring käsitles täiskasvanuid kontrollitud tingimustes; veebimäng ei mõõda alkoholijoovet.'},
     citation: 'Psychopharmacology, 2022 · systematic review and meta-analysis', url: 'https://pubmed.ncbi.nlm.nih.gov/35075512/',
     evidence: {
@@ -150,7 +150,12 @@ function articleFromPath(){
 }
 
 export default function ArticleApp(){
-  const [lang, setLang] = useState<Lang>(() => localStorage.getItem('alkohol-ja-aju:language') === 'ru' ? 'ru' : 'et');
+  const [lang, setLang] = useState<Lang>(() => {
+    const requested = new URLSearchParams(location.search).get('lang');
+    if (requested === 'ru' || requested === 'et') return requested;
+    try { return localStorage.getItem('alkohol-ja-aju:language') === 'ru' ? 'ru' : 'et'; }
+    catch { return 'et'; }
+  });
   const article = useMemo(articleFromPath, []);
   const ru = lang === 'ru';
 
@@ -164,8 +169,8 @@ export default function ArticleApp(){
     <header className="article-header">
       <a className="article-brand" href="../"><img src="../logo-mark.svg" alt=""/>{ru ? 'алкоголь и мозг' : 'alkohol ja aju'}</a>
       <div className="article-language" role="group" aria-label={ru ? 'Язык' : 'Keel'}>
-        <button className={lang === 'et' ? 'active' : ''} onClick={() => setLang('et')}>ET</button>
-        <button className={lang === 'ru' ? 'active' : ''} onClick={() => setLang('ru')}>RU</button>
+        <button aria-pressed={lang === 'et'} className={lang === 'et' ? 'active' : ''} onClick={() => setLang('et')}>ET</button>
+        <button aria-pressed={lang === 'ru'} className={lang === 'ru' ? 'active' : ''} onClick={() => setLang('ru')}>RU</button>
       </div>
     </header>
     <section className="article-hero">
@@ -187,6 +192,7 @@ export default function ArticleApp(){
       <article><span>03</span><h2>{ru ? 'Границы вывода' : 'Järelduse piirid'}</h2><p>{article.limits[lang]}</p></article>
     </section>
     <EvidenceSourceCard article={article} lang={lang}/>
+    {article.id === "alcohol-and-sleep" && <section aria-labelledby="sleep-onset"><h2 id="sleep-onset">{ru ? "Засыпание и качество сна" : "Uinumine ja une kvaliteet"}</h2><p>{ru ? "Обзор NIAAA объясняет, почему быстрое засыпание после алкоголя может сочетаться с прерывистым сном. Метаанализ на этой странице измерял дыхание и насыщение крови кислородом во сне." : "NIAAA ülevaade selgitab, miks kiirem uinumine pärast alkoholi võib kaasneda katkendliku unega. Selle lehe metaanalüüsis mõõdeti hingamist ja vere hapnikusisaldust une ajal."} <a href="https://www.niaaa.nih.gov/publications/brochures-and-fact-sheets/hangovers">NIAAA</a></p></section>}
     <RelatedNextSteps articleId={article.id} topics={articles.map(({id,title})=>({id,title}))} lang={lang}/>
     <footer className="article-footer"><a href="../">{ru ? 'Вернуться к учебному маршруту' : 'Tagasi õpperajale'}</a></footer>
   </main>;

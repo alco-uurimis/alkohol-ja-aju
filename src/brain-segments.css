@@ -1,6 +1,6 @@
 /* Segmented anatomical brain imagery and glossary relocation. Loaded after the UX layer. */
 :root{
-  --brain-photo:url('https://upload.wikimedia.org/wikipedia/commons/0/0e/Lobes_of_the_brain_NL.svg');
+  --brain-photo:url('/brain-anatomy.svg');
 }
 
 /* The original in-flow glossary stays in the source component for now, but is removed from the visible route.
@@ -20,7 +20,7 @@
 .brain-photo-hero::after,
 .brain-map-stage::after,
 .brain-map-visual::after{
-  content:'Gray’s Anatomy / Henry Vandyke Carter · Wikimedia Commons · public domain'!important;
+  content:'Gray’s Anatomy / Henry Vandyke Carter / Mysid · Wikimedia Commons · public domain'!important;
   right:8px!important;
   bottom:6px!important;
   max-width:88%;

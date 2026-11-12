@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import ResearchPortal from './components/ResearchPortal';
 import SiteEnhancements from './components/SiteEnhancements';
 import './scrollProgress';
 // Base styles load first; component and responsive refinements follow.
@@ -20,7 +19,6 @@ import './ux-system.css';
 import './brain-segments.css';
 import './sticky-header.css';
 import './mobile-cleanup.css';
-import './research-entry.css';
 import './mobile-design-fix.css';
 import './paths.css';
 import './mobile-simple.css';
@@ -31,4 +29,4 @@ import './quick-reference-mobile.css';
 import './research-visibility.css';
 import './quality-pass.css';
 import './desktop-menu.css';
-ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><ResearchPortal/><SiteEnhancements/></React.StrictMode>);
+ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><SiteEnhancements/></React.StrictMode>);

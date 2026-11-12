@@ -11,11 +11,11 @@ Research survey: https://alco-uurimis.github.io/alkohol-ja-aju/science/
 - memory/attention exercises and three mini-games
 - myth/fact quiz with confidence reflection
 - classroom plan and printable worksheet
-- 15+ deidentified research survey with separate Telegram / Google Sheets delivery
+- 15+ deidentified research survey stored in a private Google Sheet with optional Telegram delivery notifications
 - methodology, fact-checking, data-policy, topic index and privacy-thresholded aggregate results pages
 
 ## Research data
-The survey does not request name, e-mail, phone, school or exact date of birth. It collects sensitive alcohol-related answers without direct identifiers. Production delivery attempts two independent channels: a private Google Sheet and the organiser's Telegram. Public results, when enabled, are aggregates only and suppress groups smaller than N=10.
+The survey does not request name, e-mail, phone, school or exact date of birth. It collects sensitive alcohol-related answers without direct identifiers. Production saves the response in a private Google Sheet. Telegram can notify the organiser after a new response is saved without including response details. Public results, when enabled, are aggregates only and suppress groups smaller than N=10.
 
 The web form itself is not an ethics approval. The organiser remains responsible for determining which consent/ethics requirements apply to the concrete research context, including participation by 15–17-year-olds.
 
