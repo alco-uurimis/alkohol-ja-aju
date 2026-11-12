@@ -8,6 +8,7 @@ import './mobile-simple.css';
 import './product-v2.css';
 import './research-intro.css';
 import './quality-pass.css';
+import './ux-final.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode><ResearchExperience /></React.StrictMode>,

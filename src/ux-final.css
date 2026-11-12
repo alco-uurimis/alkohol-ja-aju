@@ -1,0 +1,101 @@
+/* ===== Final UX layer: loaded last. Accessibility floors, motion, decorative graphics. ===== */
+:root{--ux-purple:#5a49c9;--ux-lime:#c9f574;--ux-ease:cubic-bezier(.22,.8,.24,1)}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* ---------- Readability & touch floors ---------- */
+.eyebrow,.section-index,.topic-number,.research-kicker,.phase-divider small,.nav-group-label{font-size:max(.75rem,12px)!important}
+.language-switch button,.project-lang button,.entry-language button,.article-language button,.research-lang button{min-height:40px!important;min-width:42px!important;touch-action:manipulation}
+.research-lang button{min-height:36px!important}
+.account__signin{min-height:44px}
+.account__avatar{width:44px;height:44px}
+input[type=checkbox],input[type=radio]{accent-color:var(--ux-purple)}
+input[type=checkbox]:not(.survey-scale input),input[type=radio]:not(.survey-scale input){width:20px;height:20px}
+a,button,summary,[role=button]{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid #805ddb;outline-offset:3px;border-radius:6px}
+@media (max-width:760px){
+  body{-webkit-text-size-adjust:100%}
+  .header-actions{flex-wrap:nowrap}
+  .account-dialog{margin:auto auto 0;width:100%;max-width:none;border-radius:20px 20px 0 0;padding-bottom:max(22px,env(safe-area-inset-bottom))}
+}
+@media (max-width:360px){.account__signin{padding:0 10px}.header{gap:5px!important}}
+
+/* ---------- Page & hero entrance ---------- */
+@keyframes ux-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes ux-fade{from{opacity:0}to{opacity:1}}
+@keyframes ux-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes ux-shimmer{to{background-position:200% center}}
+@keyframes ux-pop{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes nb-pulse{0%,100%{opacity:.25;r:2}50%{opacity:1}}
+@keyframes nb-glow{0%,100%{opacity:.1}50%{opacity:.4}}
+body{animation:ux-fade .5s ease both}
+.hero-copy>*{animation:ux-rise .7s var(--ux-ease) both}
+.hero-copy>*:nth-child(1){animation-delay:.05s}.hero-copy>*:nth-child(2){animation-delay:.12s}.hero-copy>*:nth-child(3){animation-delay:.2s}
+.hero-copy>*:nth-child(4){animation-delay:.28s}.hero-copy>*:nth-child(5){animation-delay:.36s}.hero-copy>*:nth-child(n+6){animation-delay:.44s}
+.hero-visual{animation:ux-rise .9s var(--ux-ease) .2s both}
+.hero-visual img,.hero-visual svg{animation:ux-float 7s ease-in-out 1s infinite}
+.hero h1 span{background:linear-gradient(90deg,#5a49c9,#9a87ff,#5a49c9);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:ux-shimmer 6s linear infinite}
+
+/* ---------- Neural network backdrop (hero) ---------- */
+.hero{position:relative;isolation:isolate}
+.neural-backdrop{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.6;
+  -webkit-mask-image:linear-gradient(180deg,#000 0,#000 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 0,#000 55%,transparent 100%)}
+.nb-edge{stroke:#8f80ea;stroke-width:1;opacity:.14;animation:nb-glow 6s ease-in-out infinite}
+.nb-node{fill:#7c6ae6;animation:nb-pulse 4s ease-in-out infinite}
+
+/* ---------- Scroll reveal (only when JS enabled it) ---------- */
+.js-motion .reveal:not(.in-view){opacity:0;transform:translateY(26px)}
+.js-motion .reveal{transition:opacity .7s var(--ux-ease) var(--d,0ms),transform .7s var(--ux-ease) var(--d,0ms)}
+.js-motion .reveal.in-view{opacity:1;transform:none}
+@media print{.js-motion .reveal:not(.in-view){opacity:1;transform:none}}
+
+/* ---------- Hover / press feedback ---------- */
+a,button{transition:background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .25s ease,transform .25s var(--ux-ease)}
+button:active:not(:disabled),a.btn:active,.actions a:active{transform:scale(.97)}
+@media (hover:hover){
+  .guide-card,.path-card,.knowledge-card,.lab-card,.infographic-card,.minute-card,.method-card,.depth-card,.action-hub-card{transition:transform .35s var(--ux-ease),box-shadow .35s ease,border-color .25s ease}
+  .guide-card:hover,.path-card:hover,.knowledge-card:hover,.minute-card:hover,.method-card:hover,.depth-card:hover,.action-hub-card:hover{transform:translateY(-5px);box-shadow:0 18px 40px rgba(60,48,150,.16)}
+  .lab-card:hover,.infographic-card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(23,27,55,.14)}
+}
+
+/* ---------- Menu / dialog motion ---------- */
+.header nav.open{animation:ux-pop .28s var(--ux-ease) both}
+.header nav.open .nav-group{animation:ux-rise .45s var(--ux-ease) both}
+.header nav.open .nav-group:nth-child(2){animation-delay:.05s}.header nav.open .nav-group:nth-child(3){animation-delay:.1s}.header nav.open .nav-group:nth-child(n+4){animation-delay:.15s}
+.account__menu{animation:ux-pop .2s var(--ux-ease) both}
+.account-dialog[open]{animation:ux-rise .35s var(--ux-ease) both}
+.account-dialog[open]::backdrop{animation:ux-fade .3s ease both}
+
+/* ---------- Phase dividers: animated accent line ---------- */
+.phase-divider{position:relative}
+.phase-divider::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:72px;border-radius:2px;background:linear-gradient(90deg,var(--ux-purple),var(--ux-lime));transform-origin:left;transform:scaleX(0);transition:transform .9s var(--ux-ease) .15s}
+.phase-divider.in-view::before,html:not(.js-motion) .phase-divider::before{transform:scaleX(1)}
+
+/* ---------- Decorative graphics (inline SVG data URIs, no extra requests) ---------- */
+.section-heading{position:relative}
+@media (min-width:900px){
+  .section-heading::after{content:"";position:absolute;right:0;top:-8px;width:150px;height:130px;pointer-events:none;opacity:.5;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 130' fill='none' stroke='%237c6ae6' stroke-width='1.5'%3E%3Cpath d='M45 8l26 15v30L45 68 19 53V23z'/%3E%3Cpath d='M97 38l26 15v30l-26 15-26-15V53z' stroke='%23a6c43a'/%3E%3Cpath d='M71 53l-26 15M71 83l26 15' opacity='.5'/%3E%3Ccircle cx='45' cy='8' r='4' fill='%237c6ae6'/%3E%3Ccircle cx='123' cy='83' r='4' fill='%23c9f574' stroke='none'/%3E%3C/svg%3E") no-repeat center/contain;animation:ux-float 9s ease-in-out infinite}
+}
+/* Topic card icons */
+.guide-card{position:relative}
+.guide-card::before{content:"";display:block;width:46px;height:46px;margin:0 0 14px;border-radius:14px;background:#efecff center/26px no-repeat}
+a.guide-card[href^="acute-effects"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a49c9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 4a3 3 0 00-3 3 3 3 0 00-2 5 3 3 0 002 5 3 3 0 003 3 2 2 0 002-2V6a2 2 0 00-2-2zM15 4a3 3 0 013 3 3 3 0 012 5 3 3 0 01-2 5 3 3 0 01-3 3 2 2 0 01-2-2V6a2 2 0 012-2z'/%3E%3C/svg%3E")}
+a.guide-card[href^="memory-blackouts"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a49c9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='3'/%3E%3Cpath d='M8 12h2M14 12h2M10 9l-1 6' stroke-dasharray='2 2'/%3E%3C/svg%3E")}
+a.guide-card[href^="adolescent-brain"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a49c9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21V9M12 9c0-3 2-5 6-5 0 4-2 6-6 5zM12 13c0-2-1.5-4-5-4 0 3 1.5 5 5 4z'/%3E%3C/svg%3E")}
+a.guide-card[href^="self-control"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a49c9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M12 2v3M12 19v3M2 12h3M19 12h3'/%3E%3C/svg%3E")}
+a.guide-card[href^="alcohol-and-sleep"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a49c9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z'/%3E%3C/svg%3E")}
+a.guide-card[href^="alcohol-and-driving"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a49c9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Ccircle cx='12' cy='12' r='2'/%3E%3Cpath d='M3 12h7M14 12h7M12 14v7'/%3E%3C/svg%3E")}
+a.guide-card[href^="reward-and-habits"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a49c9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12a8 8 0 0114-5l2-2v6h-6l2.5-2.5A5 5 0 007 12M20 12a8 8 0 01-14 5l-2 2v-6h6l-2.5 2.5A5 5 0 0017 12'/%3E%3C/svg%3E")}
+a.guide-card[href^="recovery-and-brain"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a49c9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h4l3-7 4 14 3-7h4'/%3E%3C/svg%3E")}
+@media (hover:hover){.guide-card:hover::before{animation:ux-float 2s ease-in-out infinite;background-color:#e4dfff}}
+
+/* ---------- Reduced motion: switch everything off ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .js-motion .reveal:not(.in-view){opacity:1;transform:none}
+}
+
+/* hero: keep photo credit and caption apart; tighter topic cards on phones */
+.hero-visual>p{margin-top:26px}
+@media (max-width:760px){.guide-card{min-height:0}.guide-card::before{margin-bottom:10px}}
