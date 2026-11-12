@@ -110,3 +110,19 @@ describe('admin access', () => {
     expect(isAdminUser(user, '')).toBe(false);
   });
 });
+
+import adminSummary from '../api/admin-summary.js';
+describe('legacy admin password header', () => {
+  const call = async authorization => {
+    vi.stubEnv('ADMIN_DASHBOARD_PASSWORD', 'пароль-123');
+    vi.stubEnv('SHEET_WEBHOOK_URL', '');
+    const res = { setHeader: vi.fn(), status: vi.fn().mockReturnThis(), json: vi.fn(), end: vi.fn() };
+    await adminSummary({ method: 'GET', headers: { authorization } }, res);
+    return res.status.mock.calls[0][0];
+  };
+  it('accepts a non-Latin password only in the percent-encoded form, and rejects a wrong one', async () => {
+    expect(await call('Bearer u:' + encodeURIComponent('пароль-123'))).toBe(503); // authorised, then stops at "not configured"
+    expect(await call('Bearer u:' + encodeURIComponent('неверный'))).toBe(401);
+    expect(await call('Bearer u:%E0%A4%A')).toBe(401); // malformed encoding
+  });
+});
