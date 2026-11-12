@@ -9,7 +9,7 @@ function json(data) {
 }
 
 function doGet() {
-  return json({ ok: true, service: 'research-sheet-webhook', version: 9 });
+  return json({ ok: true, service: 'research-sheet-webhook', version: 10 });
 }
 
 function requireSecret(body) {
@@ -96,6 +96,37 @@ function aggregate(sheet) {
   });
 }
 
+// Admin-only: every question, every category, no suppression. Reachable only with the webhook secret, which only the
+// private Vercel API holds, and that API releases the result only to allow-listed signed-in admins.
+const ADMIN_SINGLE_FIELDS = ['language','ageGroup','ownUse','typicalUnits','sixPlus','peerNorm','closeExposure','closeHousehold','closeConflict','closeUnsafe','worry','sleep','study','mood','avoid','unsafe','extraResponsibility','overallImpact','pressure','refusalNormal','helpKnowledge','supportChoice'];
+const ADMIN_MULTI_FIELDS = ['contexts','closeRelations'];
+
+function adminAggregate(sheet) {
+  const lastColumn = sheet.getLastColumn();
+  const lastRow = sheet.getLastRow();
+  const now = new Date().toISOString();
+  if (lastColumn < 1 || lastRow < 2) return { ok: true, n: 0, excluded: 0, lastUpdated: now, fields: {}, answered: {} };
+  const headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0].map(v => String(v || '').trim());
+  const allRows = sheet.getRange(2, 1, lastRow - 1, lastColumn).getDisplayValues();
+  const rows = allRows.filter(row => isValidCurrentResponse(row, headers));
+  const fields = {};
+  const answered = {};
+  ADMIN_SINGLE_FIELDS.concat(ADMIN_MULTI_FIELDS).forEach(name => {
+    const multi = ADMIN_MULTI_FIELDS.indexOf(name) >= 0;
+    const counts = {};
+    let people = 0;
+    rows.forEach(row => {
+      const raw = readCell(row, headers, name);
+      if (!raw) return;
+      people += 1;
+      (multi ? raw.split('|') : [raw]).map(v => v.trim()).filter(Boolean).forEach(code => { counts[code] = (counts[code] || 0) + 1; });
+    });
+    fields[name] = counts;
+    answered[name] = people;
+  });
+  return { ok: true, n: rows.length, excluded: allRows.length - rows.length, lastUpdated: now, fields: fields, answered: answered };
+}
+
 function doPost(e) {
   let body;
   try { body = JSON.parse((e && e.postData && e.postData.contents) || '{}'); }
@@ -109,6 +140,7 @@ function doPost(e) {
   const sheet = spreadsheet.getSheetByName(SHEET_NAME);
   if (!sheet) return json({ ok: false, error: 'missing_sheet' });
   if (body.aggregate === true) return json(aggregate(sheet));
+  if (body.adminAggregate === true) return json(adminAggregate(sheet));
 
   const r = body.response || {};
   const responseId = String(r.response_id || '').trim();

@@ -96,3 +96,17 @@ describe('skipped questions (answered base)', () => {
     expect(publicSummary({ n: 30, overallImpact: { none: 12 } }).overallImpact).toEqual({});
   });
 });
+
+import { isAdminUser } from '../api/admin-data.js';
+describe('admin access', () => {
+  const user = { email: 'Owner@Example.com', email_confirmed_at: '2026-01-01T00:00:00Z' };
+  it('allows a confirmed e-mail on the list, ignoring case and spaces', () => {
+    expect(isAdminUser(user, ' owner@example.com , other@example.com')).toBe(true);
+  });
+  it('rejects unlisted, unconfirmed or missing users and an empty list', () => {
+    expect(isAdminUser({ ...user, email: 'x@example.com' }, 'owner@example.com')).toBe(false);
+    expect(isAdminUser({ email: 'owner@example.com' }, 'owner@example.com')).toBe(false);
+    expect(isAdminUser(null, 'owner@example.com')).toBe(false);
+    expect(isAdminUser(user, '')).toBe(false);
+  });
+});
