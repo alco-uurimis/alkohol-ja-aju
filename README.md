@@ -32,6 +32,12 @@ pnpm dev
 
 Tech: React 19, TypeScript, Vite, Vitest.
 
+## Google accounts
+
+GitHub Pages builds the account page from the repository Actions variables VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY. For local development, copy .env.example to .env.local and fill in the same public values. Only an sb_publishable_ key is accepted in the client. The Google OAuth Client Secret belongs in Supabase Auth provider settings.
+
+Create a Web application client in Google Auth Platform, authorize the GitHub Pages origin and register the Supabase callback https://<project-ref>.supabase.co/auth/v1/callback. Enable Google in Supabase Auth and allow the exact site callback https://alco-uurimis.github.io/alkohol-ja-aju/account/. For a local sign-in test, also allow http://127.0.0.1:5173/account/. The first Google sign-in creates a Supabase Auth user. No application tables or migrations are required. Survey responses do not use this session.
+
 ## Deployment
 GitHub Pages is deployed by `.github/workflows/deploy-pages.yml`.
 Serverless research endpoints are under `api/` and deployed separately on Vercel.

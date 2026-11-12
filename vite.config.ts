@@ -27,6 +27,7 @@ export default defineConfig({
         start: 'start/index.html',
         teacher: 'teacher/index.html',
         help: 'help/index.html',
+        account: 'account/index.html',
         admin: 'admin/index.html',
         acuteEffects: 'acute-effects/index.html',
         memoryBlackouts: 'memory-blackouts/index.html',
