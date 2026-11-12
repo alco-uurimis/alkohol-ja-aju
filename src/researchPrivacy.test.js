@@ -74,8 +74,21 @@ describe('skipped questions (answered base)', () => {
     for (const count of Object.values(r.ageGroup)) expect(count).toBeGreaterThanOrEqual(10);
   });
 
+  it('publishes categories of 5 or more and merges anything smaller', () => {
+    expect(publicSummary({ n: 40, ownUse: { never: 20, monthly: 5 }, answered: { ownUse: 25 } }).ownUse).toEqual({ never: 20, monthly: 5 });
+    // a category of 4 is not shown on its own; with the 5 hidden before it, the remainder 4 is merged with the smallest shown category
+    const r = publicSummary({ n: 40, ownUse: { never: 20, monthly: 6 }, answered: { ownUse: 30 } });
+    expect(r.ownUse).toEqual({ never: 20, other_small: 10 });
+    for (const count of Object.values(r.ownUse)) expect(count).toBeGreaterThanOrEqual(5);
+  });
+
+  it('still requires 10 valid responses overall', () => {
+    expect(publicSummary({ n: 9, ownUse: { never: 9 }, answered: { ownUse: 9 } })).not.toHaveProperty('ownUse');
+  });
+
   it('withholds when nothing would remain besides the merged row', () => {
     expect(publicSummary({ n: 40, ageGroup: { '18_20': 12 }, answered: { ageGroup: 15 } }).ageGroup).toEqual({});
+    expect(publicSummary({ n: 40, ageGroup: { '18_20': 12 }, answered: { ageGroup: 14 } }).ageGroup).toEqual({});
   });
 
   it('keeps the old behaviour when the upstream sends no answered counts', () => {

@@ -1,6 +1,7 @@
 const SPREADSHEET_ID = '1U4vVdsnYMPq-CZRbXxm_rqNk-n9kF4Chtu-wl5pz7Lg';
 const SHEET_NAME = 'Responses';
-const PUBLIC_MIN_N = 10;
+const PUBLIC_MIN_N = 10;      // minimum valid responses before anything is public
+const PUBLIC_MIN_GROUP = 5;   // minimum size of any single published category
 const CURRENT_SCHEMA_VERSION = '4';
 
 function json(data) {
@@ -8,7 +9,7 @@ function json(data) {
 }
 
 function doGet() {
-  return json({ ok: true, service: 'research-sheet-webhook', version: 8 });
+  return json({ ok: true, service: 'research-sheet-webhook', version: 9 });
 }
 
 function requireSecret(body) {
@@ -41,7 +42,7 @@ function countField(rows, headers, name) {
   });
   const published = {};
   Object.keys(counts).sort().forEach(code => {
-    if (counts[code] >= PUBLIC_MIN_N) published[code] = counts[code];
+    if (counts[code] >= PUBLIC_MIN_GROUP) published[code] = counts[code];
   });
   return published;
 }

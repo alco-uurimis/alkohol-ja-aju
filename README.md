@@ -15,7 +15,7 @@ Research survey: https://alco-uurimis.github.io/alkohol-ja-aju/science/
 - methodology, fact-checking, data-policy, topic index and privacy-thresholded aggregate results pages
 
 ## Research data
-The survey does not request name, e-mail, phone, school or exact date of birth. It collects sensitive alcohol-related answers without direct identifiers. Production saves the response in a private Google Sheet. Telegram can notify the organiser after a new response is saved without including response details. Public results, when enabled, are aggregates only and suppress groups smaller than N=10.
+The survey does not request name, e-mail, phone, school or exact date of birth. It collects sensitive alcohol-related answers without direct identifiers. Production saves the response in a private Google Sheet. Telegram can notify the organiser after a new response is saved without including response details. Public results, when enabled, are aggregates only and require N=10 valid responses before anything is published and suppress single categories smaller than 5 (small categories are merged into an "other" row).
 
 The web form itself is not an ethics approval. The organiser remains responsible for determining which consent/ethics requirements apply to the concrete research context, including participation by 15–17-year-olds.
 
