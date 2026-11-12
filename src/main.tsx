@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import SiteEnhancements from './components/SiteEnhancements';
+import AccountMenu from './components/AccountMenu';
 import './scrollProgress';
 // Base styles load first; component and responsive refinements follow.
 import './styles.css';
@@ -29,4 +30,4 @@ import './quick-reference-mobile.css';
 import './research-visibility.css';
 import './quality-pass.css';
 import './desktop-menu.css';
-ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><SiteEnhancements/></React.StrictMode>);
+ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><SiteEnhancements/><AccountMenu/></React.StrictMode>);
