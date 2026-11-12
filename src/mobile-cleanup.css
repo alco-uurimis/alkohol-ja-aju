@@ -56,7 +56,7 @@ html[lang="et"] .brain-map-stage.brain-static-diagram{
 /* Attribution remains a separate stable strip, never mixed with labels. */
 .hero-visual .brain-photo-hero::after,
 .brain-map-stage.brain-static-diagram::after{
-  content:'Gray’s Anatomy / Henry Vandyke Carter · Wikimedia Commons · public domain'!important;
+  content:'Gray’s Anatomy / Henry Vandyke Carter / Mysid · Wikimedia Commons · public domain'!important;
   position:absolute!important;
   left:12%!important;
   right:12%!important;
@@ -99,4 +99,14 @@ html[lang="et"] .brain-map-stage.brain-static-diagram{
   .brain-map-stage.brain-static-diagram::after{
     font-size:5.5px!important;
   }
+}
+
+.hero-diagram-key { display: none; }
+@media (max-width: 600px) {
+  html[lang] .hero-visual .brain-photo-hero {
+    background-image: var(--brain-photo) !important;
+    background-position: center !important;
+    background-size: 90% auto !important;
+  }
+  .hero-diagram-key { display: grid; gap: 6px; padding-inline-start: 20px; font-size: .9rem; color: #e0e3f0; }
 }

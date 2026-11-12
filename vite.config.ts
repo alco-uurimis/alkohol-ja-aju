@@ -8,7 +8,7 @@ export default defineConfig({
   // their bundles to /assets instead of /alkohol-ja-aju/assets.
   base: (globalThis as {process?:{env?:Record<string,string|undefined>}}).process?.env?.GITHUB_ACTIONS ? '/alkohol-ja-aju/' : './',
   test: {
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.{ts,js}'],
   },
   build: {
     rollupOptions: {
@@ -26,6 +26,7 @@ export default defineConfig({
         worksheetRu: 'worksheet/ru/index.html',
         start: 'start/index.html',
         teacher: 'teacher/index.html',
+        help: 'help/index.html',
         admin: 'admin/index.html',
         acuteEffects: 'acute-effects/index.html',
         memoryBlackouts: 'memory-blackouts/index.html',

@@ -1,23 +1,24 @@
 import type { ReactNode } from 'react';
-import { sources,takeaways } from '../data/content';
-import { sourcesRu,takeawaysRu } from '../data/content.ru';
+import { sources } from '../data/content';
+import { sourcesRu } from '../data/content.ru';
 import { additionalSourcesEt,additionalSourcesRu } from '../data/additionalSources';
-import { InfoCard,Section,SourceReference } from '../components/Shared';
+import { Section } from '../components/Shared';
 import FeedbackSurvey from '../components/FeedbackSurvey';
 import ReferenceGlossary from '../components/ReferenceGlossary';
 
 export default function Closing({lang,summary}:{lang:'et'|'ru';summary?:ReactNode}){
   const ru=lang==='ru';
   const localizedSources=[...(ru?sourcesRu:sources),...(ru?additionalSourcesRu:additionalSourcesEt)];
-  const localizedTakeaways=ru?takeawaysRu:takeaways;
 
   return <>
-    <Section id="meelespea" number={ru?'12 / ГЛАВНОЕ':'12 / VÕTA KAASA'} title={ru?'Что стоит запомнить?':'Mida tasub meeles pidada?'} intro={ru?'Короткое резюме после упражнений, игр и проверки знаний.':'Lühikokkuvõte pärast harjutusi, mänge ja teadmiste kontrolli.'}>
-      <div className="takeaways">{localizedTakeaways.map((t,i)=><InfoCard key={t.title} title={t.title}><span className="takeaway-number" aria-hidden="true">0{i+1}</span><p>{t.text} <SourceReference ids={t.refs} lang={lang}/></p></InfoCard>)}</div>
-      <div className="closing-note"><strong>{ru?'Результат упражнения — не диагноз.':'Harjutuse tulemus ei ole diagnoos.'}</strong><p>{ru?'Здесь можно заметить собственный опыт и проверить знания. Выводы о влиянии алкоголя основаны на учебнике, обзорах организаций здравоохранения и научных публикациях, а не на одной сумме баллов.':'Siin saad oma kogemust märgata ja teadmisi kontrollida. Alkoholi mõju käsitlevad järeldused põhinevad õpikul, terviseasutuste ülevaadetel ja teaduspublikatsioonidel, mitte ühel punktisummal.'}</p></div>
+    <Section id="meelespea" number={ru?"ИТОГ":"KOKKUVÕTE"} title={ru?"Факт и граница вывода":"Fakt ja järelduse piir"}>
+      <p>{ru?"Назови один факт, который можешь объяснить, и один вывод, который эти данные сделать не позволяют.":"Nimeta üks fakt, mida oskad selgitada, ja üks järeldus, mida nende andmete põhjal teha ei saa."}</p>
+      <a href="acute-effects/">{ru?"Свериться с карточкой исследования":"Vaata võrdluseks uuringukaarti"}</a>
     </Section>
 
-    <Section id="tagasiside" number={ru?'13 / ОБРАТНАЯ СВЯЗЬ':'13 / TAGASISIDE'} title={ru?'Короткий опрос о сайте':'Lühike küsitlus veebilehe kohta'} intro={ru?'Теперь основной материал завершён. Оцени понятность, интерес, сложность заданий и удобство сайта. Не указывай имя, контакты, сведения о здоровье или другую личную информацию.':'Põhimaterjal on nüüd läbitud. Hinda arusaadavust, huvi, ülesannete raskust ja veebilehe kasutusmugavust. Ära lisa nime, kontaktandmeid, terviseandmeid ega muud isiklikku teavet.'}>
+    {summary}
+
+    <Section id="tagasiside" number={ru?'13 / ОБРАТНАЯ СВЯЗЬ':'13 / TAGASISIDE'} title={ru?'Обратная связь о сайте':'Tagasiside veebilehe kohta'} intro={ru?'По желанию оцени понятность, интерес, сложность заданий и удобство сайта. Не указывай имя, контакты, сведения о здоровье или другую личную информацию.':'Soovi korral hinda arusaadavust, huvi, ülesannete raskust ja veebilehe kasutusmugavust. Ära lisa nime, kontaktandmeid, terviseandmeid ega muud isiklikku teavet.'}>
       <FeedbackSurvey lang={lang}/>
     </Section>
 
