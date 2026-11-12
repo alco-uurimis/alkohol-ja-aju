@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Section } from './Shared';
+import ProgressRing from './ProgressRing';
 import { readGameMetrics, type GameMetrics } from '../utils/gameMetrics';
 
 type Lang='et'|'ru';
@@ -26,7 +27,7 @@ export default function FinalSummary({lang,quizScore,visitedIds,totalSections,pr
 
   return <Section id="isiklik-kokkuvote" number={ru?'15 / ТВОЙ ИТОГ':'15 / SINU KOKKUVÕTE'} title={ru?'Что ты уже прошёл(а)':'Mida oled juba teinud'} intro={progressSaved?(ru?'Прогресс разделов сохранён только в этом браузере на этом устройстве; это не медицинская оценка и не передаётся автору.':'Osade edenemine on salvestatud ainult selle seadme brauserisse; see ei ole tervisehinnang ega jõua autorini.'):(ru?'Итог собирает данные этой вкладки и не является медицинской оценкой.':'Kokkuvõte kasutab selle vahelehe andmeid ega ole tervisehinnang.')} className="personal-summary">
     <div className="summary-stats">
-      <article><span>{ru?'Этапы сайта':'Lehe etapid'}</span><strong>{visitedIds.length} / {totalSections}</strong><p>{ru?'Открытые разделы':'Avatud osad'}</p></article>
+      <article><ProgressRing value={visitedIds.length} max={totalSections}/><span>{ru?'Этапы сайта':'Lehe etapid'}</span><strong>{visitedIds.length} / {totalSections}</strong><p>{ru?'Открытые разделы':'Avatud osad'}</p></article>
       <article><span>{ru?'Мини-игры':'Minimängud'}</span><strong>{games} / 3</strong><p>{games===0?(ru?'Пока нет результатов':'Tulemusi veel pole'):(ru?'Результаты сохранены в этой вкладке':'Tulemused on selles vahelehes salvestatud')}</p></article>
       <article><span>{ru?'Викторина':'Viktoriin'}</span><strong>{quizScore===null?'—':`${quizScore} / 10`}</strong><p>{quizScore===null?(ru?'Ещё не завершена':'Veel lõpetamata'):(ru?'Последняя завершённая попытка':'Viimane lõpetatud katse')}</p></article>
     </div>
