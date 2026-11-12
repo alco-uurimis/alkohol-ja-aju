@@ -21,3 +21,4 @@
 .rchart__legend b{font-size:1.02rem}
 @media (max-width:520px){.rchart__legend li{grid-template-columns:auto 1fr auto}.rchart__legend small{grid-column:2/-1}}
 @media (prefers-reduced-motion:reduce){.rchart__track i,.rchart__seg{transition:none}}
+.result-base{margin:12px 0 0;font-size:.8rem;color:#697087}

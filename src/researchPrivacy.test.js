@@ -56,3 +56,21 @@ it('stores only applicable answers and sends Telegram a notification without res
     disable_web_page_preview: true,
   });
 });
+
+describe('skipped questions (answered base)', () => {
+  it('publishes a distribution whose gap to N is explained by skipped answers', () => {
+    const r = publicSummary({ n: 30, overallImpact: { none: 12, slight: 10 }, answered: { overallImpact: 22 } });
+    expect(r.overallImpact).toEqual({ none: 12, slight: 10 });
+    expect(r.answered).toEqual({ overallImpact: 22 });
+  });
+
+  it('still withholds when a small category was hidden upstream', () => {
+    // 22 answered, only 12 shown: the missing 10 would include a hidden small group.
+    expect(publicSummary({ n: 30, overallImpact: { none: 12 }, answered: { overallImpact: 22 } }).overallImpact).toEqual({});
+    expect(publicSummary({ n: 30, overallImpact: { none: 12, slight: 10 }, answered: { overallImpact: 25 } }).overallImpact).toEqual({});
+  });
+
+  it('keeps the old behaviour when the upstream sends no answered counts', () => {
+    expect(publicSummary({ n: 30, overallImpact: { none: 12, slight: 10 } }).overallImpact).toEqual({});
+  });
+});

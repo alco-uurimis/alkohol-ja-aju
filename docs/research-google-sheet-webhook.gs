@@ -8,7 +8,7 @@ function json(data) {
 }
 
 function doGet() {
-  return json({ ok: true, service: 'research-sheet-webhook', version: 7 });
+  return json({ ok: true, service: 'research-sheet-webhook', version: 8 });
 }
 
 function requireSecret(body) {
@@ -26,6 +26,10 @@ function headerIndex(headers, name) {
 function readCell(row, headers, name) {
   const index = headerIndex(headers, name);
   return index >= 0 ? String(row[index] || '').trim() : '';
+}
+
+function countAnswered(rows, headers, name) {
+  return rows.filter(row => Boolean(readCell(row, headers, name))).length;
 }
 
 function countField(rows, headers, name) {
@@ -79,7 +83,15 @@ function aggregate(sheet) {
     ageGroup: countField(rows, headers, 'ageGroup'),
     ownUse: countField(rows, headers, 'ownUse'),
     overallImpact: countField(rows, headers, 'overallImpact'),
-    helpKnowledge: countField(rows, headers, 'helpKnowledge')
+    helpKnowledge: countField(rows, headers, 'helpKnowledge'),
+    // How many people answered each question. Lets the public API tell "some people skipped this question"
+    // apart from "a small category was hidden" (the latter must still withhold the chart).
+    answered: {
+      ageGroup: countAnswered(rows, headers, 'ageGroup'),
+      ownUse: countAnswered(rows, headers, 'ownUse'),
+      overallImpact: countAnswered(rows, headers, 'overallImpact'),
+      helpKnowledge: countAnswered(rows, headers, 'helpKnowledge')
+    }
   });
 }
 
