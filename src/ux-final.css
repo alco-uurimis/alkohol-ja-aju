@@ -160,3 +160,34 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
 .site-footer .footer-support strong{white-space:normal}
 .site-footer .footer-support{grid-auto-flow:row!important;grid-template-areas:none!important}
 .site-footer .footer-support>*{grid-column:1!important;grid-row:auto!important}
+
+/* =====================================================================
+   Interactive brain map: markers sit on the real anatomical spots.
+   The artwork is 1024×732, so the box keeps that ratio and the image fills it;
+   --x/--y are the marker positions in that same coordinate space.
+   ===================================================================== */
+.brain-map-visual{aspect-ratio:1024/732;min-height:0!important;height:auto!important;position:relative;overflow:hidden;border-radius:20px;
+  background-size:100% 100%!important;background-position:center!important}
+.brain-map-visual::after{top:8px!important;bottom:auto!important;right:8px!important;max-width:62%!important}
+.brain-map-visual .brain-point{position:absolute!important;left:var(--x)!important;top:var(--y)!important;right:auto!important;bottom:auto!important;
+  transform:translate(-16px,-50%);display:flex!important;align-items:center;gap:8px!important;width:auto!important;max-width:none!important;
+  padding:3px 13px 3px 3px!important;border-radius:999px!important;white-space:nowrap;font-size:.8rem;z-index:2}
+.brain-map-visual .brain-point b{max-width:none!important;white-space:nowrap!important;line-height:1.1}
+.brain-map-visual .brain-point span{flex:0 0 auto;width:26px!important;height:26px!important;display:grid;place-items:center}
+.brain-map-visual .brain-point.active{z-index:3}
+.brain-map-visual .brain-point.active span{animation:ux-ring 2.4s ease-out infinite}
+.brain-map-visual .point-prefrontal{--x:17%;--y:34%}
+.brain-map-visual .point-reward{--x:50.5%;--y:51%}
+.brain-map-visual .point-hippocampus{--x:42%;--y:71%}
+.brain-map-visual .point-cerebellum{--x:74%;--y:77%}
+.brain-map-visual .point-brainstem{--x:60%;--y:90%}
+@media (max-width:760px){
+  .brain-map-visual .brain-point{padding:3px!important;font-size:.7rem;min-height:0!important;min-width:0!important;border-radius:50%!important;backdrop-filter:none}
+  .brain-map-visual .brain-point::before{content:"";position:absolute;inset:-9px}
+  .brain-map-visual .brain-point b{display:none}
+  .brain-map-visual .brain-point.active{padding:3px 11px 3px 3px!important;border-radius:999px!important}
+  .brain-map-visual .brain-point.active b{display:block}
+  .brain-map-visual .brain-point span{width:24px!important;height:24px!important}
+  .brain-map-visual .point-cerebellum.active,.brain-map-visual .point-reward.active{flex-direction:row-reverse;padding:3px 3px 3px 11px!important;border-radius:999px!important;transform:translate(calc(-100% + 16px),-50%)}
+  .brain-map-visual::after{display:none}
+}
