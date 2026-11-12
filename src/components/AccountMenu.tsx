@@ -19,8 +19,8 @@ const t = {
   confirm: { et: 'Saatsime kinnituslingi. Ava e-kiri ja kinnita aadress.', ru: 'Мы отправили ссылку подтверждения. Откройте письмо и подтвердите адрес.' },
   failed: { et: 'Ei õnnestunud. Kontrolli andmeid ja proovi uuesti.', ru: 'Не получилось. Проверьте данные и попробуйте снова.' },
   privacy: {
-    et: 'Konto on valikuline ega ole seotud uurimisküsitlusega: küsitluse vastused jäävad anonüümseks.',
-    ru: 'Аккаунт необязателен и не связан с исследовательским опросом: ответы опроса остаются анонимными.',
+    et: 'Konto on valikuline ega ole seotud uurimisküsitlusega: küsitluse vastuseid kontoga ei seota.',
+    ru: 'Аккаунт необязателен и не связан с исследовательским опросом: ответы опроса с аккаунтом не связываются.',
   },
 } as const;
 

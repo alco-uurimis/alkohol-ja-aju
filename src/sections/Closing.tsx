@@ -16,8 +16,6 @@ export default function Closing({lang,summary}:{lang:'et'|'ru';summary?:ReactNod
       <a href="acute-effects/">{ru?"Свериться с карточкой исследования":"Vaata võrdluseks uuringukaarti"}</a>
     </Section>
 
-    {summary}
-
     <Section id="tagasiside" number={ru?'13 / ОБРАТНАЯ СВЯЗЬ':'13 / TAGASISIDE'} title={ru?'Обратная связь о сайте':'Tagasiside veebilehe kohta'} intro={ru?'По желанию оцени понятность, интерес, сложность заданий и удобство сайта. Не указывай имя, контакты, сведения о здоровье или другую личную информацию.':'Soovi korral hinda arusaadavust, huvi, ülesannete raskust ja veebilehe kasutusmugavust. Ära lisa nime, kontaktandmeid, terviseandmeid ega muud isiklikku teavet.'}>
       <FeedbackSurvey lang={lang}/>
     </Section>
