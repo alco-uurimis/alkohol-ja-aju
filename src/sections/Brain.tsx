@@ -1,3 +1,4 @@
+import Collapse from '../components/Collapse';
 import { useState } from 'react';
 import { topics,science,knowledgeCards } from '../data/content';
 import { topicsRu,scienceRu,knowledgeCardsRu } from '../data/content.ru';
@@ -79,6 +80,7 @@ export default function Brain({lang}:{lang:'et'|'ru'}){
           ?'Короткие объяснения на основе учебника по психиатрии, обзоров NIAAA и ВОЗ и рецензируемых научных статей. Открой карточку, если нужен механизм или оговорки исследования.'
           :'Lühiselgitused psühhiaatriaõpiku, NIAAA ja WHO ülevaadete ning eelretsenseeritud teadusartiklite põhjal. Ava kaart, kui tahad näha mehhanismi või uuringu piiranguid.'}</p>
       </div>
+      <Collapse lang={lang} collapsed={[700,520]} count={`${localizedKnowledge.length} ${ru?'карточек':'kaarti'}`}>
       <div className="knowledge-grid">
         {localizedKnowledge.map((item,i)=><article className="knowledge-card" key={item.title}>
           <div className="knowledge-card-top"><span>{String(i+1).padStart(2,'0')}</span><span>{item.kicker}</span></div>
@@ -90,6 +92,7 @@ export default function Brain({lang}:{lang:'et'|'ru'}){
           </details>
         </article>)}
       </div>
+      </Collapse>
     </div>
   </Section>;
 }

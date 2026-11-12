@@ -1,3 +1,4 @@
+import Collapse from '../components/Collapse';
 import type { ReactNode } from 'react';
 import { sources } from '../data/content';
 import { sourcesRu } from '../data/content.ru';
@@ -29,7 +30,7 @@ export default function Closing({lang,summary}:{lang:'et'|'ru';summary?:ReactNod
     <ReferenceGlossary lang={lang}/>
 
     <Section id="allikad" number={ru?'17 / ИСТОЧНИКИ':'17 / ALLIKAD'} title={ru?'Источники и литература':'Allikad ja kirjandus'} intro={ru?'Последний раздел сайта — библиография. Номера рядом с научными утверждениями ведут прямо к соответствующей записи здесь.':'Lehe viimane osa on bibliograafia. Teadusväidete kõrval olevad numbrid viivad otse vastava allikani siin.'} className="sources-section">
-      <ol className="sources">{localizedSources.map(s=><li key={s.id} id={'allikas-'+s.id} tabIndex={-1}><span className="source-index">[{s.id}]</span><div><p className="source-org">{s.organization}</p><h3><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></h3><p>{s.note}</p><span className="small">{s.year??(ru?'Год публикации не указан':'Ilmumisaasta puudub')} · {ru?'Проверено':'Vaadatud'} {s.accessed.split('-').reverse().join('.')}</span></div></li>)}</ol>
+      <Collapse lang={lang} collapsed={[640,640]} count={`${localizedSources.length}`} anchorPrefix="#allikas-"><ol className="sources">{localizedSources.map(s=><li key={s.id} id={'allikas-'+s.id} tabIndex={-1}><span className="source-index">[{s.id}]</span><div><p className="source-org">{s.organization}</p><h3><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></h3><p>{s.note}</p><span className="small">{s.year??(ru?'Год публикации не указан':'Ilmumisaasta puudub')} · {ru?'Проверено':'Vaadatud'} {s.accessed.split('-').reverse().join('.')}</span></div></li>)}</ol></Collapse>
       <p className="small">{ru?'Это учебная подборка, а не систематический обзор всей литературы. В карточках отдельно отмечаются ограничения и различие между ассоциацией и причинностью.':'See on õppeotstarbeline allikavalik, mitte kogu teaduskirjanduse süstemaatiline ülevaade. Kaartidel tuuakse eraldi välja piirangud ning seose ja põhjuslikkuse erinevus.'}</p>
     </Section>
   </>;

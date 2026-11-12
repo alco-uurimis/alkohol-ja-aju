@@ -1,0 +1,12 @@
+.collapse{position:relative}
+.collapse__body{overflow:hidden;transition:max-height .6s cubic-bezier(.22,.8,.24,1)}
+.collapse.is-open .collapse__body{overflow:visible}
+.collapse.is-collapsed .collapse__body::after{content:"";position:absolute;left:0;right:0;bottom:64px;height:120px;background:linear-gradient(180deg,rgba(247,248,252,0),var(--collapse-fade,#f4f5f9) 85%);pointer-events:none}
+.collapse__bar{position:relative;display:flex;justify-content:center;padding-top:14px}
+.collapse__btn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 22px;border:1px solid #cfd3e6;border-radius:999px;background:#fff;color:#171b37;font:inherit;font-weight:700;font-size:.92rem;cursor:pointer;box-shadow:0 6px 18px rgba(23,27,55,.08);transition:transform .2s,box-shadow .2s,border-color .2s}
+.collapse__btn:hover{border-color:#7c6ae6;box-shadow:0 10px 24px rgba(90,73,201,.16)}
+.collapse__btn:active{transform:scale(.98)}
+.collapse__btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s}
+.collapse.is-open .collapse__btn svg{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){.collapse__body{transition:none}}
+.sources-section .collapse{--collapse-fade:#f1f3f7}
