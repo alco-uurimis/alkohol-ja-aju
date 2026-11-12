@@ -34,21 +34,24 @@ function NeuralBackdrop() {
   );
 }
 
-const FACTS: { n: number; et: string; ru: string; icon: string }[] = [
+const FACTS: { n?: number; live?: boolean; et: string; ru: string; icon: string }[] = [
   { n: 8, et: 'teadusteemat', ru: 'научных тем', icon: 'M4 6h16M4 12h16M4 18h10' },
   { n: 3, et: 'minimängu', ru: 'мини-игры', icon: 'M6 12h4M8 10v4M15 11h.01M18 13h.01M4 8h16a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4a2 2 0 012-2z' },
   { n: 10, et: 'küsimust viktoriinis', ru: 'вопросов в викторине', icon: 'M9 9a3 3 0 115 2c-1 1-2 1.5-2 3M12 18h.01' },
-  { n: 1629, et: 'osalejat metaanalüüsis', ru: 'участников метаанализа', icon: 'M16 11a3 3 0 100-6 3 3 0 000 6zM8 11a3 3 0 100-6 3 3 0 000 6zM2 20c0-3 3-5 6-5s6 2 6 5M14 15c3 0 8 1 8 5' },
+  { live: true, et: 'vastust küsitlusele', ru: 'ответили на опрос', icon: 'M16 11a3 3 0 100-6 3 3 0 000 6zM8 11a3 3 0 100-6 3 3 0 000 6zM2 20c0-3 3-5 6-5s6 2 6 5M14 15c3 0 8 1 8 5' },
 ];
 
 function CountUp({ to, run }: { to: number; run: boolean }) {
   const [v, setV] = useState(() => (reduced() ? to : 0));
+  const shown = useRef(v);
   useEffect(() => {
-    if (!run || reduced()) { if (reduced()) setV(to); return; }
-    let raf = 0; const t0 = performance.now(); const dur = 1400;
+    if (!run) return;
+    if (reduced()) { shown.current = to; setV(to); return; }
+    let raf = 0; const t0 = performance.now(); const from = shown.current; const dur = 1400;
     const tick = (t: number) => {
       const k = Math.min(1, (t - t0) / dur);
-      setV(Math.round(to * (1 - Math.pow(1 - k, 3))));
+      const next = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+      shown.current = next; setV(next);
       if (k < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -57,11 +60,43 @@ function CountUp({ to, run }: { to: number; run: boolean }) {
   return <>{v.toLocaleString('en-US').replace(',', '\u00a0')}</>;
 }
 
+/** Live number of survey responses (public aggregate). Refreshes every minute while the tab is visible; null until known. */
+const SUMMARY_URL = 'https://alkohol-ja-aju.vercel.app/api/research-summary';
+const CACHE_KEY = 'alkohol-ja-aju:responses-count';
+function useResponseCount(): number | null | 'failed' {
+  const [n, setN] = useState<number | null | 'failed'>(() => {
+    try { const v = Number(sessionStorage.getItem(CACHE_KEY)); return Number.isFinite(v) && v > 0 ? v : null; } catch { return null; }
+  });
+  useEffect(() => {
+    let alive = true; let timer = 0;
+    const load = async () => {
+      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 12000);
+      try {
+        const r = await fetch(SUMMARY_URL, { signal: ctl.signal });
+        const d = await r.json();
+        if (!alive) return;
+        if (r.ok && d?.ok === true && Number.isInteger(d.n) && d.n >= 0) {
+          setN(d.n);
+          try { sessionStorage.setItem(CACHE_KEY, String(d.n)); } catch { /* storage unavailable */ }
+        } else setN(prev => (typeof prev === 'number' ? prev : 'failed'));
+      } catch { if (alive) setN(prev => (typeof prev === 'number' ? prev : 'failed')); }
+      finally { clearTimeout(to); }
+    };
+    const schedule = () => { window.clearTimeout(timer); if (!document.hidden) timer = window.setTimeout(async () => { await load(); schedule(); }, 60000); };
+    load().then(schedule);
+    const onVis = () => { if (!document.hidden) { load(); } schedule(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => { alive = false; window.clearTimeout(timer); document.removeEventListener('visibilitychange', onVis); };
+  }, []);
+  return n;
+}
+
 /** Animated key-numbers strip shown under the hero. All numbers come from the site's own content. */
 function FactStrip() {
   const ref = useRef<HTMLDivElement>(null);
   const [run, setRun] = useState(false);
   const [lang, setLang] = useState(() => (document.documentElement.lang === 'ru' ? 'ru' : 'et'));
+  const responses = useResponseCount();
   useEffect(() => {
     const mo = new MutationObserver(() => setLang(document.documentElement.lang === 'ru' ? 'ru' : 'et'));
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
@@ -73,11 +108,12 @@ function FactStrip() {
   }, []);
   return (
     <div className="fact-strip" ref={ref} role="list">
-      {FACTS.map((f, i) => (
-        <div className="fact-strip__item" role="listitem" key={f.n} style={{ ['--i' as string]: i }}>
+      {FACTS.filter(f => !(f.live && responses === 'failed')).map((f, i) => (
+        <div className="fact-strip__item" role="listitem" key={f.live ? 'live' : f.n} style={{ ['--i' as string]: i }}>
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={f.icon} /></svg>
-          <strong><CountUp to={f.n} run={run} /></strong>
+          <strong>{f.live ? (typeof responses === 'number' ? <CountUp to={responses} run={run} /> : '…') : <CountUp to={f.n ?? 0} run={run} />}</strong>
           <span>{lang === 'ru' ? f.ru : f.et}</span>
+          {f.live && typeof responses === 'number' && <i className="fact-strip__live" aria-hidden="true" />}
         </div>
       ))}
     </div>

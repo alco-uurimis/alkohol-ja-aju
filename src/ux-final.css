@@ -227,3 +227,8 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
 /* Looping decoration only while visible */
 .hero-away .neural-backdrop,.hero-away .hero h1 span,.hero-away .hero .actions a,.hero-away .hero-visual,.hero-away .hero-visual *{animation-play-state:paused!important}
 .footer-away .site-footer::before{animation-play-state:paused!important}
+
+/* live indicator on the responses tile */
+.fact-strip__live{position:absolute;right:16px;bottom:16px;width:9px;height:9px;border-radius:50%;background:#c9f574;box-shadow:0 0 0 0 rgba(201,245,116,.6);animation:ux-live 2.4s ease-out 6}
+@keyframes ux-live{to{box-shadow:0 0 0 10px rgba(201,245,116,0)}}
+@media (prefers-reduced-motion:reduce){.fact-strip__live{animation:none}}
