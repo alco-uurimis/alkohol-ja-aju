@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 const REVEAL = [
   '.section-heading', '.phase-divider', '.guide-card', '.path-card', '.knowledge-card', '.infographic-card',
   '.lab-card', '.task-card', '.minute-card', '.method-card', '.depth-card', '.quiz-card', '.action-hub-card',
-  '.summary-stats article', '.about-grid > div', '.site-footer',
+  '.summary-stats article', '.about-grid > div', '.site-footer', '.context-grid .info-card', '.takeaways .info-card',
 ].join(',');
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -107,6 +107,14 @@ export default function Motion() {
     }, { rootMargin: '0px 0px -6% 0px', threshold: 0 });
 
     const seen = new WeakSet<Element>();
+    // Decorative looping animations run only while their block is on screen (see .hero-away / .footer-away in ux-final.css).
+    const away = new IntersectionObserver((entries) => {
+      entries.forEach((e) => root.classList.toggle(e.target.id === 'avaleht' ? 'hero-away' : 'footer-away', !e.isIntersecting));
+    });
+    const heroEl = document.getElementById('avaleht');
+    const footerEl = document.querySelector('.site-footer');
+    if (heroEl) away.observe(heroEl);
+    if (footerEl) { footerEl.id = footerEl.id || 'site-footer'; away.observe(footerEl); }
     const scan = () => {
       document.querySelectorAll(REVEAL).forEach((el) => {
         if (seen.has(el)) return;
@@ -122,7 +130,7 @@ export default function Motion() {
     let t = 0;
     const mo = new MutationObserver(() => { clearTimeout(t); t = window.setTimeout(scan, 120); });
     mo.observe(document.body, { childList: true, subtree: true });
-    return () => { io.disconnect(); mo.disconnect(); clearTimeout(t); root.classList.remove('js-motion'); };
+    return () => { io.disconnect(); away.disconnect(); mo.disconnect(); clearTimeout(t); root.classList.remove('js-motion', 'hero-away', 'footer-away'); };
   }, []);
 
   return <>{hero && createPortal(<NeuralBackdrop />, hero)}{strip && createPortal(<FactStrip />, strip)}</>;

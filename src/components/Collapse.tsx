@@ -35,10 +35,13 @@ export default function Collapse({ children, lang, collapsed, count, anchorPrefi
 
   useLayoutEffect(() => { measure(); }, [measure]);
   useEffect(() => {
-    addEventListener('resize', measure);
+    // Phones fire "resize" when the address bar hides during scrolling; only a width change can reflow this block.
+    let lastW = innerWidth;
+    const onResize = () => { if (innerWidth !== lastW) { lastW = innerWidth; measure(); } };
+    addEventListener('resize', onResize);
     const ro = 'ResizeObserver' in window && box.current ? new ResizeObserver(measure) : null;
     if (ro && box.current) ro.observe(box.current);
-    return () => { removeEventListener('resize', measure); ro?.disconnect(); };
+    return () => { removeEventListener('resize', onResize); ro?.disconnect(); };
   }, [measure]);
 
   // Open before following a link that points into the collapsed block.

@@ -27,21 +27,21 @@ a,button,summary,[role=button]{-webkit-tap-highlight-color:transparent}
 @keyframes ux-shimmer{to{background-position:200% center}}
 @keyframes ux-pop{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes nb-pulse{0%,100%{opacity:.25;r:2}50%{opacity:1}}
-@keyframes nb-glow{0%,100%{opacity:.1}50%{opacity:.4}}
+@keyframes nb-breathe{0%,100%{opacity:.45}50%{opacity:.75}}
 body{animation:ux-fade .5s ease both}
 .hero-copy>*{animation:ux-rise .7s var(--ux-ease) both}
 .hero-copy>*:nth-child(1){animation-delay:.05s}.hero-copy>*:nth-child(2){animation-delay:.12s}.hero-copy>*:nth-child(3){animation-delay:.2s}
 .hero-copy>*:nth-child(4){animation-delay:.28s}.hero-copy>*:nth-child(5){animation-delay:.36s}.hero-copy>*:nth-child(n+6){animation-delay:.44s}
 .hero-visual{animation:ux-rise .9s var(--ux-ease) .2s both}
-.hero-visual img,.hero-visual svg{animation:ux-float 7s ease-in-out 1s infinite}
-.hero h1 span{background:linear-gradient(90deg,#5a49c9,#9a87ff,#5a49c9);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:ux-shimmer 6s linear infinite}
+.hero-visual img,.hero-visual svg{animation:ux-float 7s ease-in-out 1s 3}
+.hero h1 span{background:linear-gradient(90deg,#5a49c9,#9a87ff,#5a49c9);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:ux-shimmer 6s linear 2}
 
 /* ---------- Neural network backdrop (hero) ---------- */
 .hero{position:relative;isolation:isolate}
-.neural-backdrop{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.6;
+.neural-backdrop{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.6;will-change:opacity;animation:nb-breathe 9s ease-in-out 3;
   -webkit-mask-image:linear-gradient(180deg,#000 0,#000 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 0,#000 55%,transparent 100%)}
-.nb-edge{stroke:#8f80ea;stroke-width:1;opacity:.14;animation:nb-glow 6s ease-in-out infinite}
-.nb-node{fill:#7c6ae6;animation:nb-pulse 4s ease-in-out infinite}
+.nb-edge{stroke:#8f80ea;stroke-width:1;opacity:.2}
+.nb-node{fill:#7c6ae6;opacity:.7}
 
 /* ---------- Scroll reveal (only when JS enabled it) ---------- */
 .js-motion .reveal:not(.in-view){opacity:0;transform:translateY(26px)}
@@ -146,10 +146,10 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
 
 /* ---------- Footer glow & accent line ---------- */
 .site-footer{background-image:radial-gradient(520px 220px at 0% 0%,rgba(124,106,230,.35),transparent 70%),radial-gradient(420px 220px at 100% 100%,rgba(201,245,116,.14),transparent 70%)}
-.site-footer::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#7c6ae6,#2bb3a0,#c9f574,#f08a4b,#7c6ae6);background-size:200% 100%;animation:ux-shimmer 8s linear infinite}
+.site-footer::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#7c6ae6,#2bb3a0,#c9f574,#f08a4b,#7c6ae6);background-size:200% 100%;animation:ux-shimmer 8s linear 2}
 
 /* ---------- Primary buttons: soft glow ---------- */
-.hero .actions a:first-child,.hero .actions .primary{box-shadow:0 10px 26px rgba(23,27,55,.28),0 0 0 0 rgba(124,106,230,.5);animation:ux-ring 3.2s ease-out 2s infinite}
+.hero .actions a:first-child,.hero .actions .primary{box-shadow:0 10px 26px rgba(23,27,55,.28),0 0 0 0 rgba(124,106,230,.5);animation:ux-ring 3.2s ease-out 2s 3}
 @keyframes ux-ring{0%{box-shadow:0 10px 26px rgba(23,27,55,.28),0 0 0 0 rgba(124,106,230,.45)}70%,100%{box-shadow:0 10px 26px rgba(23,27,55,.28),0 0 0 16px rgba(124,106,230,0)}}
 @media (prefers-reduced-motion:reduce){.hero .actions a:first-child{animation:none}}
 
@@ -175,7 +175,7 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
 .brain-map-visual .brain-point b{max-width:none!important;white-space:nowrap!important;line-height:1.1}
 .brain-map-visual .brain-point span{flex:0 0 auto;width:26px!important;height:26px!important;display:grid;place-items:center}
 .brain-map-visual .brain-point.active{z-index:3}
-.brain-map-visual .brain-point.active span{animation:ux-ring 2.4s ease-out infinite}
+.brain-map-visual .brain-point.active span{animation:ux-ring 2.4s ease-out 2}
 .brain-map-visual .point-prefrontal{--x:17%;--y:34%}
 .brain-map-visual .point-reward{--x:50.5%;--y:51%}
 .brain-map-visual .point-hippocampus{--x:42%;--y:71%}
@@ -211,3 +211,19 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
 .sparkline__dot.is-last{fill:#c9f574;stroke:#171b37}
 @keyframes spark-draw{to{stroke-dashoffset:0}}
 @media (prefers-reduced-motion:reduce){.sparkline__line{stroke-dashoffset:0;animation:none}}
+
+/* The older scroll-driven (view()) reveal in polish.css re-evaluated every frame on the main thread and duplicated the IntersectionObserver reveal. */
+.section-heading,.task-card,.context-grid .info-card,.takeaways .info-card{animation:none!important;animation-timeline:auto!important}
+
+/* Reading-progress bar: transform instead of width (no layout per scroll frame); --p is set on the bar by scrollProgress.ts */
+.header-progress-track::after{width:100%!important;transform:scaleX(var(--p,0));transform-origin:0 50%;will-change:transform}
+
+/* Phones: no blur filters over scrolling content (expensive to composite on every frame). Backgrounds stay near-opaque. */
+@media (max-width:760px){
+  *,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .header{background:rgba(250,251,254,.98)!important}
+}
+
+/* Looping decoration only while visible */
+.hero-away .neural-backdrop,.hero-away .hero h1 span,.hero-away .hero .actions a,.hero-away .hero-visual,.hero-away .hero-visual *{animation-play-state:paused!important}
+.footer-away .site-footer::before{animation-play-state:paused!important}
