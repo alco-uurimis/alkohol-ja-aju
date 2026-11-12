@@ -37,6 +37,9 @@ jobs:
       - name: Test
         run: pnpm test
       - name: Build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: pnpm build
       - name: Setup Pages
         if: github.event_name != 'pull_request'
