@@ -191,3 +191,6 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
   .brain-map-visual .point-cerebellum.active,.brain-map-visual .point-reward.active{flex-direction:row-reverse;padding:3px 3px 3px 11px!important;border-radius:999px!important;transform:translate(calc(-100% + 16px),-50%)}
   .brain-map-visual::after{display:none}
 }
+/* the map is now an inline React SVG: drop the old background image */
+.brain-map-visual{background-image:none!important;background-color:#11162d}
+.brain-map-visual .brain-silhouette{display:none}
