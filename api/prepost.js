@@ -1,6 +1,7 @@
 // Receives one anonymous before/after knowledge-check submission and stores it through the sheet webhook.
 // No account, no name, no IP is stored by this code: the record is a random browser-made token plus six answers.
 import { ITEMS, KEY } from './_prepost-key.js';
+import { mirrorPrepost } from './_mirror.js';
 
 const ALLOWED_ORIGINS = new Set(['https://alco-uurimis.github.io', 'https://alkohol-ja-aju.vercel.app']);
 function cors(req, res) { const origin = req.headers?.origin; if (origin && ALLOWED_ORIGINS.has(origin)) res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Vary', 'Origin'); res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); res.setHeader('Cache-Control', 'no-store'); }
@@ -47,7 +48,7 @@ export default async function handler(req, res) {
   if (!url || !secret) return res.status(503).json({ ok: false, error: 'not_configured' });
   try {
     const parsed = new URL(String(url).trim()); if (parsed.protocol !== 'https:' || parsed.hostname !== 'script.google.com') return res.status(503).json({ ok: false, error: 'not_configured' });
-    const response = await request(parsed.toString(), { secret, prepost: record });
+    const [response] = await Promise.all([request(parsed.toString(), { secret, prepost: record }), mirrorPrepost(record)]);
     const data = await response.json().catch(() => null);
     if (!response.ok || data?.ok !== true) return res.status(502).json({ ok: false, error: 'store_failed_or_script_outdated' });
     return res.status(200).json({ ok: true, duplicate: data.duplicate === true });

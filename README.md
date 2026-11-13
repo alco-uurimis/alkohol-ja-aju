@@ -59,3 +59,7 @@ Year: 2026
 - **Peer-norm widget** (`src/components/PeerNorm.tsx`, `src/lib/norms.ts`) on the survey results page: visitors guess the share of respondents who drank less than monthly or not at all, then see the real figure from the public aggregate. It appears only when both categories are published (exact, nothing hidden) and the share is a majority.
 - **Effect statistics** in the admin before/after card (`src/lib/stats.ts`): mean change, share of improvers with a Wilson 95% interval and an exact sign test. Descriptive only.
 - `/api/prepost` has a best-effort per-IP brake (150 requests / 10 min, in-memory, nothing stored).
+
+## Supabase copy of the research data (optional)
+
+`api/_mirror.js` writes every survey response and before/after submission to Supabase as well as to the Google Sheet. It is off until you set `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (Vercel, server-side only) and run `docs/supabase-schema.sql`. Failures never affect the answer shown to the visitor, duplicates are ignored by primary key, and the Sheet remains the source of truth for the public and admin views. The same data now lives in a second store: say so in the privacy notice before enabling it.
