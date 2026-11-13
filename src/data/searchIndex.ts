@@ -41,6 +41,7 @@ export const searchIndex: SearchEntry[] = [
   p('reward-and-habits/', 'Система вознаграждения и привычки', 'Tasustamissüsteem ja harjumused', 'дофамин привычка'),
   p('recovery-and-brain/', 'Восстановление когнитивных функций', 'Kognitiivsete funktsioonide taastumine', 'восстановление taastumine'),
   p('science/', 'Добровольный опрос 15+', 'Vabatahtlik küsitlus 15+', 'исследование анкета küsitlus'),
+  p('science/results/#estonia-data', 'Что показывают данные Эстонии?', 'Mida näitavad Eesti andmed?', 'ESPAD TAI школьники статистика kooliõpilased'),
   p('science/results/', 'Результаты опроса', 'Küsitluse tulemused', 'статистика графики'),
   p('methodology/', 'Методология', 'Metoodika', 'как сделан'),
   p('fact-check/', 'Как проверялись факты', 'Kuidas fakte kontrolliti', 'faktikontroll'),

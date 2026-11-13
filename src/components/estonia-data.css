@@ -1,0 +1,50 @@
+.estonia-data {
+  max-width: 760px;
+  padding: clamp(16px, 4vw, 32px);
+  margin-top: 32px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  scroll-margin-top: 140px;
+  line-height: 1.55;
+}
+
+.estonia-data h2 { margin: 0 0 12px; line-height: 1.2; }
+.estonia-data h3 { margin: 24px 0 6px; }
+.estonia-data p { margin: 0 0 12px; }
+.estonia-data figure { margin: 0; }
+.estonia-data figcaption { max-width: 58ch; font-weight: 650; }
+
+.estonia-data__bars {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 18px 0 4px;
+  padding: 0;
+}
+
+.estonia-data__bars li {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) 3rem;
+  align-items: center;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.estonia-data__bars strong { text-align: right; }
+.estonia-data__track { height: 18px; border-radius: 4px; overflow: hidden; background: #edeaf9; }
+.estonia-data__track span { display: block; height: 100%; background: #5b46bf; }
+
+.estonia-data__axis {
+  display: flex;
+  justify-content: space-between;
+  margin-inline: 3.5rem;
+  color: #545c72;
+  font-size: .75rem;
+}
+
+.estonia-data .estonia-data__source { margin-top: 16px; font-size: .875rem; }
+.estonia-data details { padding: 4px 12px; border-radius: 10px; background: #f1eeff; }
+.estonia-data summary { padding: 10px 0; font-weight: 750; cursor: pointer; }
+.estonia-data details a { display: inline-block; margin-bottom: 8px; }
+.estonia-data-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 14px; }
