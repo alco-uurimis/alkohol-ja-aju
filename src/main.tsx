@@ -5,6 +5,7 @@ import SiteEnhancements from './components/SiteEnhancements';
 import AccountMenu from './components/AccountMenu';
 import Motion from './components/Motion';
 import SiteSearch from './components/SiteSearch';
+import Comfort from './components/Comfort';
 import './scrollProgress';
 // Base styles load first; component and responsive refinements follow.
 import './styles.css';
@@ -35,4 +36,4 @@ import './desktop-menu.css';
 import './ux-final.css';
 import './registerSW';
 import { whenReady } from './data/ru';
-whenReady(() => { ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><SiteEnhancements/><AccountMenu/><Motion/><SiteSearch/></React.StrictMode>); });
+whenReady(() => { ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><SiteEnhancements/><AccountMenu/><Motion/><SiteSearch/><Comfort/></React.StrictMode>); });

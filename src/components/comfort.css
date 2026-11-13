@@ -1,0 +1,32 @@
+.comfort__host-bar,.comfort__host-menu{display:contents}
+.comfort__btn{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border:1px solid var(--line,#ddd);border-radius:999px;background:#fff;color:var(--ink,#171b37);font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+.comfort__btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;flex:none}
+.comfort__btn:hover{border-color:#7c6ae6}
+.comfort__btn--bar span{display:none}
+.comfort__btn--bar{width:40px;padding:0;justify-content:center}
+.comfort__btn--menu{display:none;width:100%;justify-content:flex-start;margin:0 0 12px;min-height:46px;padding:0 16px;grid-column:1/-1;border-radius:14px}
+@media (max-width:760px){.comfort__btn--bar{display:none}.comfort__btn--menu{display:inline-flex}}
+.comfort-dialog{width:min(440px,calc(100vw - 24px));margin:10vh auto auto;padding:20px;border:0;border-radius:18px;box-shadow:0 30px 70px rgba(10,12,35,.35);background:#fff;color:#171b37}
+.comfort-dialog::backdrop{background:rgba(20,20,35,.5)}
+.comfort__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.comfort__head h2{margin:0;font-size:1.15rem}
+.comfort__head button{min-width:44px;min-height:44px;border:0;background:none;font-size:1.6rem;cursor:pointer}
+.comfort__row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid #e3e6ef}
+.comfort__row input{width:22px;height:22px;margin-top:2px;accent-color:#6b58d8;flex:none}
+.comfort__row span{display:grid;gap:2px}.comfort__row small{color:#5d6479}
+.comfort__row--read{justify-content:space-between;align-items:center}
+.comfort__row--read button{min-height:44px;padding:0 16px;border:1px solid #6b58d8;border-radius:12px;background:#6b58d8;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.comfort__note{margin:10px 0 0;font-size:.8rem;color:#5d6479}
+.comfort__stop{position:fixed;right:16px;bottom:max(16px,env(safe-area-inset-bottom));z-index:2147483000;min-height:48px;padding:0 20px;border:0;border-radius:999px;background:#171b37;color:#fff;font:inherit;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.3);cursor:pointer}
+/* easy-read: larger type, looser lines, calm left-aligned measure */
+html.easy-read{font-size:112.5%}
+html.easy-read body{line-height:1.8;letter-spacing:.015em;word-spacing:.08em}
+html.easy-read p,html.easy-read li{line-height:1.85!important;text-align:left!important;max-width:68ch}
+html.easy-read h1,html.easy-read h2,html.easy-read h3{line-height:1.3!important}
+/* calm: mirrors the prefers-reduced-motion rules in ux-final.css so nothing is left invisible */
+html.calm *,html.calm *::before,html.calm *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+html.calm.js-motion .reveal:not(.in-view){opacity:1;transform:none}
+html.calm .hero .actions a:first-child,html.calm .fact-strip__live{animation:none}
+html.calm .sparkline__line{stroke-dashoffset:0;animation:none}
+
+.comfort__aa{font-size:.95rem;letter-spacing:-.02em;line-height:1}

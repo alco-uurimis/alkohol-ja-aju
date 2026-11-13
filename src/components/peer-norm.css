@@ -1,0 +1,11 @@
+.peer-norm{margin:28px 0;padding:22px;border-radius:20px;border:1px solid #d9d4f7;background:linear-gradient(180deg,#faf9ff,#f3f1ff)}
+.peer-norm h2{margin:0 0 8px;font-size:1.25rem}
+.peer-norm__guess{display:grid;gap:8px;margin:14px 0}
+.peer-norm__guess input{width:100%;min-height:44px;accent-color:#6b58d8}
+.peer-norm__out{min-height:24px;margin-top:14px}
+.peer-norm__bars{display:grid;gap:6px;margin-bottom:10px}
+.peer-norm__bars i{display:block;height:14px;border-radius:7px;background:#b7aef0;transition:width .5s ease}
+.peer-norm__bars i.real{background:#4a3bb0}
+@media (prefers-reduced-motion:reduce){.peer-norm__bars i{transition:none}}
+.peer-norm__btn{min-height:46px;padding:0 20px;border:0;border-radius:12px;background:#4a3bb0;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.peer-norm__bars span{font-size:.8rem;color:#5d6479}

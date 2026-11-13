@@ -46,3 +46,16 @@ describe('api/prepost', () => {
     vi.unstubAllEnvs(); vi.unstubAllGlobals();
   });
 });
+
+describe('prepost rate limit', () => {
+  it('lets a classroom through and brakes a flood from one address', async () => {
+    const { tooMany } = await import('../api/prepost.js');
+    const req = { headers: { 'x-forwarded-for': '203.0.113.9' } };
+    const t0 = 1_000_000;
+    let blocked = 0;
+    for (let i = 0; i < 200; i++) if (tooMany(req, t0 + i)) blocked++;
+    expect(blocked).toBe(50);
+    expect(tooMany({ headers: { 'x-forwarded-for': '203.0.113.10' } }, t0)).toBe(false);
+    expect(tooMany(req, t0 + 11 * 60 * 1000)).toBe(false); // window over
+  });
+});

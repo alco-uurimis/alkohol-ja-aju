@@ -46,3 +46,4 @@
   .admin-report__page .rchart__track i,.admin-report__page .rchart__seg{width:var(--w)!important;transition:none!important}
   .admin-report__q,.admin-prepost{break-inside:avoid}
 }
+.admin-effect{margin:10px 0 14px;padding:12px 14px;border-left:3px solid #7c6ae6;background:#f6f4ff;border-radius:0 10px 10px 0}.admin-effect p{margin:0 0 6px}.admin-effect p:last-child{margin:0}

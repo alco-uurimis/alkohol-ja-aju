@@ -52,3 +52,10 @@ Google Apps Script code for the Sheets webhook is in `docs/research-google-sheet
 Author: Sofija Tsaika  
 School: Tallinna Laagna Gümnaasium  
 Year: 2026
+
+## Reading comfort, peer-norm widget, effect statistics
+
+- **Reading comfort** (`src/components/Comfort.tsx`): "Aa" button in the header (menu on phones) — easy-read layout, calm (no animation) mode, read-aloud with the browser's own voices (no voice for the language → a notice, nothing is sent anywhere). Settings live in `localStorage`.
+- **Peer-norm widget** (`src/components/PeerNorm.tsx`, `src/lib/norms.ts`) on the survey results page: visitors guess the share of respondents who drank less than monthly or not at all, then see the real figure from the public aggregate. It appears only when both categories are published (exact, nothing hidden) and the share is a majority.
+- **Effect statistics** in the admin before/after card (`src/lib/stats.ts`): mean change, share of improvers with a Wilson 95% interval and an exact sign test. Descriptive only.
+- `/api/prepost` has a best-effort per-IP brake (150 requests / 10 min, in-memory, nothing stored).

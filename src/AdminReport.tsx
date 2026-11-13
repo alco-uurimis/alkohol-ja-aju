@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ResultsChart, { type ResultItem } from './components/ResultsChart';
 import { adminQuestions } from './adminLabels';
+import { signTestP, wilson } from './lib/stats';
 import { bucketAge, discloseCounts, discloseMulti, MIN_CELL, MIN_N, OTHER } from './lib/disclosure';
 
 export type PrePostSummary = { nPre: number; nPost: number; matched: number; meanPre: number | null; meanPost: number | null; improved: number; same: number; worse: number; total: number; items: { id: string; pre: number | null; post: number | null }[] };
@@ -8,6 +9,25 @@ export type ReportData = { n: number; excluded: number; lastUpdated: string; fie
 
 const itemLabels: Record<string, string> = { blackout: 'Во время провала памяти человек может быть в сознании', attention: 'Алкоголь затрудняет следить за двумя задачами сразу', reaction: 'Алкоголь ускоряет реакцию на неожиданную ситуацию', sleep: 'Быстрое засыпание после алкоголя всегда означает лучший сон', decisions: 'Алкоголь может ослаблять контроль импульсов', development: 'В гимназическом возрасте развитие мозга уже завершено' };
 const pct = (v: number | null) => (v === null ? '—' : `${Math.round(v * 100)}%`);
+
+const fmtP = (p: number) => (p < 0.001 ? 'p < 0,001' : `p = ${p.toFixed(3).replace('.', ',')}`);
+
+/** Effect summary from counts only: share of improvers with a Wilson interval and an exact sign test. Descriptive, not causal. */
+function Effect({ d }: { d: PrePostSummary }) {
+  const moved = d.improved + d.worse;
+  const ci = wilson(d.improved, moved);
+  const p = signTestP(d.improved, d.worse);
+  const diff = d.meanPre !== null && d.meanPost !== null ? d.meanPost - d.meanPre : null;
+  return (
+    <div className="admin-effect">
+      {diff !== null && <p><b>Изменение среднего балла:</b> {diff >= 0 ? '+' : '−'}{Math.abs(diff).toFixed(2)} из {d.total}</p>}
+      {ci && p !== null && moved >= 5
+        ? <p><b>Среди тех, чей балл изменился ({moved}):</b> улучшили {Math.round((d.improved / moved) * 100)}% (95% ДИ {Math.round(ci[0] * 100)}–{Math.round(ci[1] * 100)}%), знаковый критерий {fmtP(p)}.</p>
+        : <p className="admin-meta">Для оценки эффекта нужно не меньше 5 пар, у которых балл изменился. Сейчас: {moved}.</p>}
+      <p className="result-base">Это описание изменения в самоотобранной группе, а не доказательство эффекта сайта: нет контрольной группы, часть людей не доходит до «после», а повторное прохождение даёт эффект практики.</p>
+    </div>
+  );
+}
 
 /** Admin card: anonymous before/after check. Pairs are matched by a random browser token only. */
 export function PrePostCard({ data, publicMode = false }: { data?: PrePostSummary; publicMode?: boolean }) {
@@ -19,6 +39,7 @@ export function PrePostCard({ data, publicMode = false }: { data?: PrePostSummar
       <p className="admin-meta">Прошли «до»: <b>{data.nPre}</b> · прошли «после»: <b>{data.nPost}</b> · пар с общим кодом: <b>{data.matched}</b></p>
       {hidden ? <p className="admin-meta">Для публикации нужно не меньше {MIN_N} пар. Сейчас: {data.matched}.</p> : data.matched === 0 ? <p className="admin-meta">Пока нет ни одной пары «до и после».</p> : <>
         <p className="admin-prepost__means">Средний балл (из {data.total}): <b>{data.meanPre?.toFixed(2)}</b> → <b>{data.meanPost?.toFixed(2)}</b> · улучшили: {data.improved}, без изменений: {data.same}, ухудшили: {data.worse}</p>
+        <Effect d={data} />
         <table className="admin-table"><thead><tr><th>Утверждение</th><th>До</th><th>После</th></tr></thead><tbody>{data.items.map(i => <tr key={i.id}><td>{itemLabels[i.id] ?? i.id}</td><td>{pct(i.pre)}</td><td>{pct(i.post)}</td></tr>)}</tbody></table>
         <p className="result-base">Доля верных ответов среди пар. Пары собираются по случайному коду в браузере: человек, который проходил проверку на другом устройстве или очистил данные, в пары не попадает.</p>
       </>}
