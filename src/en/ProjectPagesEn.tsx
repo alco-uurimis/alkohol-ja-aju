@@ -1,3 +1,4 @@
+import EstoniaData, { EstoniaDataLink } from '../components/EstoniaData';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import ResultsChart, { type ResultItem } from '../components/ResultsChart';
 
@@ -73,7 +74,7 @@ function Topics() {
   const [filter, setFilter] = useState('all');
   const labels: Record<string, string> = { all: 'All', brain: 'Brain', youth: 'Teenagers', sleep: 'Sleep', safety: 'Safety', recovery: 'Recovery' };
   const list = filter === 'all' ? topics : topics.filter(t => t.cat === filter);
-  return <section className="project-section"><div className="topic-filters" role="group" aria-label="Topic filter">{Object.entries(labels).map(([k, v]) => <button type="button" key={k} className={filter === k ? 'active' : ''} aria-pressed={filter === k} onClick={() => setFilter(k)}>{v}</button>)}</div><TopicCards list={list} prefix="../" /></section>;
+  return <section className="project-section"><div className="topic-filters" role="group" aria-label="Topic filter">{Object.entries(labels).map(([k, v]) => <button type="button" key={k} className={filter === k ? 'active' : ''} aria-pressed={filter === k} onClick={() => setFilter(k)}>{v}</button>)}</div><TopicCards list={list} prefix="../" /><EstoniaDataLink lang="en" /></section>;
 }
 
 function Methodology() {
@@ -163,6 +164,6 @@ export default function ProjectPagesEn({ page, setLang }: { page: EnPage; setLan
     try { localStorage.setItem('alkohol-ja-aju:language', 'en'); } catch { /* ignore */ }
     document.title = `${copy[page].title}${page === 'home' ? ' — teaching website' : ' — Alcohol and the brain'}`;
   }, [page]);
-  const content = page === 'home' ? <Home setLang={setLang} /> : page === 'methodology' ? <Methodology /> : page === 'fact-check' ? <FactCheck /> : page === 'data-policy' ? <DataPolicy /> : page === 'results' ? <Results /> : page === 'changelog' ? <Changelog /> : <Topics />;
+  const content = page === 'home' ? <Home setLang={setLang} /> : page === 'methodology' ? <Methodology /> : page === 'fact-check' ? <FactCheck /> : page === 'data-policy' ? <DataPolicy /> : page === 'results' ? <><Results /><EstoniaData lang="en" /></> : page === 'changelog' ? <Changelog /> : <Topics />;
   return <Shell page={page} setLang={setLang}>{content}</Shell>;
 }
