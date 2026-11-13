@@ -40,9 +40,8 @@
 .admin-report__foot{margin-top:24px;color:#697087;font-size:.8rem}
 @media print{
   @page{margin:14mm}
-  body.printing-report *{visibility:hidden!important}
-  body.printing-report .admin-report__page,body.printing-report .admin-report__page *{visibility:visible!important}
-  body.printing-report .admin-report__page{position:absolute;left:0;top:0;width:100%;max-width:none;border:0;padding:0}
+  body.printing-report :not(:has(.admin-report__page)):not(.admin-report__page):not(.admin-report__page *){display:none!important}
+  body.printing-report .admin-report__page{position:static;width:100%;max-width:none;border:0;padding:0}
   .admin-report__page *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .admin-report__page .rchart__track i,.admin-report__page .rchart__seg{width:var(--w)!important;transition:none!important}
   .admin-report__q,.admin-prepost{break-inside:avoid}
