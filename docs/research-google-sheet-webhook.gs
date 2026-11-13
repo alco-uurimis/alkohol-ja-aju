@@ -9,7 +9,7 @@ function json(data) {
 }
 
 function doGet() {
-  return json({ ok: true, service: 'research-sheet-webhook', version: 11 });
+  return json({ ok: true, service: 'research-sheet-webhook', version: 12 });
 }
 
 function requireSecret(body) {
@@ -33,11 +33,18 @@ function countAnswered(rows, headers, name) {
   return rows.filter(row => Boolean(readCell(row, headers, name))).length;
 }
 
-function countField(rows, headers, name) {
+// Public age groups are coarser than the survey options: a lone older respondent must not push a larger group into "Other".
+// The private admin view and the spreadsheet keep every original group.
+function publicAgeBucket(code) {
+  return ['18_20', '21_25', '26_35', '36_plus'].indexOf(code) >= 0 ? '18_plus' : code;
+}
+
+function countField(rows, headers, name, bucket) {
   const counts = {};
   rows.forEach(row => {
-    const code = readCell(row, headers, name);
-    if (!code) return;
+    const raw = readCell(row, headers, name);
+    if (!raw) return;
+    const code = bucket ? bucket(raw) : raw;
     counts[code] = (counts[code] || 0) + 1;
   });
   const published = {};
@@ -81,7 +88,7 @@ function aggregate(sheet) {
   if (n < PUBLIC_MIN_N) return base;
 
   return Object.assign(base, {
-    ageGroup: countField(rows, headers, 'ageGroup'),
+    ageGroup: countField(rows, headers, 'ageGroup', publicAgeBucket),
     ownUse: countField(rows, headers, 'ownUse'),
     overallImpact: countField(rows, headers, 'overallImpact'),
     helpKnowledge: countField(rows, headers, 'helpKnowledge'),
