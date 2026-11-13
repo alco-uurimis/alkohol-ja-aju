@@ -3,7 +3,7 @@ import './collapse.css';
 
 type Props = {
   children: ReactNode;
-  lang: 'et' | 'ru';
+  lang: 'et' | 'ru' | 'en';
   /** Visible height while collapsed, in px (phone / desktop). */
   collapsed: [number, number];
   /** Shown on the button, e.g. "12 карточек". */
@@ -15,6 +15,7 @@ type Props = {
 const text = {
   et: { more: 'Näita kõike', less: 'Peida' },
   ru: { more: 'Показать всё', less: 'Свернуть' },
+  en: { more: 'Show all', less: 'Collapse' },
 };
 
 /** Collapses a long block to a teaser with a fade. Everything stays in the DOM, so search, anchors and screen readers still reach it. */

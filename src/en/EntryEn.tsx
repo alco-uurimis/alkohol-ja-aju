@@ -90,7 +90,7 @@ export function TeacherEn() {
     <p>The aim of the lesson is to explain one scientific conclusion, name its limitation and choose a safe action in a fictional situation.</p>
     <ol className="teacher-plan">{plan.map(([time, title, description, href]) => <li key={time}><span>{time} min</span><div><h3><a href={href}>{title}</a></h3><p>{description}</p></div></li>)}</ol>
     <p>The worksheet is available in English, Estonian and Russian. The lesson, the science topics and the myth-or-fact quiz are available in English.</p>
-    <div className="lesson-actions"><a className="button primary" href="../worksheet/en/">Worksheet A4 · EN</a><a href="../worksheet/et/">Worksheet A4 · ET</a><a href="../worksheet/ru/">Worksheet A4 · RU</a><a href="../check/">Before-and-after check for your class</a></div>
+    <div className="lesson-actions"><a className="button primary" href="../worksheet/en/">Worksheet A4 · EN</a><a href="../worksheet/et/">Worksheet A4 · ET</a><a href="../worksheet/ru/">Worksheet A4 · RU</a><a href="../en/classroom.html">Short plan for 15–20 minutes</a><a href="../check/">Before-and-after check for your class</a></div>
   </section>;
 }
 
@@ -109,5 +109,6 @@ export function HelpEn() {
     <p>You can talk to a family doctor or school nurse. For young people there is information at noored.alkoinfo.ee and the Peaasi programme for ages 12–26 with mild to moderate difficulties (check the conditions at peaasi.ee).</p>
     <div className="lesson-actions"><a href="https://noored.alkoinfo.ee/">noored.alkoinfo.ee</a><a href="https://peaasi.ee/">peaasi.ee</a></div>
     <RideScenario lang="en" />
+    <p><a href="../en/situations.html">More practical situations and other services</a></p>
   </section>;
 }

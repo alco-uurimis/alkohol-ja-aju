@@ -59,3 +59,28 @@ describe('English exercises', () => {
     expect(new Set(wordsEn).size).toBe(wordsEn.length);
   });
 });
+
+describe('English “What to do in real life”', () => {
+  it('has an English text for every Estonian string and the same four scenarios', async () => {
+    const { actionEn, scenariosEn } = await import('./data/action.en');
+    const src = readFileSync(new URL('./sections/ActionHub.tsx', import.meta.url), 'utf8');
+    const pairT = new RegExp(`T\\(lang,ru\\s*\\?\\s*${lit}\\s*:\\s*${lit}\\)`, 'g');
+    const missing = [...src.matchAll(pairT)].map(m => m[2].slice(1, -1)).filter(et => !actionEn[et]);
+    expect(missing).toEqual([]);
+    expect(scenariosEn.map(s => s.id)).toEqual(['friend', 'journey', 'pressure', 'warning']);
+    for (const s of scenariosEn) { expect(s.steps).toHaveLength(4); expect(JSON.stringify(s)).not.toMatch(/[А-Яа-яõäöü]/); }
+  });
+});
+
+describe('English classroom kit', () => {
+  it('has an English text for every Estonian string and complete lesson data', async () => {
+    const { classroomEn, lessonEn, objectivesEn, promptsEn, ticketQuestionsEn } = await import('./data/classroom.en');
+    const src = readFileSync(new URL('./sections/ClassroomKit.tsx', import.meta.url), 'utf8');
+    const pairT = new RegExp(`T\\(lang,ru\\s*\\?\\s*${lit}\\s*:\\s*${lit}\\)`, 'g');
+    const missing = [...src.matchAll(pairT)].map(m => m[2].slice(1, -1).replace(/\\n/g, '\n')).filter(et => !classroomEn[et]);
+    expect(missing).toEqual([]);
+    expect(lessonEn).toHaveLength(6);
+    expect(objectivesEn).toHaveLength(3); expect(promptsEn).toHaveLength(4); expect(ticketQuestionsEn).toHaveLength(4);
+    expect(JSON.stringify([lessonEn, objectivesEn, promptsEn, ticketQuestionsEn, Object.values(classroomEn)])).not.toMatch(/[А-Яа-яõäöü]/);
+  });
+});

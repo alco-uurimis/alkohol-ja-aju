@@ -16,6 +16,8 @@ export default defineConfig({
         main: 'index.html',
         en: 'en/index.html',
         enPractice: 'en/practice.html',
+        enSituations: 'en/situations.html',
+        enClassroom: 'en/classroom.html',
         check: 'check/index.html',
         science: 'science/index.html',
         scienceResults: 'science/results/index.html',
