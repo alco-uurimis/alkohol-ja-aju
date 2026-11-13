@@ -6,6 +6,7 @@ import { adminQuestions } from './adminLabels';
 
 type AdminData = { ok: true; n: number; excluded: number; lastUpdated: string; fields: Record<string, Record<string, number>>; answered: Record<string, number> };
 const endpoint = 'https://alkohol-ja-aju.vercel.app/api/admin-data';
+const DELETE_ENDPOINT = 'https://alkohol-ja-aju.vercel.app/api/admin-delete-response';
 
 /** Turn the server's error code into something the admin can act on. */
 function explain(status: number, code?: string): string {
@@ -36,6 +37,11 @@ export default function AdminData() {
   const [ready, setReady] = useState(false);
   const [data, setData] = useState<AdminData | null>(null);
   const [error, setError] = useState('');
+  const [reload, setReload] = useState(0);
+  const [responseId, setResponseId] = useState('');
+  const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteMsg, setDeleteMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
     if (!supabase) { setReady(true); return; }
@@ -57,11 +63,32 @@ export default function AdminData() {
       .then(d => { if (alive) setData(d); })
       .catch(e => { if (alive) setError(e instanceof Error ? e.message : 'Ошибка.'); });
     return () => { alive = false; };
-  }, [session]);
+  }, [session, reload]);
+
+  const remove = async () => {
+    if (!session) return;
+    setDeleting(true); setDeleteMsg(null);
+    try {
+      const r = await fetch(DELETE_ENDPOINT, { method: 'POST', headers: { Authorization: `Bearer ${session.access_token}`, 'content-type': 'application/json' }, body: JSON.stringify({ responseId: responseId.trim() }) });
+      const body = await r.json().catch(() => null);
+      if (r.ok && body?.ok) {
+        setDeleteMsg(body.deleted ? { ok: true, text: `Ответ ${responseId.trim()} удалён.` } : { ok: false, text: 'Такого ответа в таблице нет. Проверьте ID.' });
+        if (body.deleted) { setResponseId(''); setReload(v => v + 1); }
+      } else if (body?.error === 'invalid_response_id') setDeleteMsg({ ok: false, text: 'ID должен выглядеть как research_… (латиница, цифры, _ и -).' });
+      else setDeleteMsg({ ok: false, text: explain(r.status, body?.error === 'delete_upstream_failed_or_script_outdated' ? 'upstream_failed_or_script_outdated' : body?.error).replace('версии 10', 'версии 11') });
+    } catch { setDeleteMsg({ ok: false, text: 'Не удалось связаться с сервером.' }); }
+    finally { setDeleting(false); setConfirming(false); }
+  };
 
   const signIn = () => supabase?.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
 
-  if (!supabase) return null;
+  if (!supabase) return (
+    <section className="admin-card">
+      <p className="admin-kicker">ВХОД НЕ НАСТРОЕН</p>
+      <h2>В этой сборке сайта нет ключей Supabase</h2>
+      <p>Добавьте переменные VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY (GitHub → Settings → Secrets and variables → Actions → Variables) и перезапустите деплой сайта.</p>
+    </section>
+  );
   return (
     <section className="admin-card admin-data">
       <p className="admin-kicker">ПОЛНЫЕ ДАННЫЕ БЕЗ СКРЫТИЯ</p>
@@ -90,6 +117,22 @@ export default function AdminData() {
                     </div>
                   );
                 })}
+              </div>
+              <div className="admin-delete">
+                <h3>Удалить ответ</h3>
+                <p>Укажите ID ответа из столбца response_id в таблице Responses. Удаление строки необратимо; восстановить её можно только через историю версий Google Sheets.</p>
+                <label htmlFor="admin-response-id">ID ответа</label>
+                <input id="admin-response-id" type="text" inputMode="text" autoComplete="off" spellCheck={false} placeholder="research_…" value={responseId} onChange={e => { setResponseId(e.target.value); setConfirming(false); setDeleteMsg(null); }} />
+                {!confirming ? (
+                  <button type="button" className="admin-danger" disabled={!responseId.trim() || deleting} onClick={() => setConfirming(true)}>Удалить…</button>
+                ) : (
+                  <div className="admin-confirm" role="alert">
+                    <span>Удалить ответ <b>{responseId.trim()}</b> навсегда?</span>
+                    <button type="button" className="admin-danger" disabled={deleting} onClick={remove}>{deleting ? 'Удаляю…' : 'Да, удалить'}</button>
+                    <button type="button" className="admin-link" disabled={deleting} onClick={() => setConfirming(false)}>Отмена</button>
+                  </div>
+                )}
+                {deleteMsg && <p role="status" className={deleteMsg.ok ? 'admin-ok' : 'admin-error'}>{deleteMsg.text}</p>}
               </div>
             </>
           )}

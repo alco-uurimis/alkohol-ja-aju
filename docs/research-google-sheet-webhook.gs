@@ -9,7 +9,7 @@ function json(data) {
 }
 
 function doGet() {
-  return json({ ok: true, service: 'research-sheet-webhook', version: 10 });
+  return json({ ok: true, service: 'research-sheet-webhook', version: 11 });
 }
 
 function requireSecret(body) {
@@ -127,6 +127,29 @@ function adminAggregate(sheet) {
   return { ok: true, n: rows.length, excluded: allRows.length - rows.length, lastUpdated: now, fields: fields, answered: answered };
 }
 
+// Admin-only: permanently remove one response row by its response_id (Google Sheets version history can restore it).
+function deleteResponse(sheet, responseId) {
+  if (!/^research_[a-z0-9_-]{8,90}$/i.test(responseId)) return { ok: false, error: 'invalid_response_id' };
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const lastColumn = sheet.getLastColumn();
+    const lastRow = sheet.getLastRow();
+    if (lastRow < 2) return { ok: true, deleted: false };
+    const headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0].map(v => String(v || '').trim());
+    const idIndex = headerIndex(headers, 'response_id');
+    if (idIndex < 0) return { ok: false, error: 'missing_response_id_header' };
+    const ids = sheet.getRange(2, idIndex + 1, lastRow - 1, 1).getDisplayValues().flat().map(v => String(v).trim());
+    const at = ids.indexOf(responseId);
+    if (at < 0) return { ok: true, deleted: false };
+    sheet.deleteRow(at + 2);
+    SpreadsheetApp.flush();
+    return { ok: true, deleted: true };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function doPost(e) {
   let body;
   try { body = JSON.parse((e && e.postData && e.postData.contents) || '{}'); }
@@ -141,6 +164,7 @@ function doPost(e) {
   if (!sheet) return json({ ok: false, error: 'missing_sheet' });
   if (body.aggregate === true) return json(aggregate(sheet));
   if (body.adminAggregate === true) return json(adminAggregate(sheet));
+  if (body.adminAction === 'deleteResponse') return json(deleteResponse(sheet, String(body.responseId || '').trim()));
 
   const r = body.response || {};
   const responseId = String(r.response_id || '').trim();

@@ -10,3 +10,13 @@
 .admin-error{color:#7a2620;background:#fff1ef;border-radius:10px;padding:10px 12px;margin:0}
 .admin-signin{justify-self:start;min-height:44px;padding:0 20px;border:0;border-radius:12px;background:#171b37;color:#fff;font:inherit;font-weight:700;cursor:pointer}
 .admin-link{border:0;background:none;padding:0;color:#493aa7;text-decoration:underline;font:inherit;cursor:pointer}
+
+/* Delete form */
+.admin-delete{display:grid;gap:10px;margin-top:8px;padding:18px;border:1px solid #f0c9c4;border-radius:14px;background:#fffafa;max-width:560px}
+.admin-delete h3{margin:0}.admin-delete p{margin:0;font-size:.9rem;color:#4b5165}
+.admin-delete label{font-weight:700;font-size:.9rem}
+.admin-delete input{min-height:44px;border:1px solid #d6dae6;border-radius:10px;padding:0 12px;font:inherit;width:100%}
+.admin-danger{justify-self:start;min-height:44px;padding:0 18px;border:0;border-radius:12px;background:#b3261e;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.admin-danger:disabled{opacity:.5;cursor:not-allowed}
+.admin-confirm{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:#fff1ef;border-radius:10px;padding:10px 12px}
+.admin-ok{color:#244316;background:#eef7e8;border-radius:10px;padding:10px 12px}

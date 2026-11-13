@@ -111,18 +111,46 @@ describe('admin access', () => {
   });
 });
 
-import adminSummary from '../api/admin-summary.js';
-describe('legacy admin password header', () => {
-  const call = async authorization => {
-    vi.stubEnv('ADMIN_DASHBOARD_PASSWORD', 'пароль-123');
-    vi.stubEnv('SHEET_WEBHOOK_URL', '');
-    const res = { setHeader: vi.fn(), status: vi.fn().mockReturnThis(), json: vi.fn(), end: vi.fn() };
-    await adminSummary({ method: 'GET', headers: { authorization } }, res);
-    return res.status.mock.calls[0][0];
+import deleteResponse from '../api/admin-delete-response.js';
+describe('admin delete (Google sign-in only)', () => {
+  const ID = 'research_abcdefgh1234';
+  const env = () => {
+    vi.stubEnv('ADMIN_EMAILS', 'owner@example.com');
+    vi.stubEnv('SUPABASE_URL', 'https://x.supabase.co');
+    vi.stubEnv('SUPABASE_ANON_KEY', 'anon');
+    vi.stubEnv('SHEET_WEBHOOK_URL', 'https://script.google.com/macros/s/test/exec');
+    vi.stubEnv('SHEET_WEBHOOK_SECRET', 'secret');
   };
-  it('accepts a non-Latin password only in the percent-encoded form, and rejects a wrong one', async () => {
-    expect(await call('Bearer u:' + encodeURIComponent('пароль-123'))).toBe(503); // authorised, then stops at "not configured"
-    expect(await call('Bearer u:' + encodeURIComponent('неверный'))).toBe(401);
-    expect(await call('Bearer u:%E0%A4%A')).toBe(401); // malformed encoding
+  const call = async (headers, body, fetchImpl) => {
+    env();
+    vi.stubGlobal('fetch', fetchImpl ?? vi.fn());
+    const res = { setHeader: vi.fn(), status: vi.fn().mockReturnThis(), json: vi.fn(), end: vi.fn() };
+    await deleteResponse({ method: 'POST', headers, body }, res);
+    return { status: res.status.mock.calls[0]?.[0], json: res.json.mock.calls[0]?.[0] };
+  };
+  const supabaseUser = email => new Response(JSON.stringify({ email, email_confirmed_at: '2026-01-01T00:00:00Z' }), { status: 200 });
+
+  it('rejects requests without a token and no longer accepts a shared password', async () => {
+    expect((await call({}, { responseId: ID })).status).toBe(401);
+    const r = await call({ authorization: 'Bearer some-old-password' }, { responseId: ID }, vi.fn().mockResolvedValue(new Response('{}', { status: 401 })));
+    expect(r.status).toBe(401);
+  });
+  it('rejects a signed-in account that is not on the list', async () => {
+    const r = await call({ authorization: 'Bearer t' }, { responseId: ID }, vi.fn().mockResolvedValue(supabaseUser('stranger@example.com')));
+    expect(r.status).toBe(403);
+  });
+  it('validates the response id before touching the sheet', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(supabaseUser('owner@example.com'));
+    const r = await call({ authorization: 'Bearer t' }, { responseId: '../etc' }, fetchMock);
+    expect(r.status).toBe(400);
+    expect(fetchMock).toHaveBeenCalledTimes(1); // only the Supabase identity check
+  });
+  it('deletes through the sheet webhook for an allow-listed admin', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(supabaseUser('Owner@Example.com'))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ ok: true, deleted: true })));
+    const r = await call({ authorization: 'Bearer t' }, { responseId: ID }, fetchMock);
+    expect(r).toEqual({ status: 200, json: { ok: true, deleted: true } });
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toMatchObject({ adminAction: 'deleteResponse', responseId: ID, secret: 'secret' });
   });
 });
