@@ -33,6 +33,25 @@ function items(key: string, counts: Record<string, number>): ResultItem[] {
 }
 
 /** Uncensored results for the signed-in, allow-listed admin. Access is enforced on the server, not here. */
+function MirrorStatus({ token, sheetTotal }: { token: string; sheetTotal: number }) {
+  const [st, setSt] = useState<{ configured: boolean; responses: number | null } | 'err' | null>(null);
+  const check = () => {
+    setSt(null);
+    fetch('https://alkohol-ja-aju.vercel.app/api/admin-mirror-status', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+      .then(r => r.json()).then(b => setSt(b?.ok ? b : 'err'), () => setSt('err'));
+  };
+  return (
+    <div className="admin-q admin-mirror">
+      <h3>Копия в Supabase</h3>
+      <button type="button" className="admin-link" onClick={check}>Сверить количество</button>
+      {st === 'err' && <p role="alert" className="admin-error">Не удалось получить данные (деплой ещё не обновился?).</p>}
+      {st && st !== 'err' && (!st.configured
+        ? <p className="admin-meta">Копия выключена: нет SUPABASE_SERVICE_ROLE_KEY в Vercel.</p>
+        : <p className="admin-meta">В таблице: <b>{sheetTotal}</b> · в Supabase: <b>{st.responses ?? '—'}</b>. {st.responses === sheetTotal ? 'Совпадает.' : 'Разница нормальна, если копия включена позже первых ответов: старые строки сами не переносятся.'}</p>)}
+    </div>
+  );
+}
+
 export default function AdminData() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
@@ -74,7 +93,7 @@ export default function AdminData() {
       const r = await fetch(DELETE_ENDPOINT, { method: 'POST', headers: { Authorization: `Bearer ${session.access_token}`, 'content-type': 'application/json' }, body: JSON.stringify({ responseId: responseId.trim() }) });
       const body = await r.json().catch(() => null);
       if (r.ok && body?.ok) {
-        setDeleteMsg(body.deleted ? { ok: true, text: `Ответ ${responseId.trim()} удалён.` } : { ok: false, text: 'Такого ответа в таблице нет. Проверьте ID.' });
+        setDeleteMsg(body.deleted ? { ok: body.mirror !== 'failed', text: body.mirror === 'failed' ? `Ответ ${responseId.trim()} удалён из таблицы, но копию в Supabase удалить не удалось. Удалите строку вручную в Table Editor (research_responses).` : `Ответ ${responseId.trim()} удалён.` } : { ok: false, text: 'Такого ответа в таблице нет. Проверьте ID.' });
         if (body.deleted) { setResponseId(''); setReload(v => v + 1); }
       } else if (body?.error === 'invalid_response_id') setDeleteMsg({ ok: false, text: 'ID должен выглядеть как research_… (латиница, цифры, _ и -).' });
       else setDeleteMsg({ ok: false, text: explain(r.status, body?.error === 'delete_upstream_failed_or_script_outdated' ? 'upstream_failed_or_script_outdated' : body?.error).replace('версии 10', 'версии 11') });
@@ -120,6 +139,7 @@ export default function AdminData() {
                   );
                 })}
               </div>
+              <MirrorStatus token={session.access_token} sheetTotal={data.n + data.excluded} />
               <PrePostCard data={data.prepost} />
               <div className="admin-report-toggle"><button type="button" className="admin-signin" aria-expanded={showReport} onClick={() => setShowReport(v => !v)}>{showReport ? 'Скрыть отчёт' : 'Сформировать отчёт (PDF)'}</button></div>
               {showReport && <AdminReport data={data} />}

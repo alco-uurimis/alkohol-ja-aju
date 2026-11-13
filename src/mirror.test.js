@@ -33,3 +33,30 @@ describe('supabase mirror', () => {
     expect(r).toEqual({ ok: false, configured: true, error: 'unreachable' });
   });
 });
+
+describe('supabase mirror: delete and count', () => {
+  it('deletes one row by id and reports whether something was removed', async () => {
+    const { mirrorDelete } = await import('../api/_mirror.js');
+    process.env.SUPABASE_URL = 'https://abc.supabase.co'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'sb_secret_x';
+    let seen;
+    const r = await mirrorDelete('research_abc12345', async (url, init) => { seen = { url, init }; return { ok: true, json: async () => [{ response_id: 'research_abc12345' }] }; });
+    expect(r).toEqual({ ok: true, configured: true, deleted: true });
+    expect(seen.url).toBe('https://abc.supabase.co/rest/v1/research_responses?response_id=eq.research_abc12345');
+    expect(seen.init.method).toBe('DELETE');
+    expect(seen.init.headers.authorization).toBeUndefined(); // sb_secret_ keys go in apikey only
+  });
+  it('rejects ids that are not response ids (no filter injection)', async () => {
+    const { mirrorDelete } = await import('../api/_mirror.js');
+    process.env.SUPABASE_URL = 'https://abc.supabase.co'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'k';
+    let called = false;
+    const r = await mirrorDelete('x&select=*', async () => { called = true; return { ok: true }; });
+    expect(r.error).toBe('invalid_id'); expect(called).toBe(false);
+  });
+  it('reads the exact count from Content-Range', async () => {
+    const { mirrorCount } = await import('../api/_mirror.js');
+    process.env.SUPABASE_URL = 'https://abc.supabase.co'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'k';
+    const r = await mirrorCount('research_responses', async () => ({ ok: true, headers: { get: () => '0-0/37' } }));
+    expect(r).toEqual({ ok: true, configured: true, count: 37 });
+    expect((await mirrorCount('auth.users', async () => ({ ok: true }))).ok).toBe(false);
+  });
+});

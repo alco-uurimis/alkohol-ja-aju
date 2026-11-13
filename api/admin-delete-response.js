@@ -1,5 +1,6 @@
 // Permanently deletes one response row by ID. Signed-in admins only (see _admin-auth.js).
 import {requireAdmin} from './_admin-auth.js';
+import {mirrorDelete} from './_mirror.js';
 
 const ALLOWED_ORIGINS=new Set(['https://alco-uurimis.github.io','https://alkohol-ja-aju.vercel.app']);
 function cors(req,res){const origin=req.headers?.origin;if(origin&&ALLOWED_ORIGINS.has(origin))res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Authorization, Content-Type');res.setHeader('Cache-Control','no-store');}
@@ -17,9 +18,9 @@ export default async function handler(req,res){
   if(!url||!secret)return res.status(503).json({ok:false,error:'summary_not_configured'});
   try{
     const parsed=new URL(String(url).trim());if(parsed.protocol!=='https:'||parsed.hostname!=='script.google.com')return res.status(503).json({ok:false,error:'summary_url_invalid'});
-    const response=await request(parsed.toString(),{secret,adminAction:'deleteResponse',responseId});
+    const [response,mirror]=await Promise.all([request(parsed.toString(),{secret,adminAction:'deleteResponse',responseId}),mirrorDelete(responseId)]);
     const data=await response.json().catch(()=>null);
     if(!response.ok||data?.ok!==true)return res.status(502).json({ok:false,error:'delete_upstream_failed_or_script_outdated'});
-    return res.status(200).json({ok:true,deleted:data.deleted===true});
+    return res.status(200).json({ok:true,deleted:data.deleted===true,mirror:!mirror.configured?'off':mirror.ok?'ok':'failed'});
   }catch{return res.status(502).json({ok:false,error:'delete_unreachable'});}
 }

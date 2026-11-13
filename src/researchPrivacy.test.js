@@ -150,7 +150,7 @@ describe('admin delete (Google sign-in only)', () => {
       .mockResolvedValueOnce(supabaseUser('Owner@Example.com'))
       .mockResolvedValueOnce(new Response(JSON.stringify({ ok: true, deleted: true })));
     const r = await call({ authorization: 'Bearer t' }, { responseId: ID }, fetchMock);
-    expect(r).toEqual({ status: 200, json: { ok: true, deleted: true } });
+    expect(r).toEqual({ status: 200, json: { ok: true, deleted: true, mirror: 'off' } });
     expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toMatchObject({ adminAction: 'deleteResponse', responseId: ID, secret: 'secret' });
   });
 });

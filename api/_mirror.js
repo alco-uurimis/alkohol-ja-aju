@@ -48,3 +48,41 @@ export function mirrorPrepost(record, fetchImpl) {
   const { token, phase, lang, correct, score, total } = record;
   return insertIgnoringDuplicates('prepost_submissions', 'token,phase', { token, phase, lang, correct, score, total }, fetchImpl);
 }
+
+/** Removes the copy of one response (called by the admin delete, so erasing a row in the Sheet erases it here too). */
+export async function mirrorDelete(responseId, fetchImpl = fetch) {
+  const t = target();
+  if (!t) return { ok: false, configured: false };
+  if (!/^research_[a-z0-9_-]{8,90}$/i.test(String(responseId))) return { ok: false, configured: true, error: 'invalid_id' };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetchImpl(`${t.base}/rest/v1/research_responses?response_id=eq.${encodeURIComponent(responseId)}`, {
+      method: 'DELETE',
+      headers: { apikey: t.key, ...(t.key.startsWith('sb_') ? {} : { authorization: `Bearer ${t.key}` }), prefer: 'return=representation' },
+      signal: controller.signal,
+    });
+    const rows = res.ok ? await res.json().catch(() => []) : [];
+    return { ok: res.ok, configured: true, deleted: Array.isArray(rows) && rows.length > 0 };
+  } catch { return { ok: false, configured: true, error: 'unreachable' }; }
+  finally { clearTimeout(timer); }
+}
+
+/** Exact row count of a mirror table, from PostgREST's Content-Range header. */
+export async function mirrorCount(table, fetchImpl = fetch) {
+  const t = target();
+  if (!t) return { ok: false, configured: false };
+  if (!['research_responses', 'prepost_submissions'].includes(table)) return { ok: false, configured: true };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetchImpl(`${t.base}/rest/v1/${table}?select=*`, {
+      method: 'HEAD',
+      headers: { apikey: t.key, ...(t.key.startsWith('sb_') ? {} : { authorization: `Bearer ${t.key}` }), prefer: 'count=exact', range: '0-0' },
+      signal: controller.signal,
+    });
+    const total = Number(String(res.headers?.get?.('content-range') ?? '').split('/')[1]);
+    return { ok: res.ok && Number.isFinite(total), configured: true, count: Number.isFinite(total) ? total : null };
+  } catch { return { ok: false, configured: true, error: 'unreachable' }; }
+  finally { clearTimeout(timer); }
+}
