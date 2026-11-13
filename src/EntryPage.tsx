@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Quiz } from './components/Quiz';
 import { ProgressBar } from './components/Shared';
 import { questions } from './data/content';
-import { questionsRu } from './data/content.ru';
+import { getRu, loadRu } from './data/ru';
 import { useStageFocus } from './hooks/useStageFocus';
 import './entry-pages.css';
 
@@ -69,7 +69,7 @@ function Lesson({ lang, full }: { lang: Lang; full: boolean }) {
   const done = step === stages.length;
   const quiz = step === stages.length - 1;
   const quizIds = full ? ['blackout', 'attention', 'reaction', 'decisions'] : ['blackout', 'attention'];
-  const quizItems = (ru ? questionsRu : questions).filter(question => quizIds.includes(question.id));
+  const quizItems = (ru ? getRu().questionsRu : questions).filter(question => quizIds.includes(question.id));
   const advance = () => {
     setStep(current => current + 1);
     window.scrollTo({ top: 0 });
@@ -148,7 +148,7 @@ export default function EntryPage({ page }: { page: Page }) {
     const url = new URL(location.href);
     url.searchParams.set('lang', next);
     history.replaceState(null, '', url);
-    setLang(next);
+    if (next === 'ru') loadRu().then(() => setLang('ru'), () => { /* stay in the current language */ }); else setLang(next);
   }
   return <div className="entry-page">
     <header className="entry-header">

@@ -1,1 +1,53 @@
-{"name":"Alkohol ja aju","short_name":"Alkohol ja aju","start_url":"./","display":"standalone","background_color":"#f8f9fc","theme_color":"#171b37","lang":"et","icons":[{"src":"./favicon.svg","sizes":"any","type":"image/svg+xml"}]}
+{
+ "name": "Alkohol ja aju",
+ "short_name": "Alkohol ja aju",
+ "start_url": "./",
+ "display": "standalone",
+ "background_color": "#f8f9fc",
+ "theme_color": "#171b37",
+ "lang": "et",
+ "icons": [
+  {
+   "src": "./icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "./icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "./icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  },
+  {
+   "src": "./favicon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  }
+ ],
+ "id": "./",
+ "scope": "./",
+ "description": "Teaduspõhine õppeveeb alkoholi mõjust ajule / Учебный сайт о влиянии алкоголя на мозг",
+ "categories": [
+  "education"
+ ],
+ "shortcuts": [
+  {
+   "name": "Õppetükk 5 minutiga",
+   "short_name": "5 min",
+   "url": "./start/"
+  },
+  {
+   "name": "Teadusteemad",
+   "short_name": "Teemad",
+   "url": "./topics/"
+  }
+ ]
+}

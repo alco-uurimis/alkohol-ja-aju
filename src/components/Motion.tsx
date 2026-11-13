@@ -100,6 +100,7 @@ function FactStrip() {
   useEffect(() => {
     const mo = new MutationObserver(() => setLang(document.documentElement.lang === 'ru' ? 'ru' : 'et'));
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    setLang(document.documentElement.lang === 'ru' ? 'ru' : 'et');
     const el = ref.current;
     if (!el || !('IntersectionObserver' in window)) { setRun(true); return () => mo.disconnect(); }
     const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setRun(true); io.disconnect(); } }, { threshold: 0.3 });

@@ -2,10 +2,10 @@ import { useCallback,useEffect,useRef,useState } from 'react';
 import { Section,ResultCard,SourceReference } from '../components/Shared';
 import { attentionRound,scoreSelection,toggleSelection } from '../utils/tasks';
 import { science } from '../data/content';
-import { scienceRu } from '../data/content.ru';
+import { getRu } from '../data/ru';
 import { useStageFocus } from '../hooks/useStageFocus';
 export default function Attention({lang}:{lang:'et'|'ru'}){
- const ru=lang==='ru';const localizedScience=ru?scienceRu:science;const [stage,setStage]=useState<'intro'|'play'|'result'>('intro');const [grid,setGrid]=useState(attentionRound);const [selected,setSelected]=useState<number[]>([]);const [timed,setTimed]=useState(true);const [remaining,setRemaining]=useState(45);const [elapsed,setElapsed]=useState(0);const [cursor,setCursor]=useState(0);const started=useRef(0);const ended=useRef(false);const cells=useRef<(HTMLButtonElement|null)[]>([]);const heading=useStageFocus(stage);
+ const ru=lang==='ru';const localizedScience=ru?getRu().scienceRu:science;const [stage,setStage]=useState<'intro'|'play'|'result'>('intro');const [grid,setGrid]=useState(attentionRound);const [selected,setSelected]=useState<number[]>([]);const [timed,setTimed]=useState(true);const [remaining,setRemaining]=useState(45);const [elapsed,setElapsed]=useState(0);const [cursor,setCursor]=useState(0);const started=useRef(0);const ended=useRef(false);const cells=useRef<(HTMLButtonElement|null)[]>([]);const heading=useStageFocus(stage);
  const finish=useCallback(()=>{if(ended.current)return;ended.current=true;setElapsed(Math.min(timed?45:Infinity,(performance.now()-started.current)/1000));setStage('result');},[timed]);
  useEffect(()=>{setStage('intro');setGrid(attentionRound());setSelected([]);},[lang]);
  useEffect(()=>{if(stage!=='play'||!timed)return;const tick=()=>{const left=Math.max(0,Math.ceil(45-(performance.now()-started.current)/1000));setRemaining(left);if(!left)finish();};const id=window.setInterval(tick,100);tick();return()=>clearInterval(id);},[stage,timed,finish]);

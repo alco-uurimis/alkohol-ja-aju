@@ -43,6 +43,7 @@ export default function AccountMenu() {
   useEffect(() => {
     const observer = new MutationObserver(() => setLang(pageLang()));
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    setLang(pageLang());
     // The header is rendered by App after this component mounts; wait for it.
     const find = () => setHost(document.querySelector('.header-actions'));
     find();

@@ -1,7 +1,7 @@
 import Collapse from '../components/Collapse';
 import type { ReactNode } from 'react';
 import { sources } from '../data/content';
-import { sourcesRu } from '../data/content.ru';
+import { getRu } from '../data/ru';
 import { additionalSourcesEt,additionalSourcesRu } from '../data/additionalSources';
 import { Section } from '../components/Shared';
 import FeedbackSurvey from '../components/FeedbackSurvey';
@@ -9,7 +9,7 @@ import ReferenceGlossary from '../components/ReferenceGlossary';
 
 export default function Closing({lang,summary}:{lang:'et'|'ru';summary?:ReactNode}){
   const ru=lang==='ru';
-  const localizedSources=[...(ru?sourcesRu:sources),...(ru?additionalSourcesRu:additionalSourcesEt)];
+  const localizedSources=[...(ru?getRu().sourcesRu:sources),...(ru?additionalSourcesRu:additionalSourcesEt)];
 
   return <>
     <Section id="meelespea" number={ru?"ИТОГ":"KOKKUVÕTE"} title={ru?"Факт и граница вывода":"Fakt ja järelduse piir"}>

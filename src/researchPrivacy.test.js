@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { publicSummary } from '../api/research-summary.js';
-import { publicSummary as legacySummary } from '../alkohol-ja-aju/api/research-summary.js';
 import submit from '../api/research.js';
 
-describe.each([publicSummary, legacySummary])('public research summary', summarize => {
+describe('public research summary', () => {
+  const summarize = publicSummary;
   it.each([1, 9])('withholds distributions at N=%i even if the upstream minimum is one', n => {
     const result = summarize({ n, minimumGroupSize: 1, ageGroup: { '15_17': n } });
     expect(result).toMatchObject({ publishable: false, minimumGroupSize: 10 });

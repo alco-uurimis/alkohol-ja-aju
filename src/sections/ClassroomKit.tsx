@@ -1,3 +1,4 @@
+import Collapse from '../components/Collapse';
 import { useMemo, useState } from 'react';
 import { Section } from '../components/Shared';
 import './ClassroomKit.css';
@@ -143,6 +144,12 @@ export default function ClassroomKit({lang}:{lang:Lang}){
     }
   };
 
+  const handlePrintPlan=()=>{
+    const clear=()=>document.body.classList.remove('printing-lesson-plan');
+    document.body.classList.add('printing-lesson-plan');
+    window.addEventListener('afterprint',clear,{once:true});
+    window.print();
+  };
   const handlePrintTicket=()=>{
     const clearPrintMode=()=>document.body.classList.remove('printing-exit-ticket');
     document.body.classList.add('printing-exit-ticket');
@@ -190,6 +197,12 @@ export default function ClassroomKit({lang}:{lang:Lang}){
         <p>{ru?'Говорите о вымышленных ситуациях и фактах из источников. Разрешите не отвечать и не просите делиться опытом употребления, здоровьем или данными других людей.':'Rääkige väljamõeldud olukordadest ja allikates toodud faktidest. Luba vastamata jätta ning ära palu jagada tarvitamiskogemust, terviseandmeid ega teiste inimeste infot.'}</p>
       </div>
 
+      <div className="classroom-kit__plan-actions">
+        <button type="button" className="text-button" onClick={handlePrintPlan}>{ru?'Распечатать план урока (PDF)':'Prindi tunnikava (PDF)'}</button>
+        <small>{ru?'В окне печати выберите «Сохранить как PDF».':'Prindiaknas vali „Salvesta PDF-ina“.'}</small>
+      </div>
+
+      <Collapse lang={lang} collapsed={[560,640]} count={ru?'план, вопросы, билет выхода':'kava, küsimused, väljumispilet'}>
       <div className="classroom-kit__schedule" aria-label={ru?'План занятия':'Tunni kava'}>
         {lesson.map((step,index)=><article className="classroom-kit__step" key={step.minutes}>
           <div className="classroom-kit__step-time"><span>{step.minutes}</span><small>{ru?'мин':'min'}</small></div>
@@ -231,6 +244,7 @@ export default function ClassroomKit({lang}:{lang:Lang}){
           <p className="sr-only" aria-live="polite">{copyState==='copied'?(ru?'Текст скопирован в буфер обмена.':'Tekst kopeeriti lõikelauale.'):copyState==='manual'?(ru?'Выдели текст в поле и скопируй его вручную.':'Vali väljal olev tekst ning kopeeri see käsitsi.'):''}</p>
         </article>
       </div>
+      </Collapse>
     </div>
   </Section>;
 }

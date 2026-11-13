@@ -3,7 +3,7 @@ import { Section, SourceReference } from './Shared';
 
 type Lang='et'|'ru';
 
-const terms=[
+export const terms=[
   {term:'GABA',et:'Peamine pidurdav virgatsaine ajus. Alkohol võib võimendada GABA-A retseptoritega seotud pidurdavat signaali.',ru:'Главный тормозный медиатор мозга. Алкоголь может усиливать тормозные сигналы, связанные с GABA-A-рецепторами.',refs:[6,9]},
   {term:'Glutamaat',ruTerm:'Глутамат',et:'Oluline ergastav virgatsaine. Alkohol võib vähendada NMDA-tüüpi glutamaadiretseptorite aktiivsust.',ru:'Важный возбуждающий медиатор. Алкоголь может снижать активность NMDA-рецепторов глутамата.',refs:[6,9]},
   {term:'Dopamiin',ruTerm:'Дофамин',et:'Tasustamise, õppimise ja motivatsiooniga seotud signaalmolekul. Alkohol võib muuta tasuradade dopamiinisignaali.',ru:'Сигнальная молекула, связанная с вознаграждением, обучением и мотивацией. Алкоголь может менять дофаминовую передачу в системе вознаграждения.',refs:[6]},

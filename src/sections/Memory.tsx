@@ -2,12 +2,12 @@ import { useEffect,useRef,useState } from 'react';
 import { ProgressBar,ResultCard,Section,SourceReference } from '../components/Shared';
 import { memoryRound,scoreSelection,toggleSelection } from '../utils/tasks';
 import { science } from '../data/content';
-import { scienceRu } from '../data/content.ru';
+import { getRu } from '../data/ru';
 import { wordsRu } from '../data/words.ru';
 import { useStageFocus } from '../hooks/useStageFocus';
 type Stage='intro'|'study'|'distract'|'recall'|'result';
 export default function Memory({lang}:{lang:'et'|'ru'}){
- const ru=lang==='ru';const makeRound=()=>memoryRound(ru?wordsRu:undefined);const [stage,setStage]=useState<Stage>('intro');const [round,setRound]=useState(makeRound);const [selected,setSelected]=useState<string[]>([]);const [timed,setTimed]=useState(true);const [remaining,setRemaining]=useState(12);const [distraction,setDistraction]=useState<string|null>(null);const deadline=useRef(0);const heading=useStageFocus(stage);const localizedScience=ru?scienceRu:science;
+ const ru=lang==='ru';const makeRound=()=>memoryRound(ru?wordsRu:undefined);const [stage,setStage]=useState<Stage>('intro');const [round,setRound]=useState(makeRound);const [selected,setSelected]=useState<string[]>([]);const [timed,setTimed]=useState(true);const [remaining,setRemaining]=useState(12);const [distraction,setDistraction]=useState<string|null>(null);const deadline=useRef(0);const heading=useStageFocus(stage);const localizedScience=ru?getRu().scienceRu:science;
  useEffect(()=>{setStage('intro');setRound(makeRound());setSelected([]);setDistraction(null);},[lang]);
  useEffect(()=>{if(stage!=='study'||!timed)return;const tick=()=>{const left=Math.max(0,Math.ceil((deadline.current-performance.now())/1000));setRemaining(left);if(!left)setStage('distract');};const id=window.setInterval(tick,100);tick();return()=>clearInterval(id);},[stage,timed]);
  const start=()=>{setRound(makeRound());setSelected([]);setDistraction(null);setRemaining(12);deadline.current=performance.now()+12000;setStage('study');};const score=scoreSelection(round.targets,selected);

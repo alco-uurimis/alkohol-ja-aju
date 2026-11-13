@@ -1,15 +1,15 @@
 import Collapse from '../components/Collapse';
 import { useState } from 'react';
 import { topics,science,knowledgeCards } from '../data/content';
-import { topicsRu,scienceRu,knowledgeCardsRu } from '../data/content.ru';
+import { getRu } from '../data/ru';
 import { InfoCard,Section,SourceReference } from '../components/Shared';
 
 export default function Brain({lang}:{lang:'et'|'ru'}){
   const [active,setActive]=useState(0);
   const ru=lang==='ru';
-  const localizedTopics=ru?topicsRu:topics;
-  const localizedScience=ru?scienceRu:science;
-  const localizedKnowledge=ru?knowledgeCardsRu:knowledgeCards;
+  const localizedTopics=ru?getRu().topicsRu:topics;
+  const localizedScience=ru?getRu().scienceRu:science;
+  const localizedKnowledge=ru?getRu().knowledgeCardsRu:knowledgeCards;
   const topic=localizedTopics[active];
 
   return <Section

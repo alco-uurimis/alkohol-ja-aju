@@ -10,3 +10,6 @@
 .collapse.is-open .collapse__btn svg{transform:rotate(180deg)}
 @media (prefers-reduced-motion:reduce){.collapse__body{transition:none}}
 .sources-section .collapse{--collapse-fade:#f1f3f7}
+/* Printing always shows the full content */
+@media print{.collapse__body{max-height:none!important;overflow:visible!important}.collapse__bar,.collapse::after{display:none!important}.collapse.is-collapsed .collapse__body::after{display:none}}
+.classroom-kit-section .collapse{--collapse-fade:#f3f4fb}

@@ -14,7 +14,7 @@ import PathChooser from './components/PathChooser';
 import ClassroomKit from './sections/ClassroomKit';
 import ActionHub from './sections/ActionHub';
 import { questions } from './data/content';
-import { questionsRu } from './data/content.ru';
+import { getRu, loadRu } from './data/ru';
 
 type Lang='et'|'ru';
 type NavItem=[string,string];
@@ -73,8 +73,8 @@ const observer=new IntersectionObserver(entries=>{for(const entry of entries){if
     const url=new URL(window.location.href);
     url.searchParams.set('lang',next);
     history.replaceState(null,'',url);
-    setLang(next);
     setMenu(false);
+    if(next==='ru')loadRu().then(()=>setLang('ru'),()=>{});else setLang(next);
   };
   const handleQuizComplete=(score:number)=>{setQuizScore(score);try{sessionStorage.setItem(quizScoreKey,String(score));}catch{}};
   const saveProgress=()=>{try{localStorage.setItem(savedProgressEnabledKey,'1');localStorage.setItem(savedProgressKey,JSON.stringify([...visited]));setProgressSaved(true);}catch{}};
@@ -108,7 +108,7 @@ const observer=new IntersectionObserver(entries=>{for(const entry of entries){if
       {stage>=1&&<><div className="phase-divider"><div><strong>{ru?'Изучи':'Õpi'}</strong><small>{ru?'Факты, механизмы и ограничения':'Faktid, mehhanismid ja piirangud'}</small></div></div><Brain lang={lang}/></>}
       {stage>=2&&<><Infographics lang={lang}/><LearningCenter lang={lang}/></>}
       {stage>=3&&<><div className="phase-divider"><div><strong>{ru?'Попробуй':'Proovi'}</strong><small>{ru?'Учебные упражнения, не медицинские тесты':'Õppeharjutused, mitte meditsiinilised testid'}</small></div></div><Memory lang={lang}/><Attention lang={lang}/><Lab lang={lang}/></>}
-      {stage>=4&&<><div className="phase-divider"><div><strong>{ru?'Проверь':'Kontrolli'}</strong><small>{ru?'Знание и уверенность в ответе':'Teadmised ja vastuse kindlus'}</small></div></div><Section id="viktoriin" number={ru?'ПРОВЕРЬ ЗНАНИЯ':'KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Сначала оцени свою уверенность. Затем выбери «миф» или «факт» и прочитай объяснение.':'Hinda esmalt oma kindlust. Seejärel vali „müüt“ või „fakt“ ja loe selgitust.'} className="quiz-section"><Quiz questions={ru?questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section><Reflection lang={lang}/><ActionHub lang={lang}/><ClassroomKit lang={lang}/></>}
+      {stage>=4&&<><div className="phase-divider"><div><strong>{ru?'Проверь':'Kontrolli'}</strong><small>{ru?'Знание и уверенность в ответе':'Teadmised ja vastuse kindlus'}</small></div></div><Section id="viktoriin" number={ru?'ПРОВЕРЬ ЗНАНИЯ':'KONTROLLI TEADMISI'} title={ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?'} intro={ru?'Сначала оцени свою уверенность. Затем выбери «миф» или «факт» и прочитай объяснение.':'Hinda esmalt oma kindlust. Seejärel vali „müüt“ või „fakt“ ja loe selgitust.'} className="quiz-section"><Quiz questions={ru?getRu().questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section><Reflection lang={lang}/><ActionHub lang={lang}/><ClassroomKit lang={lang}/></>}
       {stage>=5&&<><div className="phase-divider"><div><strong>{ru?'Заверши':'Lõpeta'}</strong><small>{ru?'Выводы, обратная связь и источники':'Järeldused, tagasiside ja allikad'}</small></div></div><Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length} progressSaved={progressSaved} onSaveProgress={saveProgress} onClearSavedProgress={clearSavedProgress}/>}/></>}
     </main>
     {returnPoint&&<button type="button" className="reading-return" onClick={returnToReadingPlace} aria-label={ru?`Вернуться к месту: ${returnPoint.label}`:`Naase kohta: ${returnPoint.label}`}><span aria-hidden="true"/><b>{ru?'Вернуться':'Tagasi'}</b><small>{returnPoint.label}</small></button>}

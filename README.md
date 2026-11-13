@@ -37,11 +37,14 @@ GitHub Pages is deployed by `.github/workflows/deploy-pages.yml`.
 Serverless research endpoints are under `api/` and deployed separately on Vercel.
 Google Apps Script code for the Sheets webhook is in `docs/research-google-sheet-webhook.gs` and must be deployed manually as a Web App after script changes.
 
+## Features worth knowing
+- **Offline:** `public/sw.js` caches pages you have opened (network first for pages, cache first for hashed assets; never admin or API). Registered in production only.
+- **Search:** header button / `/` / Ctrl+K on the main page; runs in the browser only, queries are not sent anywhere (`src/data/searchIndex.ts`).
+- **Language data:** Russian lesson content is a separate chunk loaded on demand (`src/data/ru.ts`).
+- **Printing:** the lesson plan can be printed or saved as PDF from the "Tunniks" section; long blocks collapse on screen and expand when printing.
+
 ## Admin access (no shared password)
 `/admin/` is for signed-in Google accounts only: viewing uncensored results and deleting a response by ID. The API (`api/admin-data.js`, `api/admin-delete-response.js`) verifies the Supabase session server-side and allows only e-mails listed in the `ADMIN_EMAILS` Vercel variable (comma-separated). Required Vercel variables: `ADMIN_EMAILS`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SHEET_WEBHOOK_URL`, `SHEET_WEBHOOK_SECRET`. The old `ADMIN_DASHBOARD_PASSWORD` variable is no longer used and can be deleted. The Google Apps Script (version 11 or newer) must be redeployed after changes to `docs/research-google-sheet-webhook.gs`.
-
-## Repository note
-A legacy nested `alkohol-ja-aju/` copy is temporarily retained because older Vercel configuration may still use it as Root Directory. Do not delete it until the Vercel project root has been confirmed and migrated to repository root.
 
 ## Project
 Author: Sofija Tsaika  
