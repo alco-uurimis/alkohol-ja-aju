@@ -101,5 +101,11 @@ export function HelpEn() {
     <h2>If you need advice or want to talk</h2>
     <p>Lasteabi gives free advice around the clock in Estonian, Russian and English.</p>
     <div className="lesson-actions"><a className="button" href="tel:116111">Lasteabi 116 111</a><a href="https://www.lasteabi.ee/et/lasteabi-116111">Lasteabi website</a></div>
+    <h2>If you are unsure whether a doctor is needed</h2>
+    <p>The Poison Information Centre gives advice by phone on 16662. If the person does not wake up, breathes slowly or with difficulty, or does not respond, do not call there: dial 112 straight away.</p>
+    <div className="lesson-actions"><a className="button" href="tel:16662">Call 16662</a><a href="https://www.16662.ee/">16662.ee</a></div>
+    <h2>If your own or someone else’s drinking worries you</h2>
+    <p>You can talk to a family doctor or school nurse. For young people there is information at noored.alkoinfo.ee and the Peaasi programme for ages 12–26 with mild to moderate difficulties (check the conditions at peaasi.ee).</p>
+    <div className="lesson-actions"><a href="https://noored.alkoinfo.ee/">noored.alkoinfo.ee</a><a href="https://peaasi.ee/">peaasi.ee</a></div>
   </section>;
 }

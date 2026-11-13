@@ -128,6 +128,12 @@ function Help({ ru }: { ru: boolean }) {
     <h2>{ru ? 'Если нужно поговорить или получить совет' : 'Kui vajad nõu või soovid rääkida'}</h2>
     <p>{ru ? 'Lasteabi консультирует бесплатно и круглосуточно на русском, эстонском и английском.' : 'Lasteabi nõustab tasuta ööpäev läbi eesti, vene ja inglise keeles.'}</p>
     <div className="lesson-actions"><a className="button" href="tel:116111">Lasteabi 116 111</a><a href="https://www.lasteabi.ee/et/lasteabi-116111">{ru ? 'Сайт Lasteabi' : 'Lasteabi veebileht'}</a></div>
+    <h2>{ru ? 'Если не уверен(а), нужен ли врач' : 'Kui oled kahevahel, kas arst on vajalik'}</h2>
+    <p>{ru ? 'Центр информации об отравлениях консультирует по телефону 16662. Если человек не приходит в себя, дыхание редкое или затруднённое, или он не реагирует, не звони туда, а сразу набирай 112.' : 'Mürgistusteabekeskus nõustab telefonil 16662. Kui inimene ei ärka, hingab harva või raskelt või ei reageeri, ära helista sinna, vaid vali kohe 112.'}</p>
+    <div className="lesson-actions"><a className="button" href="tel:16662">{ru ? 'Позвонить 16662' : 'Helista 16662'}</a><a href="https://www.16662.ee/">{ru ? 'Сайт 16662.ee' : 'Veebileht 16662.ee'}</a></div>
+    <h2>{ru ? 'Если тревожит твоё употребление или чьё-то рядом' : 'Kui sind häirib enda või kellegi lähedase tarvitamine'}</h2>
+    <p>{ru ? 'Можно поговорить с семейным врачом или школьной медсестрой. Для молодых людей есть информация на noored.alkoinfo.ee и программа Peaasi для 12–26 лет с лёгкими и умеренными трудностями (условия участия уточняй на peaasi.ee).' : 'Võid rääkida perearsti või kooliõega. Noortele on teavet saidil noored.alkoinfo.ee ning Peaasi programm 12–26-aastastele kergemate ja mõõdukate raskuste korral (osalemise tingimused vaata peaasi.ee).'}</p>
+    <div className="lesson-actions"><a href="https://noored.alkoinfo.ee/">noored.alkoinfo.ee</a><a href="https://peaasi.ee/">peaasi.ee</a></div>
     <p><a href="../#tegevus">{ru ? 'Практические ситуации и другие службы' : 'Praktilised olukorrad ja muud abiteenused'}</a></p>
   </section>;
 }
