@@ -1,4 +1,5 @@
 import {mirrorResponse} from './_mirror.js';
+import {primaryDelivery,readSource,withDeadline} from './_source.js';
 const ALLOWED_ORIGINS=new Set(['https://alco-uurimis.github.io','https://alkohol-ja-aju.vercel.app']);
 const LANGUAGES=new Set(['et','ru']);
 const YES_NO=new Set(['yes','no']);
@@ -96,7 +97,8 @@ export default async function handler(req,res){
 
     const responseId=readSubmissionId(body.submissionId);
     const response={submitted_at:new Date().toISOString(),response_id:responseId,language,version:schemaVersion,...answers};
-    const [sheet]=await Promise.all([deliverSheet(response),mirrorResponse(response)]);
+    const [sheetResult,mirrorResult]=await Promise.all([readSource()==='supabase'?withDeadline(deliverSheet(response),6000,{ok:false,configured:true,error:'sheet_slow'}):deliverSheet(response),mirrorResponse(response)]);
+    const sheet=primaryDelivery(sheetResult,mirrorResult);
     const telegram=sheet.ok&&!sheet.duplicate?await deliverTelegram():{ok:false,configured:Boolean(process.env.BOT_TOKEN&&process.env.CHAT_ID),error:sheet.duplicate?'notification_already_attempted':'answer_not_saved'};
     const channels={sheet:Boolean(sheet.ok),telegram:Boolean(telegram.ok)},configured={sheet:Boolean(sheet.configured),telegram:Boolean(telegram.configured)},warnings=[];
     if(!sheet.ok)warnings.push(sheet.error);if(!telegram.ok)warnings.push(telegram.error);

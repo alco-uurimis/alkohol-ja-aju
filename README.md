@@ -74,3 +74,7 @@ The admin page has a "Копия в Supabase" card (row-count comparison, `api/a
 
 Set `READ_SOURCE=supabase` in Vercel and redeploy: the public charts (`/api/research-summary`), the admin view (`/api/admin-data`) and delete-by-ID use Supabase rows, with the same privacy rules (`api/_aggregate.js`, `publicSummary`). If Supabase cannot be read, the public API falls back to the Sheet; the response header `X-Data-Source` and the admin page show which store answered. Remove the variable (or set `sheet`) and redeploy to go back. Writes always go to both stores.
 `vercel.json` schedules `/api/keepalive` twice a week so a free Supabase project is not paused for inactivity.
+
+### Stage 3: Supabase is the primary store
+
+With `READ_SOURCE=supabase` a save succeeds when the Supabase insert succeeds (`api/_source.js` `primaryDelivery`; pre/post likewise). The Google Sheet is then only a best-effort second copy (6 s deadline, failures ignored), so the Apps Script no longer needs to be redeployed or even exist: unset `SHEET_WEBHOOK_URL` / `SHEET_WEBHOOK_SECRET` to retire it. `/api/research-health` reports both stores and judges `ok` by the primary one. Back up regularly from the admin page (CSV download, `api/admin-export.js`); a backup can be re-imported with `scripts/backfill-supabase.mjs`. Rolling back = remove `READ_SOURCE` and redeploy (the Sheet copy must have been kept for that to be complete).

@@ -93,3 +93,35 @@ describe('Supabase-side aggregates equal the Apps Script ones', () => {
     expect(diff({ n: 3, fields: { a: { x: 1 } } }, { n: 4, fields: { a: { x: 1 } } })).toEqual(['n: sheet=3 supabase=4']);
   });
 });
+
+import { parseCsv, toObjects, mapResponse, mapPrepost } from '../scripts/backfill-lib.mjs';
+import { responsesCsv, prepostCsv } from '../api/_csv.js';
+
+describe('CSV backup round-trips through the backfill script', () => {
+  it('responses: export -> parse -> map gives the same rows back', () => {
+    const rows = makeResponses(30, 5).map(toDbRow);
+    const back = toObjects(parseCsv(responsesCsv(rows))).map(o => mapResponse(o));
+    expect(back.every(b => b.row)).toBe(true);
+    for (let i = 0; i < rows.length; i++) {
+      const got = back[i].row;
+      expect(got.response_id).toBe(rows[i].response_id);
+      expect(got.version).toBe(rows[i].version);
+      // empty answers are dropped on the way back; compare the non-empty ones, with lists as arrays
+      for (const [k, v] of Object.entries(rows[i].answers)) {
+        const empty = v === '' || (Array.isArray(v) && v.length === 0);
+        const key = k === 'last30' ? 'last30' : k;
+        if (empty) expect(got.answers[key]).toBeUndefined(); else expect(got.answers[key]).toEqual(v);
+      }
+    }
+  });
+  it('pre/post: export -> parse -> map', () => {
+    const rows = makePrepost(2).map(p => ({ ...p, created_at: '2026-01-01T00:00:00Z' }));
+    const back = toObjects(parseCsv(prepostCsv(rows))).map(o => mapPrepost(o));
+    expect(back.every(b => b.row)).toBe(true);
+    expect(back[0].row).toMatchObject({ token: rows[0].token, phase: rows[0].phase, correct: rows[0].correct, score: rows[0].score });
+  });
+  it('neutralises spreadsheet formulas', () => {
+    const csv = responsesCsv([{ response_id: 'research_abc12345', submitted_at: 'x', language: 'et', version: 4, answers: { ownUse: '=HYPERLINK("http://x")' } }]);
+    expect(csv).toContain(`"'=HYPERLINK(""http://x"")"`);
+  });
+});

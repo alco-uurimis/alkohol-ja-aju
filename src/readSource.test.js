@@ -93,3 +93,65 @@ describe('READ_SOURCE=supabase', () => {
     expect(r.json).toMatchObject({ ok: true, deleted: true, mirror: 'ok', sheet: 'off' });
   });
 });
+
+describe('Supabase as the primary store for writes', () => {
+  it('accepts a pre/post submission when the Sheet is missing, and reports duplicates', async () => {
+    const { default: handler } = await import('../api/prepost.js');
+    process.env.READ_SOURCE = 'supabase';
+    let inserted = true;
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, status: 201, json: async () => (inserted ? [{ token: 'x' }] : []) })));
+    const body = { token: 'd'.repeat(32), phase: 'pre', lang: 'et', answers: { blackout: true, attention: true, reaction: false, sleep: false, decisions: true, development: false } };
+    const run = async () => { const out = {}; const res = { setHeader() {}, status: c => { out.status = c; return res; }, json: b => { out.json = b; return res; }, end: () => res }; await handler({ method: 'POST', headers: { 'x-forwarded-for': '198.51.100.' + Math.floor(Math.random() * 200) }, body }, res); return out; };
+    const first = await run();
+    expect(first.status).toBe(200); expect(first.json).toEqual({ ok: true, duplicate: false });
+    inserted = false;
+    expect((await run()).json).toEqual({ ok: true, duplicate: true });
+  });
+
+  it('fails the save when Supabase is down, even if a Sheet exists', async () => {
+    const { default: handler } = await import('../api/prepost.js');
+    process.env.READ_SOURCE = 'supabase';
+    process.env.SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/x/exec'; process.env.SHEET_WEBHOOK_SECRET = 's';
+    vi.stubGlobal('fetch', vi.fn(async url => (String(url).includes('supabase.co') ? { ok: false, status: 500, json: async () => ({}) } : new Response(JSON.stringify({ ok: true })))));
+    const body = { token: 'e'.repeat(32), phase: 'post', lang: 'ru', answers: { blackout: true, attention: false, reaction: false, sleep: false, decisions: true, development: false } };
+    const out = {}; const res = { setHeader() {}, status: c => { out.status = c; return res; }, json: b => { out.json = b; return res; }, end: () => res };
+    await handler({ method: 'POST', headers: { 'x-forwarded-for': '198.51.100.250' }, body }, res);
+    expect(out.status).toBe(502); expect(out.json.error).toBe('store_failed');
+  });
+
+  it('survey: success follows Supabase, not the Sheet, once Supabase is primary (and the Sheet may be broken)', async () => {
+    const { default: handler } = await import('../api/research.js');
+    process.env.READ_SOURCE = 'supabase';
+    process.env.SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/x/exec'; process.env.SHEET_WEBHOOK_SECRET = 's';
+    vi.stubGlobal('fetch', vi.fn(async url => (String(url).includes('supabase.co')
+      ? { ok: true, status: 201, json: async () => [{ response_id: 'r' }] }
+      : new Response('boom', { status: 500 }))));
+    const answers = {
+      ageEligible15Plus: 'yes', ageGroup: '18_20', consent: 'yes', ownUse: 'never',
+      peerNorm: 'rare', closeExposure: 'never', closeConflict: 'never', closeUnsafe: 'never', worry: 'never', sleep: 'never', study: 'never',
+      mood: 'never', avoid: 'never', unsafe: 'never', extraResponsibility: 'never', overallImpact: 'none',
+      pressure: 'never', refusalNormal: 'yes', helpKnowledge: 'yes', supportChoice: 'friend',
+    };
+    const out = {}; const res = { setHeader() {}, status: c => { out.status = c; return res; }, json: b => { out.json = b; return res; } };
+    await handler({ method: 'POST', headers: {}, body: { schemaVersion: 4, language: 'et', answers } }, res);
+    expect(out.status).toBe(200);
+    expect(out.json.ok).toBe(true);
+  });
+
+  it('survey: fails the save when Supabase is down even though the Sheet works', async () => {
+    const { default: handler } = await import('../api/research.js');
+    process.env.READ_SOURCE = 'supabase';
+    process.env.SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/x/exec'; process.env.SHEET_WEBHOOK_SECRET = 's';
+    vi.stubGlobal('fetch', vi.fn(async url => (String(url).includes('supabase.co') ? { ok: false, status: 500, json: async () => ({}) } : new Response(JSON.stringify({ ok: true })))));
+    const answers = {
+      ageEligible15Plus: 'yes', ageGroup: '18_20', consent: 'yes', ownUse: 'never',
+      peerNorm: 'rare', closeExposure: 'never', closeConflict: 'never', closeUnsafe: 'never', worry: 'never', sleep: 'never', study: 'never',
+      mood: 'never', avoid: 'never', unsafe: 'never', extraResponsibility: 'never', overallImpact: 'none',
+      pressure: 'never', refusalNormal: 'yes', helpKnowledge: 'yes', supportChoice: 'friend',
+    };
+    const out = {}; const res = { setHeader() {}, status: c => { out.status = c; return res; }, json: b => { out.json = b; return res; } };
+    await handler({ method: 'POST', headers: {}, body: { schemaVersion: 4, language: 'et', answers } }, res);
+    expect(out.status).toBe(502);
+    expect(out.json.ok).toBe(false);
+  });
+});

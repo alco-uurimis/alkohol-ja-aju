@@ -19,8 +19,9 @@ describe('supabase mirror', () => {
   it('sends one idempotent row with the key in headers only', async () => {
     process.env.SUPABASE_URL = 'https://abc.supabase.co/'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'secret-key';
     let seen;
-    const r = await mirrorResponse({ response_id: 'research_x', submitted_at: '2026-01-01T00:00:00Z', language: 'ru', version: 4, ownUse: 'never', peerNorm: 'rare' }, async (url, init) => { seen = { url, init }; return { ok: true, status: 201 }; });
+    const r = await mirrorResponse({ response_id: 'research_x', submitted_at: '2026-01-01T00:00:00Z', language: 'ru', version: 4, ownUse: 'never', peerNorm: 'rare' }, async (url, init) => { seen = { url, init }; return { ok: true, status: 201, json: async () => [{ response_id: 'research_x' }] }; });
     expect(r.ok).toBe(true);
+    expect(r.duplicate).toBe(false);
     expect(seen.url).toBe('https://abc.supabase.co/rest/v1/research_responses?on_conflict=response_id');
     expect(seen.init.headers.prefer).toContain('ignore-duplicates');
     const row = JSON.parse(seen.init.body);
@@ -74,5 +75,14 @@ describe('supabase mirror: fetch all', () => {
     expect(ranges).toEqual(['0-999', '1000-1999']);
     expect(await mirrorFetchAll('research_responses', async () => ({ ok: false }))).toBeNull();
     expect(await mirrorFetchAll('auth.users', async () => ({ ok: true, json: async () => [] }))).toBeNull();
+  });
+});
+
+describe('supabase mirror: duplicate detection', () => {
+  it('reports a duplicate when the database returns no new row', async () => {
+    const { mirrorPrepost } = await import('../api/_mirror.js');
+    process.env.SUPABASE_URL = 'https://abc.supabase.co'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'k';
+    const r = await mirrorPrepost({ token: 'c'.repeat(32), phase: 'pre', lang: 'et', correct: {}, score: 1, total: 6 }, async () => ({ ok: true, status: 201, json: async () => [] }));
+    expect(r).toMatchObject({ ok: true, duplicate: true });
   });
 });

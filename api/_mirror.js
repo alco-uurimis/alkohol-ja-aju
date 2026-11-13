@@ -26,12 +26,14 @@ async function insertIgnoringDuplicates(table, conflict, row, fetchImpl = fetch)
         // Legacy service_role keys are JWTs and go in Authorization too; the newer sb_secret_… keys are sent as apikey only.
         ...(t.key.startsWith('sb_') ? {} : { authorization: `Bearer ${t.key}` }),
         'content-type': 'application/json',
-        prefer: 'resolution=ignore-duplicates,return=minimal',
+        prefer: 'resolution=ignore-duplicates,return=representation',
       },
       body: JSON.stringify(row),
       signal: controller.signal,
     });
-    return { ok: res.ok, configured: true, status: res.status };
+    // return=representation lets us tell a new row (one row back) from an ignored duplicate (none back).
+    const rows = res.ok ? await res.json().catch(() => null) : null;
+    return { ok: res.ok, configured: true, status: res.status, duplicate: res.ok && Array.isArray(rows) && rows.length === 0 };
   } catch {
     return { ok: false, configured: true, error: 'unreachable' };
   } finally { clearTimeout(timer); }

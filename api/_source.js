@@ -19,3 +19,19 @@ export async function supabaseSnapshot(now = Date.now()) {
   return value;
 }
 export const resetSnapshotCache = () => { memo = null; };
+
+/**
+ * Delivery result the API judges success by. With READ_SOURCE=supabase the Supabase insert is the primary store and the
+ * Sheet (if still configured) is a best-effort second copy; otherwise the Sheet stays primary as before.
+ */
+export function primaryDelivery(sheet, mirror) {
+  if (readSource() !== 'supabase') return sheet;
+  return { ok: Boolean(mirror?.ok), configured: Boolean(mirror?.configured), duplicate: mirror?.duplicate === true, error: mirror?.ok ? undefined : 'supabase_delivery_failed' };
+}
+
+/** Waits for `promise` but gives up after `ms` (the result is then `fallback`); used so a slow Sheet never delays a Supabase-primary save. */
+export function withDeadline(promise, ms, fallback) {
+  let timer;
+  const deadline = new Promise(resolve => { timer = setTimeout(() => resolve(fallback), ms); });
+  return Promise.race([promise, deadline]).finally(() => clearTimeout(timer));
+}

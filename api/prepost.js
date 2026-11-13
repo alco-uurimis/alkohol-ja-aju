@@ -2,6 +2,7 @@
 // No account, no name, no IP is stored by this code: the record is a random browser-made token plus six answers.
 import { ITEMS, KEY } from './_prepost-key.js';
 import { mirrorPrepost } from './_mirror.js';
+import { readSource, withDeadline } from './_source.js';
 
 const ALLOWED_ORIGINS = new Set(['https://alco-uurimis.github.io', 'https://alkohol-ja-aju.vercel.app']);
 function cors(req, res) { const origin = req.headers?.origin; if (origin && ALLOWED_ORIGINS.has(origin)) res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Vary', 'Origin'); res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); res.setHeader('Cache-Control', 'no-store'); }
@@ -44,8 +45,18 @@ export default async function handler(req, res) {
   if (tooMany(req)) { res.setHeader('Retry-After', '600'); return res.status(429).json({ ok: false, error: 'too_many_requests' }); }
   const record = parseSubmission(req.body);
   if (!record) return res.status(400).json({ ok: false, error: 'invalid_submission' });
+  const fromSupabase = readSource() === 'supabase';
   const url = process.env.SHEET_WEBHOOK_URL, secret = process.env.SHEET_WEBHOOK_SECRET;
-  if (!url || !secret) return res.status(503).json({ ok: false, error: 'not_configured' });
+  const sheetConfigured = Boolean(url && secret);
+  // Supabase primary: the Sheet is a best-effort second copy and may be missing or outdated.
+  if (fromSupabase) {
+    const [mirror, sheetOutcome] = await Promise.all([mirrorPrepost(record), sheetConfigured ? withDeadline(sheetDeliver(url, secret, record), 6000, null) : Promise.resolve(null)]);
+    void sheetOutcome;
+    if (!mirror.configured) return res.status(503).json({ ok: false, error: 'not_configured' });
+    if (!mirror.ok) return res.status(502).json({ ok: false, error: 'store_failed' });
+    return res.status(200).json({ ok: true, duplicate: mirror.duplicate === true });
+  }
+  if (!sheetConfigured) return res.status(503).json({ ok: false, error: 'not_configured' });
   try {
     const parsed = new URL(String(url).trim()); if (parsed.protocol !== 'https:' || parsed.hostname !== 'script.google.com') return res.status(503).json({ ok: false, error: 'not_configured' });
     const [response] = await Promise.all([request(parsed.toString(), { secret, prepost: record }), mirrorPrepost(record)]);
@@ -53,4 +64,14 @@ export default async function handler(req, res) {
     if (!response.ok || data?.ok !== true) return res.status(502).json({ ok: false, error: 'store_failed_or_script_outdated' });
     return res.status(200).json({ ok: true, duplicate: data.duplicate === true });
   } catch { return res.status(502).json({ ok: false, error: 'store_unreachable' }); }
+}
+
+/** Best-effort write to the Sheet; never throws. */
+async function sheetDeliver(url, secret, record) {
+  try {
+    const parsed = new URL(String(url).trim());
+    if (parsed.protocol !== 'https:' || parsed.hostname !== 'script.google.com') return null;
+    const r = await request(parsed.toString(), { secret, prepost: record });
+    return r.ok;
+  } catch { return null; }
 }

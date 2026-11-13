@@ -33,6 +33,18 @@ function items(key: string, counts: Record<string, number>): ResultItem[] {
 }
 
 /** Uncensored results for the signed-in, allow-listed admin. Access is enforced on the server, not here. */
+async function download(token: string, table: 'responses' | 'prepost') {
+  try {
+    const r = await fetch(`https://alkohol-ja-aju.vercel.app/api/admin-export?table=${table}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+    if (!r.ok) { alert('Не удалось скачать (Supabase недоступен или деплой ещё не обновился).'); return; }
+    const url = URL.createObjectURL(await r.blob());
+    const a = document.createElement('a');
+    a.href = url; a.download = (r.headers.get('content-disposition')?.match(/filename="([^"]+)"/)?.[1]) ?? `${table}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch { alert('Не удалось связаться с сервером.'); }
+}
+
 type Parity = { admin: string[]; public: string[] } | { error: string } | null;
 function MirrorStatus({ token }: { token: string }) {
   const [st, setSt] = useState<{ configured: boolean; responses: number | null; prepost: number | null; parity: Parity } | 'err' | 'busy' | null>(null);
@@ -49,6 +61,9 @@ function MirrorStatus({ token }: { token: string }) {
       <h3>Копия в Supabase</h3>
       <p className="admin-meta">Проверка, дали бы таблица и Supabase одинаковые цифры. Сайт по-прежнему берёт данные из таблицы.</p>
       <button type="button" className="admin-link" onClick={check} disabled={st === 'busy'}>{st === 'busy' ? 'Сверяю…' : 'Сверить с таблицей'}</button>
+      <p className="admin-meta">Резервная копия (CSV, те же колонки, что в таблице). Делайте её раз в месяц и храните в закрытом месте.</p>
+      <button type="button" className="admin-link" onClick={() => download(token, 'responses')}>Скачать ответы</button>{' · '}
+      <button type="button" className="admin-link" onClick={() => download(token, 'prepost')}>Скачать «до/после»</button>
       {st === 'err' && <p role="alert" className="admin-error">Не удалось получить данные (деплой ещё не обновился?).</p>}
       {st && st !== 'err' && st !== 'busy' && (!st.configured
         ? <p className="admin-meta">Копия выключена: нет SUPABASE_SERVICE_ROLE_KEY в Vercel.</p>

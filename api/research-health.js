@@ -1,3 +1,5 @@
+import {mirrorCount} from './_mirror.js';
+import {readSource} from './_source.js';
 const ALLOWED_ORIGINS = new Set([
   'https://alco-uurimis.github.io',
   'https://alkohol-ja-aju.vercel.app',
@@ -73,16 +75,25 @@ async function checkSheet(){
   }
 }
 
+async function checkSupabase(){
+  const r=await mirrorCount('research_responses');
+  if(!r.configured)return {ok:false,configured:false,reason:'missing_supabase_url_or_service_role_key'};
+  return r.ok?{ok:true,configured:true,reason:'ok'}:{ok:false,configured:true,reason:'supabase_unreachable_or_tables_missing'};
+}
+
 export default async function handler(req,res){
   applyCors(req,res);
   if(req.method==='OPTIONS')return res.status(204).end();
   if(req.method!=='GET')return res.status(405).json({ok:false,error:'method_not_allowed'});
-  const [telegram,sheet]=await Promise.all([checkTelegram(),checkSheet()]);
+  const [telegram,sheet,supabase]=await Promise.all([checkTelegram(),checkSheet(),checkSupabase()]);
+  const primary=readSource()==='supabase'?supabase:sheet; // the Sheet is only a best-effort copy once Supabase is primary
   return res.status(200).json({
-    ok:telegram.ok&&sheet.ok,
+    ok:telegram.ok&&primary.ok,
     service:'research-delivery',
+    primary:readSource(),
     telegram,
     sheet,
+    supabase,
     checkedAt:new Date().toISOString(),
   });
 }
