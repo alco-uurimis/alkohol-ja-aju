@@ -21,3 +21,29 @@
 .admin-confirm{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:#fff1ef;border-radius:10px;padding:10px 12px}
 .admin-ok{color:#244316;background:#eef7e8;border-radius:10px;padding:10px 12px}
 .admin-data .admin-title{font-size:1.6rem;margin:0}
+
+/* Report + before/after card */
+.admin-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.admin-table th,.admin-table td{text-align:left;padding:6px 8px;border-bottom:1px solid #e3e6ef;vertical-align:top}
+.admin-table th:nth-child(n+2),.admin-table td:nth-child(n+2){white-space:nowrap}
+.admin-prepost__means{margin:0 0 8px}
+.admin-report-toggle{margin-top:6px}
+.admin-report{display:grid;gap:14px}
+.admin-report__controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.admin-report__controls h2{margin:0;flex:1 1 220px}
+.admin-report__mode{display:flex;gap:6px;flex-wrap:wrap}
+.admin-report__mode button{min-height:40px;padding:0 14px;border:1px solid #d6dae6;border-radius:999px;background:#fff;font:inherit;cursor:pointer}
+.admin-report__mode button.active{background:#171b37;color:#fff;border-color:#171b37}
+.admin-report__page{background:#fff;border:1px solid #dde2ec;border-radius:12px;padding:clamp(16px,4vw,36px);max-width:900px}
+.admin-report__page h1{font-size:1.5rem;margin:6px 0}.admin-report__page h2{font-size:1.1rem;margin:22px 0 6px}
+.admin-report__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px}
+.admin-report__foot{margin-top:24px;color:#697087;font-size:.8rem}
+@media print{
+  @page{margin:14mm}
+  body.printing-report *{visibility:hidden!important}
+  body.printing-report .admin-report__page,body.printing-report .admin-report__page *{visibility:visible!important}
+  body.printing-report .admin-report__page{position:absolute;left:0;top:0;width:100%;max-width:none;border:0;padding:0}
+  .admin-report__page *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .admin-report__page .rchart__track i,.admin-report__page .rchart__seg{width:var(--w)!important;transition:none!important}
+  .admin-report__q,.admin-prepost{break-inside:avoid}
+}

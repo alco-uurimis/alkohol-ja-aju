@@ -3,8 +3,9 @@ import type { Session } from '@supabase/supabase-js';
 import { supabase } from './lib/supabase';
 import ResultsChart, { type ResultItem } from './components/ResultsChart';
 import { adminQuestions } from './adminLabels';
+import { AdminReport, PrePostCard, type PrePostSummary } from './AdminReport';
 
-type AdminData = { ok: true; n: number; excluded: number; lastUpdated: string; fields: Record<string, Record<string, number>>; answered: Record<string, number> };
+type AdminData = { ok: true; n: number; excluded: number; lastUpdated: string; fields: Record<string, Record<string, number>>; answered: Record<string, number>; prepost?: PrePostSummary };
 const endpoint = 'https://alkohol-ja-aju.vercel.app/api/admin-data';
 const DELETE_ENDPOINT = 'https://alkohol-ja-aju.vercel.app/api/admin-delete-response';
 
@@ -41,6 +42,7 @@ export default function AdminData() {
   const [responseId, setResponseId] = useState('');
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
@@ -118,6 +120,9 @@ export default function AdminData() {
                   );
                 })}
               </div>
+              <PrePostCard data={data.prepost} />
+              <div className="admin-report-toggle"><button type="button" className="admin-signin" aria-expanded={showReport} onClick={() => setShowReport(v => !v)}>{showReport ? 'Скрыть отчёт' : 'Сформировать отчёт (PDF)'}</button></div>
+              {showReport && <AdminReport data={data} />}
               <div className="admin-delete">
                 <h3>Удалить ответ</h3>
                 <p>Укажите ID ответа из столбца response_id в таблице Responses. Удаление строки необратимо; восстановить её можно только через историю версий Google Sheets.</p>

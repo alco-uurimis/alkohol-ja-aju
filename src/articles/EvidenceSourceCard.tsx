@@ -18,6 +18,17 @@ const labels = {
     doi: 'DOI',
     pmid: 'PMID',
   },
+  en: {
+    heading: 'SOURCE CARD',
+    kind: 'Type of material',
+    sample: 'Sample / material',
+    identifier: 'Identifier',
+    limit: 'Limit of the conclusion',
+    pubmed: 'Open in PubMed',
+    sourceLink: 'Open source',
+    doi: 'DOI',
+    pmid: 'PMID',
+  },
   et: {
     heading: 'ALLIKA KAART',
     kind: 'Materjali tüüp',

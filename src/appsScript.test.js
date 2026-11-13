@@ -22,3 +22,23 @@ describe('public age buckets in the Apps Script', () => {
     expect(countField(rows({ '15_17': 9, '18_20': 7 }), headers, 'ageGroup')).toEqual({ '15_17': 9, '18_20': 7 });
   });
 });
+
+describe('before/after check storage in the Apps Script', () => {
+  it('aggregates matched pairs only and reports per-item correctness', () => {
+    const rowsData = [
+      // submitted_at, token, phase, language, score, total, 6 item columns
+      ['t', 'a'.repeat(32), 'pre', 'en', 2, 6, 1, 1, 0, 0, 0, 0],
+      ['t', 'a'.repeat(32), 'post', 'en', 5, 6, 1, 1, 1, 1, 1, 0],
+      ['t', 'b'.repeat(32), 'pre', 'et', 3, 6, 1, 1, 1, 0, 0, 0],
+      ['t', 'c'.repeat(32), 'pre', 'ru', 4, 6, 1, 1, 1, 1, 0, 0], // no post: not matched
+    ];
+    const sheet = { getLastRow: () => rowsData.length + 1, getRange: () => ({ getValues: () => rowsData }) };
+    const spreadsheet = { getSheetByName: () => sheet };
+    const agg = vm.runInContext('prepostAggregate', context)(spreadsheet);
+    expect(agg).toMatchObject({ nPre: 3, nPost: 1, matched: 1, meanPre: 2, meanPost: 5, improved: 1, same: 0, worse: 0, total: 6 });
+    expect(agg.items.find(i => i.id === 'reaction')).toEqual({ id: 'reaction', pre: 0, post: 1 });
+  });
+  it('returns an empty summary when nobody has used the check yet', () => {
+    expect(vm.runInContext('prepostAggregate', context)({ getSheetByName: () => null })).toMatchObject({ nPre: 0, nPost: 0, matched: 0, meanPre: null });
+  });
+});

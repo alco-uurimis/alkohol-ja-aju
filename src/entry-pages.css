@@ -45,3 +45,14 @@ body { margin: 0; }
   .entry-brand { gap: 6px; }
   .entry-language button { padding-inline: 10px; }
 }
+
+/* before/after check */
+.check-list{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.check-list fieldset{border:1px solid #dde2ec;border-radius:14px;padding:14px 16px;margin:0;min-width:0}
+.check-list legend{padding:0 6px;font-weight:700}
+.check-q{color:#5a49c9;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.check-consent{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid #dde2ec;border-radius:12px;margin:12px 0}
+.check-consent input{margin-top:3px}
+.check-need{color:#7a2620;background:#fff1ef;border-radius:10px;padding:10px 12px}
+.check-status{color:#4b5165;font-size:.9rem}
+.check-scores{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:1.1rem}

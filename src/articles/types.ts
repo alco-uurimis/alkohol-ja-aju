@@ -1,4 +1,4 @@
-export type ArticleLang = 'et' | 'ru';
+export type ArticleLang = 'et' | 'ru' | 'en';
 
 export type LocalizedText = Record<ArticleLang, string>;
 

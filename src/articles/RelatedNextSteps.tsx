@@ -1,11 +1,13 @@
 import type { ArticleLang, ArticleTopicLink } from './types';
+
+type CoreLang = 'et' | 'ru';
 import './article-support.css';
 
 type Step = {
   href: string;
-  eyebrow: Record<ArticleLang, string>;
-  title: Record<ArticleLang, string>;
-  description: Record<ArticleLang, string>;
+  eyebrow: Record<CoreLang, string>;
+  title: Record<CoreLang, string>;
+  description: Record<CoreLang, string>;
 };
 
 type StepPlan = {
@@ -134,7 +136,7 @@ type Props = {
   lang: ArticleLang;
 };
 
-function StepCard({ step, lang }: { step: Step; lang: ArticleLang }) {
+function StepCard({ step, lang }: { step: Step; lang: CoreLang }) {
   return <a className="related-next-steps__card" href={step.href}>
     <span>{step.eyebrow[lang]}</span>
     <strong>{step.title[lang]}</strong>
@@ -142,7 +144,27 @@ function StepCard({ step, lang }: { step: Step; lang: ArticleLang }) {
   </a>;
 }
 
+const english = (nextTitle?: string, nextId?: string) => [
+  { href: '../topics/', eyebrow: 'UNDERSTAND', title: 'All science topics', description: 'Eight pages: question, study design, result, limits and source.' },
+  { href: '../start/', eyebrow: 'TRY', title: 'The 5-minute lesson', description: 'A short lesson with a myth-or-fact check.' },
+  { href: '../fact-check/', eyebrow: 'CHECK', title: 'How facts were checked', description: 'The rules by which scientific claims reach this site.' },
+  ...(nextTitle && nextId ? [{ href: `../${nextId}/`, eyebrow: 'NEXT TOPIC', title: nextTitle, description: 'Continue reading from another side of the topic.' }] : []),
+];
+
 export function RelatedNextSteps({ articleId, topics, lang }: Props) {
+  if (lang === 'en') {
+    const next = topics.find(topic => topic.id === plans[articleId]?.nextArticleId);
+    return <section className="related-next-steps" aria-labelledby="related-next-steps-title">
+      <div className="related-next-steps__intro">
+        <span>KEEP LEARNING</span>
+        <h2 id="related-next-steps-title">Connect the topic to practice</h2>
+        <p>Choose a next step: the 5-minute lesson, the other science topics, how facts are checked, or the next topic.</p>
+      </div>
+      <div className="related-next-steps__grid">
+        {english(next?.title.en, next?.id).map(step => <a className="related-next-steps__card" href={step.href} key={step.href}><span>{step.eyebrow}</span><strong>{step.title}</strong><p>{step.description}</p></a>)}
+      </div>
+    </section>;
+  }
   const plan = plans[articleId];
   if (!plan) return null;
   const nextTopic = topics.find(topic => topic.id === plan.nextArticleId);
@@ -160,10 +182,10 @@ export function RelatedNextSteps({ articleId, topics, lang }: Props) {
       <p>{lang === 'ru' ? 'Выбери следующий шаг: схема, учебное задание, проверка знаний или соседняя научная тема.' : 'Vali järgmine samm: skeem, õppeülesanne, teadmiste kontroll või järgmine teadusteema.'}</p>
     </div>
     <div className="related-next-steps__grid">
-      <StepCard step={plan.main} lang={lang} />
-      <StepCard step={plan.practice} lang={lang} />
-      <StepCard step={quiz} lang={lang} />
-      {nextStep && <StepCard step={nextStep} lang={lang} />}
+      <StepCard step={plan.main} lang={lang as CoreLang} />
+      <StepCard step={plan.practice} lang={lang as CoreLang} />
+      <StepCard step={quiz} lang={lang as CoreLang} />
+      {nextStep && <StepCard step={nextStep} lang={lang as CoreLang} />}
     </div>
   </section>;
 }

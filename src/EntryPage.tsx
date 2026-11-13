@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Quiz } from './components/Quiz';
+import { HelpEn, LessonEn, TeacherEn } from './en/EntryEn';
 import { ProgressBar } from './components/Shared';
 import { questions } from './data/content';
 import { getRu, loadRu } from './data/ru';
 import { useStageFocus } from './hooks/useStageFocus';
 import './entry-pages.css';
 
-type Lang = 'et' | 'ru';
+type Lang = 'et' | 'ru' | 'en';
 type Page = 'start' | 'teacher' | 'help';
 const languageKey = 'alkohol-ja-aju:language';
 
 function initialLanguage(): Lang {
   const requested = new URLSearchParams(location.search).get('lang');
-  if (requested === 'ru' || requested === 'et') return requested;
-  try { return localStorage.getItem(languageKey) === 'ru' ? 'ru' : 'et'; }
+  if (requested === 'ru' || requested === 'et' || requested === 'en') return requested;
+  try { const saved = localStorage.getItem(languageKey); return saved === 'ru' || saved === 'en' ? saved : 'et'; }
   catch { return 'et'; }
 }
 
@@ -81,7 +82,7 @@ function Lesson({ lang, full }: { lang: Lang; full: boolean }) {
     {done ? <>
       <p>{ru ? 'Сформулируй своими словами один факт, который можешь объяснить, и одно ограничение исследования.' : 'Sõnasta oma sõnadega üks fakt, mida oskad selgitada, ja üks uuringu piirang.'}</p>
       <details><summary>{ru ? 'Посмотреть пример' : 'Vaata näidet'}</summary><p>{ru ? 'В лаборатории рабочая память взрослых после алкоголя в среднем ухудшалась. По этому результату нельзя оценить состояние одного подростка.' : 'Laboris halvenes täiskasvanute töömälu pärast alkoholi keskmiselt. Selle põhjal ei saa hinnata ühe nooruki seisundit.'}</p></details>
-      <div className="lesson-actions"><a className="button primary" href={full ? '../topics/' : '?mode=full'}>{full ? (ru ? 'Посмотреть научные темы' : 'Vaata teadusteemasid') : (ru ? 'Изучить подробнее за 20 минут' : 'Õpi põhjalikumalt 20 minutiga')}</a><a href="../#tagasiside">{ru ? 'Оставить отзыв (по желанию)' : 'Anna soovi korral tagasisidet'}</a></div>
+      <div className="lesson-actions"><a className="button primary" href={full ? '../topics/' : '?mode=full'}>{full ? (ru ? 'Посмотреть научные темы' : 'Vaata teadusteemasid') : (ru ? 'Изучить подробнее за 20 минут' : 'Õpi põhjalikumalt 20 minutiga')}</a><a href="../check/">{ru ? 'По желанию: анонимная проверка знаний до и после' : 'Soovi korral: anonüümne teadmiste kontroll enne ja pärast'}</a><a href="../#tagasiside">{ru ? 'Оставить отзыв (по желанию)' : 'Anna soovi korral tagasisidet'}</a></div>
     </> : quiz ? <>
       <p>{ru ? 'Сначала оцени уверенность. Затем выбери «миф» или «факт» и прочитай объяснение.' : 'Hinda esmalt kindlust. Seejärel vali „müüt“ või „fakt“ ja loe selgitust.'}</p>
       <Quiz questions={quizItems} sourceBase="../" lang={lang} onContinue={advance} />
@@ -115,7 +116,7 @@ function Teacher({ ru }: { ru: boolean }) {
     <h2>{ru ? 'План на 45 минут' : '45 minuti tunnikava'}</h2>
     <p>{ru ? 'Цель урока — объяснить один научный вывод, назвать его ограничение и выбрать безопасное действие в вымышленной ситуации.' : 'Tunni eesmärk on selgitada üht teadusjäreldust, nimetada selle piirang ja valida väljamõeldud olukorras turvaline tegevus.'}</p>
     <ol className="teacher-plan">{plan.map(([time, title, description], index) => <li key={time}><span>{time} min</span><div><h3><a href={links[index]}>{title}</a></h3><p>{description}</p></div></li>)}</ol>
-    <div className="lesson-actions"><a className="button primary" href={links[5]}>{ru ? 'Рабочий лист A4 · RU' : 'Tööleht A4 · ET'}</a><a href={ru ? '../worksheet/et/' : '../worksheet/ru/'}>{ru ? 'Рабочий лист · ET' : 'Tööleht · RU'}</a><a href="../#klassiruum">{ru ? 'Короткий план на 15–20 минут' : 'Lühikava 15–20 minutiks'}</a></div>
+    <div className="lesson-actions"><a className="button primary" href={links[5]}>{ru ? 'Рабочий лист A4 · RU' : 'Tööleht A4 · ET'}</a><a href={ru ? '../worksheet/et/' : '../worksheet/ru/'}>{ru ? 'Рабочий лист · ET' : 'Tööleht · RU'}</a><a href="../#klassiruum">{ru ? 'Короткий план на 15–20 минут' : 'Lühikava 15–20 minutiks'}</a><a href="../check/">{ru ? 'Проверка знаний до и после для класса' : 'Teadmiste kontroll enne ja pärast klassile'}</a></div>
   </section>;
 }
 
@@ -135,7 +136,9 @@ export default function EntryPage({ page }: { page: Page }) {
   const [lang, setLang] = useState<Lang>(initialLanguage);
   const ru = lang === 'ru';
   const full = new URLSearchParams(location.search).get('mode') === 'full';
-  const title = page === 'help' ? (ru ? 'Что делать / Нужна помощь' : 'Mida teha / Vajan abi')
+  const en = lang === 'en';
+  const title = en ? (page === 'help' ? 'What to do / Need help' : page === 'teacher' ? 'Materials for teachers' : full ? 'Alcohol and the brain in 20 minutes' : 'Alcohol and the brain in 5 minutes')
+    : page === 'help' ? (ru ? 'Что делать / Нужна помощь' : 'Mida teha / Vajan abi')
     : page === 'teacher' ? (ru ? 'Материалы для учителя' : 'Materjalid õpetajale')
     : full ? (ru ? 'Алкоголь и мозг за 20 минут' : 'Alkohol ja aju 20 minutiga')
     : (ru ? 'Алкоголь и мозг за 5 минут' : 'Alkohol ja aju 5 minutiga');
@@ -152,18 +155,19 @@ export default function EntryPage({ page }: { page: Page }) {
   }
   return <div className="entry-page">
     <header className="entry-header">
-      <a href="../" className="entry-brand"><img src="../logo-mark.svg" alt="" /><span>{ru ? 'Алкоголь и мозг' : 'Alkohol ja aju'}</span></a>
-      <div className="entry-language" role="group" aria-label={ru ? 'Язык' : 'Keel'}>
-        <button type="button" aria-pressed={!ru} className={!ru ? 'active' : ''} onClick={() => switchLanguage('et')}>ET</button>
+      <a href="../" className="entry-brand"><img src="../logo-mark.svg" alt="" /><span>{en ? 'Alcohol and the brain' : ru ? 'Алкоголь и мозг' : 'Alkohol ja aju'}</span></a>
+      <div className="entry-language" role="group" aria-label={en ? 'Language' : ru ? 'Язык' : 'Keel'}>
+        <button type="button" aria-pressed={lang === 'et'} className={lang === 'et' ? 'active' : ''} onClick={() => switchLanguage('et')}>ET</button>
         <button type="button" aria-pressed={ru} className={ru ? 'active' : ''} onClick={() => switchLanguage('ru')}>RU</button>
+        <button type="button" aria-pressed={en} className={en ? 'active' : ''} onClick={() => switchLanguage('en')}>EN</button>
       </div>
     </header>
     <main>
       <div className="entry-hero"><h1>{title}</h1></div>
-      {page === 'start' && <Lesson lang={lang} full={full} />}
-      {page === 'teacher' && <Teacher ru={ru} />}
-      {page === 'help' && <Help ru={ru} />}
-      <a className="entry-back" href="../">{ru ? '← На главную' : '← Avalehele'}</a>
+      {page === 'start' && (en ? <LessonEn full={full} /> : <Lesson lang={lang as 'et' | 'ru'} full={full} />)}
+      {page === 'teacher' && (en ? <TeacherEn /> : <Teacher ru={ru} />)}
+      {page === 'help' && (en ? <HelpEn /> : <Help ru={ru} />)}
+      <a className="entry-back" href="../">{en ? '← Home' : ru ? '← На главную' : '← Avalehele'}</a>
     </main>
   </div>;
 }

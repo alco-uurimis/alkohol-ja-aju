@@ -14,6 +14,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html',
+        en: 'en/index.html',
+        check: 'check/index.html',
         science: 'science/index.html',
         scienceResults: 'science/results/index.html',
         topics: 'topics/index.html',

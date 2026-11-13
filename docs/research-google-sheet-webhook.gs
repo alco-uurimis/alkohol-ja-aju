@@ -9,7 +9,7 @@ function json(data) {
 }
 
 function doGet() {
-  return json({ ok: true, service: 'research-sheet-webhook', version: 12 });
+  return json({ ok: true, service: 'research-sheet-webhook', version: 13 });
 }
 
 function requireSecret(body) {
@@ -112,7 +112,7 @@ function adminAggregate(sheet) {
   const lastColumn = sheet.getLastColumn();
   const lastRow = sheet.getLastRow();
   const now = new Date().toISOString();
-  if (lastColumn < 1 || lastRow < 2) return { ok: true, n: 0, excluded: 0, lastUpdated: now, fields: {}, answered: {} };
+  if (lastColumn < 1 || lastRow < 2) return { ok: true, n: 0, excluded: 0, lastUpdated: now, fields: {}, answered: {}, prepost: prepostAggregate(sheet.getParent()) };
   const headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0].map(v => String(v || '').trim());
   const allRows = sheet.getRange(2, 1, lastRow - 1, lastColumn).getDisplayValues();
   const rows = allRows.filter(row => isValidCurrentResponse(row, headers));
@@ -131,7 +131,67 @@ function adminAggregate(sheet) {
     fields[name] = counts;
     answered[name] = people;
   });
-  return { ok: true, n: rows.length, excluded: allRows.length - rows.length, lastUpdated: now, fields: fields, answered: answered };
+  return { ok: true, n: rows.length, excluded: allRows.length - rows.length, lastUpdated: now, fields: fields, answered: answered, prepost: prepostAggregate(sheet.getParent()) };
+}
+
+// ---- Anonymous before/after knowledge check (sheet "PrePost") ----
+// One row per random token and phase. Item columns hold 1 (correct) or 0, so the aggregate never needs the answer key.
+const PREPOST_SHEET = 'PrePost';
+const PREPOST_ITEMS = ['blackout', 'attention', 'reaction', 'sleep', 'decisions', 'development'];
+const PREPOST_HEADERS = ['submitted_at', 'token', 'phase', 'language', 'score', 'total'].concat(PREPOST_ITEMS);
+
+function prepostSheet(spreadsheet) {
+  let sheet = spreadsheet.getSheetByName(PREPOST_SHEET);
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(PREPOST_SHEET);
+    sheet.getRange(1, 1, 1, PREPOST_HEADERS.length).setValues([PREPOST_HEADERS]);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function appendPrePost(spreadsheet, rec) {
+  if (!rec || !/^[a-f0-9]{32}$/.test(String(rec.token || '')) || (rec.phase !== 'pre' && rec.phase !== 'post')) return { ok: false, error: 'invalid_prepost' };
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = prepostSheet(spreadsheet);
+    const lastRow = sheet.getLastRow();
+    if (lastRow > 1) {
+      const existing = sheet.getRange(2, 2, lastRow - 1, 2).getValues();
+      if (existing.some(r => String(r[0]) === rec.token && String(r[1]) === rec.phase)) return { ok: true, duplicate: true };
+    }
+    const row = [new Date().toISOString(), rec.token, rec.phase, String(rec.lang || ''), Number(rec.score), Number(rec.total)]
+      .concat(PREPOST_ITEMS.map(id => (rec.correct && rec.correct[id] === 1 ? 1 : 0)));
+    sheet.appendRow(row);
+    SpreadsheetApp.flush();
+    return { ok: true, duplicate: false };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// Admin summary: matched pairs (same token before and after), mean change and per-item correctness.
+function prepostAggregate(spreadsheet) {
+  const sheet = spreadsheet.getSheetByName(PREPOST_SHEET);
+  const empty = { nPre: 0, nPost: 0, matched: 0, meanPre: null, meanPost: null, improved: 0, same: 0, worse: 0, items: [], total: PREPOST_ITEMS.length };
+  if (!sheet || sheet.getLastRow() < 2) return empty;
+  const values = sheet.getRange(2, 1, sheet.getLastRow() - 1, PREPOST_HEADERS.length).getValues();
+  const pre = {}, post = {};
+  values.forEach(r => {
+    const rec = { score: Number(r[4]), items: PREPOST_ITEMS.map((id, i) => Number(r[6 + i])) };
+    (String(r[2]) === 'pre' ? pre : post)[String(r[1])] = rec;
+  });
+  const tokens = Object.keys(pre).filter(t => post[t]);
+  const sum = (arr) => arr.reduce((a, b) => a + b, 0);
+  const result = { nPre: Object.keys(pre).length, nPost: Object.keys(post).length, matched: tokens.length, total: PREPOST_ITEMS.length,
+    meanPre: tokens.length ? sum(tokens.map(t => pre[t].score)) / tokens.length : null,
+    meanPost: tokens.length ? sum(tokens.map(t => post[t].score)) / tokens.length : null,
+    improved: tokens.filter(t => post[t].score > pre[t].score).length,
+    same: tokens.filter(t => post[t].score === pre[t].score).length,
+    worse: tokens.filter(t => post[t].score < pre[t].score).length,
+    items: PREPOST_ITEMS.map((id, i) => ({ id: id, pre: tokens.length ? sum(tokens.map(t => pre[t].items[i])) / tokens.length : null, post: tokens.length ? sum(tokens.map(t => post[t].items[i])) / tokens.length : null })) };
+  return result;
 }
 
 // Admin-only: permanently remove one response row by its response_id (Google Sheets version history can restore it).
@@ -171,6 +231,7 @@ function doPost(e) {
   if (!sheet) return json({ ok: false, error: 'missing_sheet' });
   if (body.aggregate === true) return json(aggregate(sheet));
   if (body.adminAggregate === true) return json(adminAggregate(sheet));
+  if (body.prepost) return json(appendPrePost(spreadsheet, body.prepost));
   if (body.adminAction === 'deleteResponse') return json(deleteResponse(sheet, String(body.responseId || '').trim()));
 
   const r = body.response || {};
