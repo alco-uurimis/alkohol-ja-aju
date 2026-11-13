@@ -1,3 +1,4 @@
+import RideScenario from './components/RideScenario';
 import { useEffect, useState } from 'react';
 import { Quiz } from './components/Quiz';
 import { HelpEn, LessonEn, TeacherEn } from './en/EntryEn';
@@ -111,7 +112,7 @@ function Teacher({ ru }: { ru: boolean }) {
     ['32–40', 'Teadmiste kontroll', 'Avage viktoriin ja arutage, miks kindlustunne ja tõendid ei pruugi kokku langeda.'],
     ['40–45', 'Tööleht', 'Paluge nimetada fakt koos allikaga, üks piirang ja üks konkreetne turvaline tegu. Hinnake neid kolme osa eraldi.'],
   ];
-  const links = ['../methodology/', '../start/', '../acute-effects/', '../#tegevus', '../#viktoriin', ru ? '../worksheet/ru/' : '../worksheet/et/'];
+  const links = ['../methodology/', '../start/', '../acute-effects/', '../help/#what-would-you-do', '../#viktoriin', ru ? '../worksheet/ru/' : '../worksheet/et/'];
   return <section className="lesson-panel">
     <h2>{ru ? 'План на 45 минут' : '45 minuti tunnikava'}</h2>
     <p>{ru ? 'Цель урока — объяснить один научный вывод, назвать его ограничение и выбрать безопасное действие в вымышленной ситуации.' : 'Tunni eesmärk on selgitada üht teadusjäreldust, nimetada selle piirang ja valida väljamõeldud olukorras turvaline tegevus.'}</p>
@@ -134,6 +135,7 @@ function Help({ ru }: { ru: boolean }) {
     <h2>{ru ? 'Если тревожит твоё употребление или чьё-то рядом' : 'Kui sind häirib enda või kellegi lähedase tarvitamine'}</h2>
     <p>{ru ? 'Можно поговорить с семейным врачом или школьной медсестрой. Для молодых людей есть информация на noored.alkoinfo.ee и программа Peaasi для 12–26 лет с лёгкими и умеренными трудностями (условия участия уточняй на peaasi.ee).' : 'Võid rääkida perearsti või kooliõega. Noortele on teavet saidil noored.alkoinfo.ee ning Peaasi programm 12–26-aastastele kergemate ja mõõdukate raskuste korral (osalemise tingimused vaata peaasi.ee).'}</p>
     <div className="lesson-actions"><a href="https://noored.alkoinfo.ee/">noored.alkoinfo.ee</a><a href="https://peaasi.ee/">peaasi.ee</a></div>
+    <RideScenario lang={ru ? "ru" : "et"} />
     <p><a href="../#tegevus">{ru ? 'Практические ситуации и другие службы' : 'Praktilised olukorrad ja muud abiteenused'}</a></p>
   </section>;
 }

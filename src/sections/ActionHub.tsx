@@ -270,6 +270,8 @@ export default function ActionHub({ lang }: { lang: Lang }) {
           </a>
         </div>
 
+        <p><a href={`help/?lang=${lang}#what-would-you-do`}>{ru ? "Пройти сценарий «Что бы ты сделал?»" : "Proovi harjutust „Mida sina teeksid?“"}</a></p>
+
         <HelpLinks lang={lang} />
 
         <div className="action-hub-limit" role="note">

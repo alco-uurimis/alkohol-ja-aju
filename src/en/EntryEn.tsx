@@ -1,3 +1,4 @@
+import RideScenario from '../components/RideScenario';
 import { useState } from 'react';
 import { Quiz } from '../components/Quiz';
 import { ProgressBar } from '../components/Shared';
@@ -80,7 +81,7 @@ export function TeacherEn() {
     ['0–5', 'Framing the question', 'What do studies show about the effect of alcohol on the brain? Discuss examples and sources. Nobody has to share personal experience.', '../methodology/'],
     ['5–12', 'Explanation', 'Open the short lesson. Ask pairs to explain one brain function and give an example of how it is studied.', '../start/'],
     ['12–22', 'Working with a source', 'Read the working-memory study card. Write down what was compared, who was studied and where the conclusion ends.', '../acute-effects/'],
-    ['22–32', 'A practical situation', 'In pairs, discuss a fictional case: after an event an acquaintance who has been drinking offers a lift. Draft a safe plan for getting home.', '../help/'],
+    ['22–32', 'A practical situation', 'In pairs, discuss a fictional case: after an event an acquaintance who has been drinking offers a lift. Draft a safe plan for getting home.', '../help/#what-would-you-do'],
     ['32–40', 'Knowledge check', 'Open the 20-minute lesson and its myth-or-fact quiz. Discuss why confidence in an answer can differ from the evidence.', '../start/?mode=full'],
     ['40–45', 'Worksheet', 'Ask students to name a fact with its source, one limitation and one concrete safe action. Assess these three parts separately.', '../worksheet/'],
   ];
@@ -107,5 +108,6 @@ export function HelpEn() {
     <h2>If your own or someone else’s drinking worries you</h2>
     <p>You can talk to a family doctor or school nurse. For young people there is information at noored.alkoinfo.ee and the Peaasi programme for ages 12–26 with mild to moderate difficulties (check the conditions at peaasi.ee).</p>
     <div className="lesson-actions"><a href="https://noored.alkoinfo.ee/">noored.alkoinfo.ee</a><a href="https://peaasi.ee/">peaasi.ee</a></div>
+    <RideScenario lang="en" />
   </section>;
 }
