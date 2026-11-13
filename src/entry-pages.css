@@ -56,3 +56,4 @@ body { margin: 0; }
 .check-need{color:#7a2620;background:#fff1ef;border-radius:10px;padding:10px 12px}
 .check-status{color:#4b5165;font-size:.9rem}
 .check-scores{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:1.1rem}
+.check-diag{color:#697087;font-size:.78rem}

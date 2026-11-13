@@ -45,14 +45,19 @@ const S = {
 
 const lessonLinks = (en: boolean) => en ? { l5: '../start/?lang=en', l20: '../start/?mode=full&lang=en', lt: '../topics/?lang=en' } : { l5: '../start/', l20: '../start/?mode=full', lt: '../topics/' };
 
+/** Technical reason of the last failed send (shown small, so a teacher can report it). */
+let lastFailure = '';
+
 async function send(state: LocalState, phase: Phase, lang: Lang): Promise<boolean> {
   const record = state[phase];
   if (!record) return false;
   try {
     const r = await fetch(PREPOST_ENDPOINT, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: state.token, phase, lang, answers: record.answers }) });
     const body = await r.json().catch(() => null);
-    return r.ok && body?.ok === true;
-  } catch { return false; }
+    const ok = r.ok && body?.ok === true;
+    lastFailure = ok ? '' : `HTTP ${r.status}${body?.error ? ' · ' + String(body.error).slice(0, 60) : ''}`;
+    return ok;
+  } catch { lastFailure = 'network / CORS'; return false; }
 }
 
 function Statements({ lang, order, answers, setAnswers, t }: { lang: Lang; order: PrePostId[]; answers: Answers; setAnswers: (a: Answers) => void; t: (typeof S)[Lang] }) {
@@ -128,7 +133,7 @@ export default function CheckPage() {
   const unsent = !!state && (state.pre?.sent === 'no' || state.post?.sent === 'no');
   const status = state && (
     state.consent
-      ? (sending ? t.sending : unsent ? <>{t.sentNo} <button type="button" className="text-button" onClick={retry}>{t.retry}</button></> : (state.pre?.sent === 'yes' || state.post?.sent === 'yes') ? t.sentYes : '')
+      ? (sending ? t.sending : unsent ? <>{t.sentNo}{lastFailure && <small className="check-diag"> ({lastFailure})</small>} <button type="button" className="text-button" onClick={retry}>{t.retry}</button></> : (state.pre?.sent === 'yes' || state.post?.sent === 'yes') ? t.sentYes : '')
       : (state.pre ? t.sentDeclined : '')
   );
 
