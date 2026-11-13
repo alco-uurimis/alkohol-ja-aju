@@ -83,14 +83,14 @@ export function TeacherEn() {
     ['12–22', 'Working with a source', 'Read the working-memory study card. Write down what was compared, who was studied and where the conclusion ends.', '../acute-effects/'],
     ['22–32', 'A practical situation', 'In pairs, discuss a fictional case: after an event an acquaintance who has been drinking offers a lift. Draft a safe plan for getting home.', '../help/#what-would-you-do'],
     ['32–40', 'Knowledge check', 'Open the 20-minute lesson and its myth-or-fact quiz. Discuss why confidence in an answer can differ from the evidence.', '../start/?mode=full'],
-    ['40–45', 'Worksheet', 'Ask students to name a fact with its source, one limitation and one concrete safe action. Assess these three parts separately.', '../worksheet/'],
+    ['40–45', 'Worksheet', 'Ask students to name a fact with its source, one limitation and one concrete safe action. Assess these three parts separately.', '../worksheet/en/'],
   ];
   return <section className="lesson-panel">
     <h2>45-minute lesson plan</h2>
     <p>The aim of the lesson is to explain one scientific conclusion, name its limitation and choose a safe action in a fictional situation.</p>
     <ol className="teacher-plan">{plan.map(([time, title, description, href]) => <li key={time}><span>{time} min</span><div><h3><a href={href}>{title}</a></h3><p>{description}</p></div></li>)}</ol>
-    <p>The worksheets are currently available in Estonian and Russian. The lesson, the science topics and the myth-or-fact quiz are available in English.</p>
-    <div className="lesson-actions"><a className="button primary" href="../worksheet/et/">Worksheet A4 · ET</a><a href="../worksheet/ru/">Worksheet A4 · RU</a><a href="../check/">Before-and-after check for your class</a></div>
+    <p>The worksheet is available in English, Estonian and Russian. The lesson, the science topics and the myth-or-fact quiz are available in English.</p>
+    <div className="lesson-actions"><a className="button primary" href="../worksheet/en/">Worksheet A4 · EN</a><a href="../worksheet/et/">Worksheet A4 · ET</a><a href="../worksheet/ru/">Worksheet A4 · RU</a><a href="../check/">Before-and-after check for your class</a></div>
   </section>;
 }
 

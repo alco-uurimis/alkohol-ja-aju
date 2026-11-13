@@ -40,3 +40,22 @@ describe('English survey', () => {
     expect(text).not.toMatch(/[õäöüÕÄÖÜ]/);
   });
 });
+
+describe('English exercises', () => {
+  it('has an English text for every Estonian string in Memory, Attention and Lab', async () => {
+    const { gamesEn } = await import('./data/games.en');
+    const pairT = new RegExp(`T\\(lang,ru\\s*\\?\\s*${lit}\\s*:\\s*${lit}\\)`, 'g');
+    const missing = [];
+    for (const f of ['Memory', 'Attention', 'Lab']) {
+      const src = readFileSync(new URL(`./sections/${f}.tsx`, import.meta.url), 'utf8');
+      for (const m of src.matchAll(pairT)) { const et = m[2].slice(1, -1); if (!gamesEn[et]) missing.push(f + ': ' + et); }
+    }
+    expect(missing).toEqual([]);
+  });
+  it('keeps the word pool the same size as the Estonian and Russian ones', async () => {
+    const { wordsEn } = await import('./data/games.en');
+    const { words } = await import('./data/words');
+    expect(wordsEn).toHaveLength(words.length);
+    expect(new Set(wordsEn).size).toBe(wordsEn.length);
+  });
+});

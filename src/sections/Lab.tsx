@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { ExerciseNote, Section } from '../components/Shared';
+import { T } from '../data/gamesT';
+import { stroopNamesEn } from '../data/games.en';
 import { recordReaction, recordSignal, recordStroop } from '../utils/gameMetrics';
 
-type Lang = 'et' | 'ru';
+type Lang = 'et' | 'ru' | 'en';
 type ReactionState = 'idle' | 'waiting' | 'go' | 'result' | 'false-start';
 type SignalPhase = 'idle' | 'showing' | 'input' | 'result';
 type Ink = 'violet' | 'lime' | 'cyan' | 'coral';
@@ -12,7 +14,7 @@ const signalNodes = [0, 1, 2, 3];
 
 function GameMeaning({lang,children}:{lang:Lang;children:string}){
   const ru=lang==='ru';
-  return <div className="game-meaning"><strong>{ru?'Что показывает':'Mida see näitab'}</strong><span>{children}</span></div>;
+  return <div className="game-meaning"><strong>{T(lang,ru?'Что показывает':'Mida see näitab')}</strong><span>{children}</span></div>;
 }
 
 function ReactionGame({ lang }: { lang: Lang }) {
@@ -61,26 +63,26 @@ function ReactionGame({ lang }: { lang: Lang }) {
   };
 
   const label = state === 'waiting'
-    ? (ru ? 'Жди сигнала…' : 'Oota märguannet…')
+    ? (T(lang,ru ? 'Жди сигнала…' : 'Oota märguannet…'))
     : state === 'go'
-      ? (ru ? 'ЖМИ!' : 'VAJUTA!')
+      ? (T(lang,ru ? 'ЖМИ!' : 'VAJUTA!'))
       : state === 'result'
         ? `${result} ms`
         : state === 'false-start'
-          ? (ru ? 'Слишком рано' : 'Liiga vara')
-          : (ru ? 'Готов к старту' : 'Valmis alustama');
+          ? (T(lang,ru ? 'Слишком рано' : 'Liiga vara'))
+          : (T(lang,ru ? 'Готов к старту' : 'Valmis alustama'));
 
   return <article className="lab-card reaction-game">
-    <div className="lab-card-top"><span>01</span><span>{ru ? 'РЕАКЦИЯ' : 'REAKTSIOON'}</span></div>
-    <h3>{ru ? 'Поймай зелёный сигнал' : 'Püüa roheline signaal'}</h3>
-    <p>{ru ? 'Нажми «Старт», дождись смены поля и кликни как можно быстрее.' : 'Vajuta „Start“, oota välja muutumist ja reageeri nii kiiresti kui saad.'}</p>
-    <GameMeaning lang={lang}>{ru?'Скорость твоей реакции именно в этой попытке. Это не тест трезвости и не медицинское измерение.':'Sinu reaktsioonikiirus just selles katses. See ei ole kainuse test ega meditsiiniline mõõtmine.'}</GameMeaning>
+    <div className="lab-card-top"><span>01</span><span>{T(lang,ru ? 'РЕАКЦИЯ' : 'REAKTSIOON')}</span></div>
+    <h3>{T(lang,ru ? 'Поймай зелёный сигнал' : 'Püüa roheline signaal')}</h3>
+    <p>{T(lang,ru ? 'Нажми «Старт», дождись смены поля и кликни как можно быстрее.' : 'Vajuta „Start“, oota välja muutumist ja reageeri nii kiiresti kui saad.')}</p>
+    <GameMeaning lang={lang}>{T(lang,ru?'Скорость твоей реакции именно в этой попытке. Это не тест трезвости и не медицинское измерение.':'Sinu reaktsioonikiirus just selles katses. See ei ole kainuse test ega meditsiiniline mõõtmine.')}</GameMeaning>
     <button className={`reaction-pad state-${state}`} onClick={tap} disabled={state === 'idle' || state === 'result' || state === 'false-start'} aria-live="polite">
       <span className="reaction-dot" aria-hidden="true" />
       <strong>{label}</strong>
-      <small>{state === 'idle' ? (ru ? 'Сначала нажми яркую кнопку «Начать игру» ниже' : 'Esmalt vajuta all olevat eredat nuppu „Alusta mängu“') : state === 'waiting' ? (ru ? 'Не нажимай заранее' : 'Ära vajuta enne signaali') : (ru ? 'мс = миллисекунды' : 'ms = millisekundid')}</small>
+      <small>{state === 'idle' ? (T(lang,ru ? 'Сначала нажми яркую кнопку «Начать игру» ниже' : 'Esmalt vajuta all olevat eredat nuppu „Alusta mängu“')) : state === 'waiting' ? (T(lang,ru ? 'Не нажимай заранее' : 'Ära vajuta enne signaali')) : (T(lang,ru ? 'мс = миллисекунды' : 'ms = millisekundid'))}</small>
     </button>
-    {(state === 'idle' || state === 'result' || state === 'false-start') && <button className="button primary game-action" onClick={start}>{state === 'idle' ? (ru ? 'Начать игру' : 'Alusta mängu') : (ru ? 'Ещё раз' : 'Proovi uuesti')}</button>}
+    {(state === 'idle' || state === 'result' || state === 'false-start') && <button className="button primary game-action" onClick={start}>{state === 'idle' ? (T(lang,ru ? 'Начать игру' : 'Alusta mängu')) : (T(lang,ru ? 'Ещё раз' : 'Proovi uuesti'))}</button>}
   </article>;
 }
 
@@ -95,7 +97,7 @@ function buildStroopRounds() {
 
 function StroopGame({ lang }: { lang: Lang }) {
   const ru = lang === 'ru';
-  const names: Record<Ink, string> = ru
+  const names: Record<Ink, string> = lang === 'en' ? stroopNamesEn : ru
     ? { violet: 'фиолетовый', lime: 'лаймовый', cyan: 'голубой', coral: 'коралловый' }
     : { violet: 'lilla', lime: 'laim', cyan: 'tsüaan', coral: 'korall' };
   const [rounds, setRounds] = useState(buildStroopRounds);
@@ -150,16 +152,16 @@ function StroopGame({ lang }: { lang: Lang }) {
 
   return <article className="lab-card stroop-game">
     <div className="lab-card-top"><span>02</span><span>STROOP</span></div>
-    <h3>{ru ? 'Смотри на цвет, а не на слово' : 'Vaata värvi, mitte sõna'}</h3>
-    <p>{ru ? 'Назови цвет букв. Само слово специально будет мешать.' : 'Vali tähtede värv. Sõna ise püüab sind meelega eksitada.'}</p>
-    <GameMeaning lang={lang}>{ru?'Насколько успешно ты подавляешь автоматическое чтение слова и выбираешь цвет.':'Kui hästi suudad automaatset sõnalugemist pidurdada ja valida värvi.'}</GameMeaning>
-    {!active && !done && <div className="stroop-intro"><span className="stroop-word ink-cyan">{names.violet}</span><p className="small">{ru ? 'Здесь правильный ответ — голубой.' : 'Siin on õige vastus tsüaan.'}</p><button className="button primary game-action" onClick={start}>{ru ? 'Запустить 8 раундов' : 'Alusta 8 vooru'}</button></div>}
+    <h3>{T(lang,ru ? 'Смотри на цвет, а не на слово' : 'Vaata värvi, mitte sõna')}</h3>
+    <p>{T(lang,ru ? 'Назови цвет букв. Само слово специально будет мешать.' : 'Vali tähtede värv. Sõna ise püüab sind meelega eksitada.')}</p>
+    <GameMeaning lang={lang}>{T(lang,ru?'Насколько успешно ты подавляешь автоматическое чтение слова и выбираешь цвет.':'Kui hästi suudad automaatset sõnalugemist pidurdada ja valida värvi.')}</GameMeaning>
+    {!active && !done && <div className="stroop-intro"><span className="stroop-word ink-cyan">{names.violet}</span><p className="small">{T(lang,ru ? 'Здесь правильный ответ — голубой.' : 'Siin on õige vastus tsüaan.')}</p><button className="button primary game-action" onClick={start}>{T(lang,ru ? 'Запустить 8 раундов' : 'Alusta 8 vooru')}</button></div>}
     {active && <div className="stroop-stage">
-      <div className="stroop-progress"><span>{index + 1} / {rounds.length}</span><span>{ru ? 'Правильно' : 'Õigeid'}: {score}</span></div>
-      <div className={`stroop-word ink-${current.ink}`} aria-label={ru ? `Слово ${names[current.word]}, цвет букв ${names[current.ink]}` : `Sõna ${names[current.word]}, tähtede värv ${names[current.ink]}`}>{names[current.word]}</div>
+      <div className="stroop-progress"><span>{index + 1} / {rounds.length}</span><span>{T(lang,ru ? 'Правильно' : 'Õigeid')}: {score}</span></div>
+      <div className={`stroop-word ink-${current.ink}`} aria-label={(lang==='en'?`Word ${names[current.word]}, letter colour ${names[current.ink]}`:ru ? `Слово ${names[current.word]}, цвет букв ${names[current.ink]}` : `Sõna ${names[current.word]}, tähtede värv ${names[current.ink]}`)}>{names[current.word]}</div>
       <div className="stroop-options">{inks.map(ink => <button key={ink} className={`swatch swatch-${ink}`} onClick={() => answer(ink)}><span aria-hidden="true" />{names[ink]}</button>)}</div>
     </div>}
-    {done && <div className="mini-result"><strong>{score} / 8</strong><span>{ru ? `Средняя реакция: ${avg} мс` : `Keskmine vastus: ${avg} ms`}</span><button className="button" onClick={start}>{ru ? 'Повторить' : 'Uus katse'}</button></div>}
+    {done && <div className="mini-result"><strong>{score} / 8</strong><span>{(lang==='en'?`Average answer: ${avg} ms`:ru ? `Средняя реакция: ${avg} мс` : `Keskmine vastus: ${avg} ms`)}</span><button className="button" onClick={start}>{T(lang,ru ? 'Повторить' : 'Uus katse')}</button></div>}
   </article>;
 }
 
@@ -232,30 +234,30 @@ function SignalGame({ lang }: { lang: Lang }) {
   };
 
   return <article className="lab-card signal-game">
-    <div className="lab-card-top"><span>03</span><span>{ru ? 'СИГНАЛ' : 'SIGNAAL'}</span></div>
-    <h3>{ru ? 'Повтори путь импульса' : 'Korda impulsi rada'}</h3>
-    <p>{ru ? 'Запомни, какие нейроны вспыхивают, и повтори последовательность. Каждый уровень добавляет один сигнал.' : 'Jäta meelde, millised neuronid süttivad, ja korda järjekorda. Iga tase lisab ühe signaali.'}</p>
-    <GameMeaning lang={lang}>{ru?'Насколько длинную визуальную последовательность удаётся удержать и точно воспроизвести в этой попытке.':'Kui pikka visuaalset järjestust õnnestub selles katses meeles hoida ja täpselt korrata.'}</GameMeaning>
-    <div className={`signal-board phase-${phase}`} aria-label={ru ? 'Поле из четырёх нейронов' : 'Nelja neuroni mänguväli'}>
+    <div className="lab-card-top"><span>03</span><span>{T(lang,ru ? 'СИГНАЛ' : 'SIGNAAL')}</span></div>
+    <h3>{T(lang,ru ? 'Повтори путь импульса' : 'Korda impulsi rada')}</h3>
+    <p>{T(lang,ru ? 'Запомни, какие нейроны вспыхивают, и повтори последовательность. Каждый уровень добавляет один сигнал.' : 'Jäta meelde, millised neuronid süttivad, ja korda järjekorda. Iga tase lisab ühe signaali.')}</p>
+    <GameMeaning lang={lang}>{T(lang,ru?'Насколько длинную визуальную последовательность удаётся удержать и точно воспроизвести в этой попытке.':'Kui pikka visuaalset järjestust õnnestub selles katses meeles hoida ja täpselt korrata.')}</GameMeaning>
+    <div className={`signal-board phase-${phase}`} aria-label={T(lang,ru ? 'Поле из четырёх нейронов' : 'Nelja neuroni mänguväli')}>
       <svg viewBox="0 0 100 100" className="signal-lines" aria-hidden="true"><path d="M20 24 C45 18 55 18 80 28M20 24 C35 50 35 70 28 78M80 28 C65 50 68 68 76 78M28 78 C48 68 58 70 76 78M20 24 C50 45 54 54 76 78M80 28 C54 42 46 57 28 78" /></svg>
-      {signalNodes.map(node => <button key={node} className={`signal-node node-${node} ${activeNode === node ? 'active' : ''}`} disabled={phase !== 'input'} onClick={() => tapNode(node)} aria-label={(ru ? 'Нейрон ' : 'Neuron ') + (node + 1)}><span /></button>)}
-      <div className="signal-board-status" aria-live="polite">{phase === 'idle' ? (ru ? 'Готов?' : 'Valmis?') : phase === 'showing' ? (ru ? 'Смотри…' : 'Vaata…') : phase === 'input' ? (ru ? `Твой ход · ${inputIndex + 1}/${sequence.length}` : `Sinu kord · ${inputIndex + 1}/${sequence.length}`) : won ? (ru ? 'Цепочка из 6 сигналов!' : '6 signaali järjest!') : (ru ? 'Цепочка прервалась' : 'Signaal katkes')}</div>
+      {signalNodes.map(node => <button key={node} className={`signal-node node-${node} ${activeNode === node ? 'active' : ''}`} disabled={phase !== 'input'} onClick={() => tapNode(node)} aria-label={(T(lang,ru ? 'Нейрон ' : 'Neuron ')) + (node + 1)}><span /></button>)}
+      <div className="signal-board-status" aria-live="polite">{phase === 'idle' ? (T(lang,ru ? 'Готов?' : 'Valmis?')) : phase === 'showing' ? (T(lang,ru ? 'Смотри…' : 'Vaata…')) : phase === 'input' ? ((lang==='en'?`Your turn · ${inputIndex + 1}/${sequence.length}`:ru ? `Твой ход · ${inputIndex + 1}/${sequence.length}` : `Sinu kord · ${inputIndex + 1}/${sequence.length}`)) : won ? (T(lang,ru ? 'Цепочка из 6 сигналов!' : '6 signaali järjest!')) : (T(lang,ru ? 'Цепочка прервалась' : 'Signaal katkes'))}</div>
     </div>
-    {(phase === 'idle' || phase === 'result') && <button className="button primary game-action" onClick={start}>{phase === 'idle' ? (ru ? 'Показать последовательность' : 'Näita järjestust') : (ru ? 'Новая цепочка' : 'Uus signaalirada')}</button>}
+    {(phase === 'idle' || phase === 'result') && <button className="button primary game-action" onClick={start}>{phase === 'idle' ? (T(lang,ru ? 'Показать последовательность' : 'Näita järjestust')) : (T(lang,ru ? 'Новая цепочка' : 'Uus signaalirada'))}</button>}
   </article>;
 }
 
 export default function Lab({ lang }: { lang: Lang }) {
   const ru = lang === 'ru';
 
-  return <Section id="labor" number={ru ? '04 / ИГРОВАЯ ЛАБОРАТОРИЯ' : '04 / MÄNGULABOR'} title={ru ? 'Три коротких игры для мозга' : 'Kolm lühikest ajumängu'} intro={ru ? 'Пройди три задания по порядку: реакция, конфликт цвета и слова, затем последовательность. Результаты описывают только конкретную попытку.' : 'Läbi kolm ülesannet järjest: reaktsioon, värvi ja sõna konflikt ning seejärel järjestus. Tulemused kirjeldavad ainult konkreetset katset.'} className="lab-section">
-    <div className="lab-steps" aria-label={ru?'Порядок мини-игр':'Minimängude järjekord'}><span><b>01</b>{ru?'Реакция':'Reaktsioon'}</span><span><b>02</b>Stroop</span><span><b>03</b>{ru?'Последовательность':'Järjestus'}</span></div>
+  return <Section id="labor" number={T(lang,ru ? '04 / ИГРОВАЯ ЛАБОРАТОРИЯ' : '04 / MÄNGULABOR')} title={T(lang,ru ? 'Три коротких игры для мозга' : 'Kolm lühikest ajumängu')} intro={T(lang,ru ? 'Пройди три задания по порядку: реакция, конфликт цвета и слова, затем последовательность. Результаты описывают только конкретную попытку.' : 'Läbi kolm ülesannet järjest: reaktsioon, värvi ja sõna konflikt ning seejärel järjestus. Tulemused kirjeldavad ainult konkreetset katset.')} className="lab-section">
+    <div className="lab-steps" aria-label={T(lang,ru?'Порядок мини-игр':'Minimängude järjekord')}><span><b>01</b>{T(lang,ru?'Реакция':'Reaktsioon')}</span><span><b>02</b>Stroop</span><span><b>03</b>{T(lang,ru?'Последовательность':'Järjestus')}</span></div>
     <div className="lab-toolbar">
-      <div><span className="pill">{ru ? 'ИНТЕРАКТИВ' : 'INTERAKTIIVNE'}</span><p>{ru ? 'Результаты игр хранятся только в этой вкладке. Они отправятся автору только вместе с отзывом о сайте и после твоего согласия.' : 'Mängutulemused säilivad ainult selles vahelehes. Need saadetakse autorile ainult koos veebilehe tagasisidega ja pärast sinu nõusolekut.'}</p></div>
+      <div><span className="pill">{T(lang,ru ? 'ИНТЕРАКТИВ' : 'INTERAKTIIVNE')}</span><p>{T(lang,ru ? 'Результаты игр хранятся только в этой вкладке. Они отправятся автору только вместе с отзывом о сайте и после твоего согласия.' : 'Mängutulemused säilivad ainult selles vahelehes. Need saadetakse autorile ainult koos veebilehe tagasisidega ja pärast sinu nõusolekut.')}</p></div>
     </div>
     <ExerciseNote lang={lang} />
     <div className="lab-grid"><ReactionGame lang={lang} /><StroopGame lang={lang} /><SignalGame lang={lang} /></div>
-    <p className="exercise-note">{ru?"Подумай: что могло повлиять на результат этой попытки — устройство, усталость или знакомство с заданием?":"Mõtle: mis võis selle katse tulemust mõjutada – seade, väsimus või ülesande varasem tundmine?"}</p>
+    <p className="exercise-note">{T(lang,ru?"Подумай: что могло повлиять на результат этой попытки — устройство, усталость или знакомство с заданием?":"Mõtle: mis võis selle katse tulemust mõjutada – seade, väsimus või ülesande varasem tundmine?")}</p>
   </Section>;
 }
 

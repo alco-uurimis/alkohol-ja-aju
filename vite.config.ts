@@ -15,6 +15,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         en: 'en/index.html',
+        enPractice: 'en/practice.html',
         check: 'check/index.html',
         science: 'science/index.html',
         scienceResults: 'science/results/index.html',
@@ -26,6 +27,7 @@ export default defineConfig({
         worksheet: 'worksheet/index.html',
         worksheetEt: 'worksheet/et/index.html',
         worksheetRu: 'worksheet/ru/index.html',
+        worksheetEn: 'worksheet/en/index.html',
         start: 'start/index.html',
         teacher: 'teacher/index.html',
         help: 'help/index.html',

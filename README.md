@@ -82,3 +82,7 @@ With `READ_SOURCE=supabase` a save succeeds when the Supabase insert succeeds (`
 ### English survey
 
 The survey (`/science/?lang=en`) has an English version: UI text in `src/data/researchUi.en.ts` (keyed by the Estonian source string), questions and options in `src/researchData.en.ts` (by question id and option value). `src/researchEn.test.js` fails if an Estonian UI string has no English text or if the English form differs from ET/RU in questions, option values or conditions. Responses are stored with `language: "en"`. **Run `docs/supabase-migration-en.sql` in Supabase before enabling it** (the language column used to allow only et/ru; without the change Supabase rejects English responses). The English wording is my translation and has not been validated; the English methodology page says so.
+
+### English exercises and worksheet
+
+`en/practice.html` (entry `src/en-practice-main.tsx`) shows the memory exercise, the attention task and the three mini-games in English. Their texts live in `src/data/games.en.ts`, keyed by the Estonian source string (`src/researchEn.test.js` fails on a missing key); the word pool is `wordsEn`. `worksheet/en/` is the English A4 worksheet. Still Estonian/Russian only: the rest of the main page sections (learning center, class kit, feedback form, closing).
