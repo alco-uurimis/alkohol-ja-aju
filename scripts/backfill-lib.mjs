@@ -39,7 +39,7 @@ export function mapResponse(o) {
   if (!/^research_[a-z0-9_-]{8,90}$/i.test(response_id || '')) return { error: 'bad_response_id' };
   const submitted_at = isoOrNull(o.submitted_at);
   if (!submitted_at) return { error: 'bad_date' };
-  if (!['et', 'ru'].includes(o.language)) return { error: 'bad_language' };
+  if (!['et', 'ru', 'en'].includes(o.language)) return { error: 'bad_language' };
   const version = Number.parseInt(o.version, 10);
   if (!Number.isInteger(version)) return { error: 'bad_version' };
   const answers = {};

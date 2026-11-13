@@ -1,4 +1,6 @@
-export type Lang='et'|'ru';
+import { questionsEn, stepsEn } from './researchData.en';
+
+export type Lang='et'|'ru'|'en';
 export type Option={value:string;label:string};
 export type Question={id:string;title:string;type:'radio'|'multi';options:Option[];optional?:boolean;hint?:string;showWhen?:{field:string;notIn:string[]}};
 export type Step={title:string;intro:string;questions:Question[]};
@@ -9,7 +11,15 @@ const freq=(ru:boolean):Option[]=>ru?
   [{value:'never',label:'Mitte kunagi'},{value:'rare',label:'Harva'},{value:'sometimes',label:'Mõnikord'},{value:'often',label:'Sageli'},prefer(false)];
 
 export function getResearchSteps(lang:Lang):Step[]{
-  const ru=lang==='ru';
+  const steps=baseSteps(lang==='ru');
+  if(lang!=='en')return steps;
+  return steps.map((step,i)=>({
+    title:stepsEn[i].title,intro:stepsEn[i].intro,
+    questions:step.questions.map(q=>{const en=questionsEn[q.id];return{...q,title:en.title,hint:q.hint?en.hint:undefined,options:q.options.map(o=>({...o,label:en.options[o.value]}))};}),
+  }));
+}
+
+function baseSteps(ru:boolean):Step[]{
   return [
     {
       title:ru?'Согласие и возраст':'Nõusolek ja vanus',

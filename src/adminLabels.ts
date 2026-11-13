@@ -2,7 +2,7 @@
 const LV = { never: 'Никогда', rare: 'Редко', sometimes: 'Иногда', often: 'Часто', prefer_not: 'Предпочитаю не отвечать' };
 type Q = { title: string; multi?: boolean; codes: Record<string, string> };
 export const adminQuestions: Record<string, Q> = {
-  language: { title: 'Язык анкеты', codes: { et: 'Эстонский', ru: 'Русский' } },
+  language: { title: 'Язык анкеты', codes: { et: 'Эстонский', ru: 'Русский', en: 'Английский' } },
   ageGroup: { title: 'Возрастные группы', codes: { '15_17': '15–17', '18_20': '18–20', '21_25': '21–25', '26_35': '26–35', '36_plus': '36+', prefer_not: 'Предпочитаю не отвечать' } },
   ownUse: { title: 'Частота употребления за 12 месяцев', codes: { never: 'Никогда', less_monthly: 'Реже раза в месяц', monthly: 'Раз в месяц', two_four_month: '2–4 раза в месяц', two_three_week: '2–3 раза в неделю', four_plus_week: '4+ раза в неделю', prefer_not: 'Предпочитаю не отвечать' } },
   typicalUnits: { title: 'Единиц алкоголя в обычный день', codes: { '1_2': '1–2', '3_4': '3–4', '5_6': '5–6', '7_9': '7–9', '10_plus': '10+', prefer_not: 'Предпочитаю не отвечать' } },

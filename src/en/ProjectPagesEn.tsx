@@ -1,5 +1,6 @@
 import EstoniaData, { EstoniaDataLink } from '../components/EstoniaData';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import PeerNorm from '../components/PeerNorm';
 import ResultsChart, { type ResultItem } from '../components/ResultsChart';
 
 /** English versions of the project pages and the English home page. Same classes as ProjectPagesAppV2. */
@@ -35,7 +36,7 @@ function Shell({ page, setLang, children }: { page: EnPage; setLang: SetLang; ch
   return <div className="project-shell">
     <header className="project-header">
       <a href={page === 'home' ? './' : '../en/'} className="project-brand" aria-label="alcohol and the brain"><img src={up + 'logo-mark.svg'} alt="" /><span>alcohol and the brain</span></a>
-      <nav aria-label="Project sections"><a href="../topics/">Science topics</a><a className="project-research-link" href={up + 'science/'}>Survey (ET/RU)</a><a href={up + 'methodology/'}>Methodology</a></nav>
+      <nav aria-label="Project sections"><a href="../topics/">Science topics</a><a className="project-research-link" href={up + 'science/?lang=en'}>Survey</a><a href={up + 'methodology/'}>Methodology</a></nav>
       <div className="project-lang" role="group" aria-label="Language">
         <button type="button" aria-pressed="false" onClick={() => setLang('et')}>ET</button>
         <button type="button" aria-pressed="false" onClick={() => setLang('ru')}>RU</button>
@@ -46,7 +47,7 @@ function Shell({ page, setLang, children }: { page: EnPage; setLang: SetLang; ch
       <section className="project-hero"><p className="project-kicker">ALKOHOL JA AJU · v2.2</p><h1>{c.title}</h1><p>{c.lead}</p></section>
       {children}
     </main>
-    <footer><a href={up}>Main site</a><a href={up + 'topics/'}>Science topics</a><a href={up + 'science/'}>Survey (ET/RU)</a><a href={up + 'data-policy/'}>Data and privacy</a><a href={up + 'fact-check/'}>Fact-check</a><a href={up + 'changelog/'}>Changelog</a></footer>
+    <footer><a href={up}>Main site</a><a href={up + 'topics/'}>Science topics</a><a href={up + 'science/?lang=en'}>Survey</a><a href={up + 'data-policy/'}>Data and privacy</a><a href={up + 'fact-check/'}>Fact-check</a><a href={up + 'changelog/'}>Changelog</a></footer>
   </div>;
 }
 
@@ -66,7 +67,7 @@ function Home({ setLang }: { setLang: SetLang }) {
     <section className="project-section"><h2>Science topics</h2><TopicCards list={topics} prefix="../" /><p><a href="../topics/">All science topics</a></p></section>
     <section className="project-callout"><strong>Need help?</strong><p>In immediate danger call <a href="tel:112">112</a>. To talk or get advice, Lasteabi <a href="tel:116111">116 111</a> is free and open around the clock in Estonian, Russian and English. <a href="../help/">More on getting help</a></p></section>
     <section className="project-callout"><strong>Optional: see what you learned</strong><p>An anonymous before-and-after check of six statements. Nothing is linked to your name or an account. <a href="../check/">Open the check</a></p></section>
-    <section className="project-callout"><strong>Exercises, games and the survey</strong><p>The memory and attention exercises, the mini-games and the voluntary research survey (15+) are currently available in Estonian and Russian only. <a href="../?lang=et" onClick={() => setLang('et')}>Open the Estonian site</a> · <a href="../?lang=ru" onClick={() => setLang('ru')}>Open the Russian site</a></p></section>
+    <section className="project-callout"><strong>Exercises, games and the survey</strong><p>The memory and attention exercises and the mini-games are currently available in Estonian and Russian only. The voluntary research survey (15+) is available in English too: <a href="../science/?lang=en">open the survey</a>. <a href="../?lang=et" onClick={() => setLang('et')}>Open the Estonian site</a> · <a href="../?lang=ru" onClick={() => setLang('ru')}>Open the Russian site</a></p></section>
   </>;
 }
 
@@ -85,7 +86,7 @@ function Methodology() {
     <h2>What is measured</h2><p>Age group, frequency of own use over 12 months, typical number of alcohol units, episodes of 6+ units, use by people close to the participant, conflict and feeling unsafe, possible effect on sleep, study or work and mood, social pressure and knowledge of where to get help. This is not a diagnostic test.</p>
     <h2>Ethics and participants aged 15–17</h2><p>The form contains separate information and a confirmation for 15–17-year-olds. The web form itself is not an ethics approval: the organiser must separately check which requirements apply to the specific study and its organiser.</p>
     <h2>Analysis plan</h2><p>The main analysis is descriptive statistics: the number of valid responses of the current schema, shares of categories and distributions. Old test and legacy schemas are not included in the current aggregates. The public page publishes nothing until there are at least 10 valid responses, and single categories with fewer than 5 responses are suppressed or merged into an “Other” row. No causal conclusions are drawn from this survey.</p>
-    <h2>Language of the survey</h2><p>The survey instrument was validated in Estonian and Russian only, so it is not offered in English.</p>
+    <h2>Language of the survey</h2><p>The survey was designed in Estonian and Russian. The English version is a translation that has not been validated: its answers are stored with the language code “en”, and comparisons between language versions should be made with caution because wording can shift meaning.</p>
   </section><section className="project-callout"><strong>Main limitation</strong><p>Self-selection of participants and self-report can create systematic bias. The results cannot be interpreted as a representative estimate of the population.</p></section></>;
 }
 
@@ -153,6 +154,7 @@ function Results() {
         const ok = counts.length > 0 && counts.every(([, c]) => Number.isInteger(c) && c >= 5) && (base === data.n || base === data.answered?.[key]);
         return <div className="result-card" key={key}><h2>{title}</h2>{ok ? <><ResultsChart variant={key === 'helpKnowledge' ? 'stack' : 'bars'} total={base} countWord="resp." ariaLabel={title} items={items(key, counts)} />{base !== data.n && <p className="result-base">{base} of {data.n} answered this question. Percentages are of those who answered.</p>}</> : <p className="result-card-empty">Figures hidden: the distribution contains small groups or incomplete data.</p>}</div>;
       })}</div>
+      <PeerNorm data={data} lang="en" />
       <p className="result-note">This is descriptive statistics of a voluntary sample. It does not prove causation and is not a representative estimate of the population of Estonia.</p>
     </>}
   </section>;

@@ -78,3 +78,7 @@ Set `READ_SOURCE=supabase` in Vercel and redeploy: the public charts (`/api/rese
 ### Stage 3: Supabase is the primary store
 
 With `READ_SOURCE=supabase` a save succeeds when the Supabase insert succeeds (`api/_source.js` `primaryDelivery`; pre/post likewise). The Google Sheet is then only a best-effort second copy (6 s deadline, failures ignored), so the Apps Script no longer needs to be redeployed or even exist: unset `SHEET_WEBHOOK_URL` / `SHEET_WEBHOOK_SECRET` to retire it. `/api/research-health` reports both stores and judges `ok` by the primary one. Back up regularly from the admin page (CSV download, `api/admin-export.js`); a backup can be re-imported with `scripts/backfill-supabase.mjs`. Rolling back = remove `READ_SOURCE` and redeploy (the Sheet copy must have been kept for that to be complete).
+
+### English survey
+
+The survey (`/science/?lang=en`) has an English version: UI text in `src/data/researchUi.en.ts` (keyed by the Estonian source string), questions and options in `src/researchData.en.ts` (by question id and option value). `src/researchEn.test.js` fails if an Estonian UI string has no English text or if the English form differs from ET/RU in questions, option values or conditions. Responses are stored with `language: "en"`. **Run `docs/supabase-migration-en.sql` in Supabase before enabling it** (the language column used to allow only et/ru; without the change Supabase rejects English responses). The English wording is my translation and has not been validated; the English methodology page says so.

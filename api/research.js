@@ -1,7 +1,7 @@
 import {mirrorResponse} from './_mirror.js';
 import {primaryDelivery,readSource,withDeadline} from './_source.js';
 const ALLOWED_ORIGINS=new Set(['https://alco-uurimis.github.io','https://alkohol-ja-aju.vercel.app']);
-const LANGUAGES=new Set(['et','ru']);
+const LANGUAGES=new Set(['et','ru','en']);
 const YES_NO=new Set(['yes','no']);
 const AGE_GROUPS=new Set(['15_17','18_20','21_25','26_35','36_plus','prefer_not']);
 const OWN_USE=new Set(['never','less_monthly','monthly','two_four_month','two_three_week','four_plus_week','prefer_not','once','rare','weekly_plus']);

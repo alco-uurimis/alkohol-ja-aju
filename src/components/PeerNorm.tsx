@@ -19,10 +19,18 @@ const t = {
     close: 'Твоя оценка почти точная.', low: (d: number) => `Ты недооценил(а) на ${d} п.`, high: (d: number) => `Ты переоценил(а) на ${d} п.`,
     note: 'Это результат добровольной выборки, которую люди формируют сами. Он не описывает всех подростков и Эстонию в целом.',
   },
+  en: {
+    title: 'How many respondents do you think drink rarely?',
+    lead: 'Guess before you see the result: out of a hundred people who answered the survey, how many said that in the last 12 months they drank less than once a month or not at all?',
+    guess: 'Your guess', res: 'Survey', of: 'out of', reveal: 'Show the result',
+    real: (p: number, n: number) => `In the survey ${p} out of 100 said so (respondents: ${n}).`,
+    close: 'Your guess was almost exact.', low: (d: number) => `You underestimated by ${d} points.`, high: (d: number) => `You overestimated by ${d} points.`,
+    note: 'This is the result of a voluntary, self-selected sample. It does not describe all young people or Estonia as a whole.',
+  },
 } as const;
 
 /** "Guess, then see": appears only when the public aggregate yields an exact, majority figure (see lib/norms). */
-export default function PeerNorm({ data, lang }: { data: NormInput; lang: 'et' | 'ru' }) {
+export default function PeerNorm({ data, lang }: { data: NormInput; lang: 'et' | 'ru' | 'en' }) {
   const S = t[lang];
   const id = useId();
   const [guess, setGuess] = useState(50);

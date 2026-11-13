@@ -21,7 +21,7 @@ describe('mapResponse', () => {
   it('reports bad rows instead of guessing', () => {
     expect(mapResponse({ ...base, response_id: 'x' }).error).toBe('bad_response_id');
     expect(mapResponse({ ...base, submitted_at: 'soon' }).error).toBe('bad_date');
-    expect(mapResponse({ ...base, language: 'en' }).error).toBe('bad_language');
+    expect(mapResponse({ ...base, language: 'de' }).error).toBe('bad_language');
     expect(mapResponse({ ...base, version: '' }).error).toBe('bad_version');
   });
 });

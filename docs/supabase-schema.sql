@@ -5,7 +5,7 @@
 create table if not exists public.research_responses (
   response_id  text primary key,
   submitted_at timestamptz not null,
-  language     text not null check (language in ('et', 'ru')),
+  language     text not null check (language in ('et', 'ru', 'en')),
   version      int  not null,
   answers      jsonb not null,
   created_at   timestamptz not null default now()
