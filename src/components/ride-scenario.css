@@ -1,0 +1,42 @@
+.ride-scenario {
+  margin-top: 2rem;
+  scroll-margin-top: 6rem;
+}
+
+.ride-scenario fieldset {
+  min-inline-size: 0;
+  padding: 0;
+  border: 0;
+  margin: 1rem 0;
+}
+
+.ride-scenario legend {
+  padding: 0;
+  font-weight: 750;
+}
+
+.ride-scenario__choices {
+  display: grid;
+  gap: .5rem;
+  margin-top: .5rem;
+}
+
+.ride-scenario__choices button {
+  text-align: start;
+}
+
+.ride-scenario__feedback {
+  padding: .75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: .625rem;
+  background: #f1eeff;
+  color: #171b37;
+}
+
+.ride-scenario__feedback p {
+  margin: 0;
+}
+
+.ride-scenario__feedback p + p {
+  margin-top: .5rem;
+}
