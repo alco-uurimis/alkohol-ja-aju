@@ -21,7 +21,13 @@ async function insertIgnoringDuplicates(table, conflict, row, fetchImpl = fetch)
   try {
     const res = await fetchImpl(`${t.base}/rest/v1/${table}?on_conflict=${conflict}`, {
       method: 'POST',
-      headers: { apikey: t.key, authorization: `Bearer ${t.key}`, 'content-type': 'application/json', prefer: 'resolution=ignore-duplicates,return=minimal' },
+      headers: {
+        apikey: t.key,
+        // Legacy service_role keys are JWTs and go in Authorization too; the newer sb_secret_… keys are sent as apikey only.
+        ...(t.key.startsWith('sb_') ? {} : { authorization: `Bearer ${t.key}` }),
+        'content-type': 'application/json',
+        prefer: 'resolution=ignore-duplicates,return=minimal',
+      },
       body: JSON.stringify(row),
       signal: controller.signal,
     });
