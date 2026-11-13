@@ -185,10 +185,10 @@ export default function ClassroomKit({lang}:{lang:Lang}){
         </ol>
       </div>
 
-      <aside className="classroom-kit__safe-note" aria-label={ru?'Условия безопасного обсуждения':'Turvalise arutelu tingimused'}>
+      <div role="note" className="classroom-kit__safe-note" aria-label={ru?'Условия безопасного обсуждения':'Turvalise arutelu tingimused'}>
         <strong>{ru?'Как вести обсуждение':'Kuidas arutelu juhtida'}</strong>
         <p>{ru?'Говорите о вымышленных ситуациях и фактах из источников. Разрешите не отвечать и не просите делиться опытом употребления, здоровьем или данными других людей.':'Rääkige väljamõeldud olukordadest ja allikates toodud faktidest. Luba vastamata jätta ning ära palu jagada tarvitamiskogemust, terviseandmeid ega teiste inimeste infot.'}</p>
-      </aside>
+      </div>
 
       <div className="classroom-kit__schedule" aria-label={ru?'План занятия':'Tunni kava'}>
         {lesson.map((step,index)=><article className="classroom-kit__step" key={step.minutes}>

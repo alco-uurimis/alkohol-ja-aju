@@ -232,3 +232,13 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
 .fact-strip__live{position:absolute;right:16px;bottom:16px;width:9px;height:9px;border-radius:50%;background:#c9f574;box-shadow:0 0 0 0 rgba(201,245,116,.6);animation:ux-live 2.4s ease-out 6}
 @keyframes ux-live{to{box-shadow:0 0 0 10px rgba(201,245,116,0)}}
 @media (prefers-reduced-motion:reduce){.fact-strip__live{animation:none}}
+
+/* ---------- Contrast fixes found by axe (WCAG AA, 4.5:1 text / 3:1 large text) ---------- */
+.phase-divider small{color:#5f667b}
+.panel-number{color:#8176c2!important}
+.project-lang button:not(.active),.project-lang button:nth-child(2):not(.active){color:#5b6277}
+.article-answer>span{color:color-mix(in srgb,var(--accent) 35%,#fff)}
+.evidence-source-card__heading>span{color:color-mix(in srgb,var(--accent) 65%,#000)}
+
+.topic-button small{color:#5d6479!important}
+#infograafika .eyebrow,#viktoriin .eyebrow,#labor .eyebrow,.infographics-section .eyebrow{color:#b9adff!important}

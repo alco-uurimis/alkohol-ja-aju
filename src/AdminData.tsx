@@ -85,14 +85,14 @@ export default function AdminData() {
   if (!supabase) return (
     <section className="admin-card">
       <p className="admin-kicker">ВХОД НЕ НАСТРОЕН</p>
-      <h2>В этой сборке сайта нет ключей Supabase</h2>
+      <h1>В этой сборке сайта нет ключей Supabase</h1>
       <p>Добавьте переменные VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY (GitHub → Settings → Secrets and variables → Actions → Variables) и перезапустите деплой сайта.</p>
     </section>
   );
   return (
     <section className="admin-card admin-data">
       <p className="admin-kicker">ПОЛНЫЕ ДАННЫЕ БЕЗ СКРЫТИЯ</p>
-      <h2>Просмотр по аккаунту Google</h2>
+      <h1 className="admin-title">Просмотр по аккаунту Google</h1>
       {!ready ? <p>Загрузка…</p> : !session ? (
         <>
           <p>Войди аккаунтом администратора. Сервер сам проверит, что аккаунт в списке. Здесь показаны все категории, даже с 1–4 ответами. Не публикуй и не пересылай эти цифры.</p>

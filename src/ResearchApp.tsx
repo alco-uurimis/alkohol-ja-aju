@@ -123,5 +123,5 @@ export default function ResearchApp(){
 
 function ResearchHeader({lang,setLang}:{lang:Lang;setLang:(lang:Lang)=>void}){
   const ru=lang==='ru';
-  return <header className="research-header"><a className="research-brand" href="../"><img src="../logo-mark.svg" alt=""/><span>{ru?'алкоголь и мозг':'alkohol ja aju'}</span></a><a className="research-home" href="../">{ru?'Основной сайт':'Põhileht'}</a><div className="research-lang" role="group" aria-label={ru?'Язык':'Keel'}><button type="button" className={lang==='et'?'active':''} onClick={()=>setLang('et')}>ET</button><button type="button" className={lang==='ru'?'active':''} onClick={()=>setLang('ru')}>RU</button></div></header>;
+  return <header className="research-header"><a className="research-brand" href="../" aria-label={ru?'алкоголь и мозг':'alkohol ja aju'}><img src="../logo-mark.svg" alt=""/><span>{ru?'алкоголь и мозг':'alkohol ja aju'}</span></a><a className="research-home" href="../">{ru?'Основной сайт':'Põhileht'}</a><div className="research-lang" role="group" aria-label={ru?'Язык':'Keel'}><button type="button" className={lang==='et'?'active':''} onClick={()=>setLang('et')}>ET</button><button type="button" className={lang==='ru'?'active':''} onClick={()=>setLang('ru')}>RU</button></div></header>;
 }

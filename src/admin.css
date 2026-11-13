@@ -20,3 +20,4 @@
 .admin-danger:disabled{opacity:.5;cursor:not-allowed}
 .admin-confirm{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:#fff1ef;border-radius:10px;padding:10px 12px}
 .admin-ok{color:#244316;background:#eef7e8;border-radius:10px;padding:10px 12px}
+.admin-data .admin-title{font-size:1.6rem;margin:0}

@@ -254,7 +254,7 @@ export default function ActionHub({ lang }: { lang: Lang }) {
           </article>
         </div>
 
-        <aside className="action-hub-emergency" aria-label={ru ? 'Когда действовать срочно' : 'Millal tegutseda kiiresti'}>
+        <div role="note" className="action-hub-emergency" aria-label={ru ? 'Когда действовать срочно' : 'Millal tegutseda kiiresti'}>
           <div className="action-hub-emergency-index" aria-hidden="true">!</div>
           <div>
             <p className="action-hub-kicker">{ru ? 'ПРИ СОМНЕНИИ — ДЕЙСТВУЙ' : 'KAHTLUSE KORRAL TEGUTSE'}</p>
@@ -268,7 +268,7 @@ export default function ActionHub({ lang }: { lang: Lang }) {
           <a href={ru?'https://www.112.ee/en/instruction/emergency-phone-number-112':'https://www.112.ee/et/juhend/hadaabinumber-112'} target="_blank" rel="noopener noreferrer">
             {ru ? 'Экстренная помощь в Эстонии — 112' : 'Hädaabi Eestis — 112'}
           </a>
-        </aside>
+        </div>
 
         <HelpLinks lang={lang} />
 
