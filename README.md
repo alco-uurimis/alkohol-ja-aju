@@ -69,3 +69,8 @@ The admin page has a "Копия в Supabase" card (row-count comparison, `api/a
 ### Moving reads to Supabase: stage 1 (compare only)
 
 `api/_aggregate.js` rebuilds the Sheet's summaries (`aggregate`, `adminAggregate`, `prepostAggregate`) from the Supabase rows. `src/aggregate.test.js` runs the **real** `docs/research-google-sheet-webhook.gs` against a fake spreadsheet and requires identical output on generated data. The admin card "Копия в Supabase → Сверить с таблицей" does the same comparison on live data. Nothing is switched yet: the site still reads from the Sheet.
+
+### Moving reads to Supabase: stage 2 (switch)
+
+Set `READ_SOURCE=supabase` in Vercel and redeploy: the public charts (`/api/research-summary`), the admin view (`/api/admin-data`) and delete-by-ID use Supabase rows, with the same privacy rules (`api/_aggregate.js`, `publicSummary`). If Supabase cannot be read, the public API falls back to the Sheet; the response header `X-Data-Source` and the admin page show which store answered. Remove the variable (or set `sheet`) and redeploy to go back. Writes always go to both stores.
+`vercel.json` schedules `/api/keepalive` twice a week so a free Supabase project is not paused for inactivity.

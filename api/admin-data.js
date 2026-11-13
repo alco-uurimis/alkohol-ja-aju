@@ -1,5 +1,7 @@
 // Uncensored research data for signed-in admins only (see _admin-auth.js).
 import {isAdminUser,requireAdmin} from './_admin-auth.js';
+import {readSource,supabaseSnapshot} from './_source.js';
+import {adminAggregate} from './_aggregate.js';
 export {isAdminUser};
 
 const ALLOWED_ORIGINS=new Set(['https://alco-uurimis.github.io','https://alkohol-ja-aju.vercel.app']);
@@ -14,6 +16,7 @@ export default async function handler(req,res){
   if(req.method!=='GET')return res.status(405).json({ok:false,error:'method_not_allowed'});
   const origin=req.headers?.origin;if(origin&&!ALLOWED_ORIGINS.has(origin))return res.status(403).json({ok:false,error:'origin_not_allowed'});
   if(!(await requireAdmin(req,res)))return;
+  if(readSource()==='supabase'){const snap=await supabaseSnapshot();if(snap)return res.status(200).json({...adminAggregate(snap.responses,snap.prepost),lastUpdated:new Date().toISOString(),source:'supabase'});}
   const url=process.env.SHEET_WEBHOOK_URL,secret=process.env.SHEET_WEBHOOK_SECRET;
   if(!url||!secret)return res.status(503).json({ok:false,error:'summary_not_configured'});
   try{
@@ -21,6 +24,6 @@ export default async function handler(req,res){
     const response=await request(parsed.toString(),{secret,adminAggregate:true});
     const data=await response.json().catch(()=>null);
     if(!response.ok||data?.ok!==true||!data.fields)return res.status(502).json({ok:false,error:'upstream_failed_or_script_outdated'});
-    return res.status(200).json(data);
+    return res.status(200).json({...data,source:'sheet'});
   }catch{return res.status(502).json({ok:false,error:'summary_unreachable'});}
 }

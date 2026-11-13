@@ -5,7 +5,7 @@ import ResultsChart, { type ResultItem } from './components/ResultsChart';
 import { adminQuestions } from './adminLabels';
 import { AdminReport, PrePostCard, type PrePostSummary } from './AdminReport';
 
-type AdminData = { ok: true; n: number; excluded: number; lastUpdated: string; fields: Record<string, Record<string, number>>; answered: Record<string, number>; prepost?: PrePostSummary };
+type AdminData = { ok: true; n: number; excluded: number; lastUpdated: string; fields: Record<string, Record<string, number>>; answered: Record<string, number>; prepost?: PrePostSummary; source?: 'sheet' | 'supabase' };
 const endpoint = 'https://alkohol-ja-aju.vercel.app/api/admin-data';
 const DELETE_ENDPOINT = 'https://alkohol-ja-aju.vercel.app/api/admin-delete-response';
 
@@ -105,7 +105,7 @@ export default function AdminData() {
       const r = await fetch(DELETE_ENDPOINT, { method: 'POST', headers: { Authorization: `Bearer ${session.access_token}`, 'content-type': 'application/json' }, body: JSON.stringify({ responseId: responseId.trim() }) });
       const body = await r.json().catch(() => null);
       if (r.ok && body?.ok) {
-        setDeleteMsg(body.deleted ? { ok: body.mirror !== 'failed', text: body.mirror === 'failed' ? `Ответ ${responseId.trim()} удалён из таблицы, но копию в Supabase удалить не удалось. Удалите строку вручную в Table Editor (research_responses).` : `Ответ ${responseId.trim()} удалён.` } : { ok: false, text: 'Такого ответа в таблице нет. Проверьте ID.' });
+        setDeleteMsg(body.deleted ? { ok: body.mirror !== 'failed' && body.sheet !== 'failed', text: body.sheet === 'failed' ? `Ответ ${responseId.trim()} удалён из Supabase, но из Google-таблицы удалить не удалось (Apps Script недоступен или не обновлён). Удалите строку в таблице вручную.` : body.mirror === 'failed' ? `Ответ ${responseId.trim()} удалён из таблицы, но копию в Supabase удалить не удалось. Удалите строку вручную в Table Editor (research_responses).` : `Ответ ${responseId.trim()} удалён.` } : { ok: false, text: 'Такого ответа в таблице нет. Проверьте ID.' });
         if (body.deleted) { setResponseId(''); setReload(v => v + 1); }
       } else if (body?.error === 'invalid_response_id') setDeleteMsg({ ok: false, text: 'ID должен выглядеть как research_… (латиница, цифры, _ и -).' });
       else setDeleteMsg({ ok: false, text: explain(r.status, body?.error === 'delete_upstream_failed_or_script_outdated' ? 'upstream_failed_or_script_outdated' : body?.error).replace('версии 10', 'версии 11') });
@@ -138,7 +138,7 @@ export default function AdminData() {
           {!data && !error && <p>Загрузка данных…</p>}
           {data && (
             <>
-              <p className="admin-meta">Валидных ответов: <b>{data.n}</b> · Исключено (старые схемы и без согласия): {data.excluded} · Обновлено {new Date(data.lastUpdated).toLocaleString('ru-RU')}</p>
+              <p className="admin-meta">Валидных ответов: <b>{data.n}</b> · Исключено (старые схемы и без согласия): {data.excluded} · Обновлено {new Date(data.lastUpdated).toLocaleString('ru-RU')} · Источник: {data.source === 'supabase' ? 'Supabase' : 'Google-таблица'}</p>
               <div className="admin-grid">
                 {Object.keys(adminQuestions).filter(k => data.fields[k] && Object.keys(data.fields[k]).length > 0).map(k => {
                   const base = adminQuestions[k].multi ? data.n : (data.answered[k] ?? data.n);
