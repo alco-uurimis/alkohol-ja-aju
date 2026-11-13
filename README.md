@@ -65,3 +65,7 @@ Year: 2026
 `api/_mirror.js` writes every survey response and before/after submission to Supabase as well as to the Google Sheet. It is off until you set `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (Vercel, server-side only) and run `docs/supabase-schema.sql`. Failures never affect the answer shown to the visitor, duplicates are ignored by primary key, and the Sheet remains the source of truth for the public and admin views. The same data now lives in a second store: say so in the privacy notice before enabling it.
 
 The admin page has a "Копия в Supabase" card (row-count comparison, `api/admin-mirror-status.js`), and deleting a response by ID removes it from the Sheet **and** from the Supabase copy (the admin sees a warning if the copy could not be deleted). Rows written before the mirror was switched on are copied once with `scripts/backfill-supabase.mjs` (dry run by default; see the header of the script).
+
+### Moving reads to Supabase: stage 1 (compare only)
+
+`api/_aggregate.js` rebuilds the Sheet's summaries (`aggregate`, `adminAggregate`, `prepostAggregate`) from the Supabase rows. `src/aggregate.test.js` runs the **real** `docs/research-google-sheet-webhook.gs` against a fake spreadsheet and requires identical output on generated data. The admin card "Копия в Supabase → Сверить с таблицей" does the same comparison on live data. Nothing is switched yet: the site still reads from the Sheet.

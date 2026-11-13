@@ -86,3 +86,26 @@ export async function mirrorCount(table, fetchImpl = fetch) {
   } catch { return { ok: false, configured: true, error: 'unreachable' }; }
   finally { clearTimeout(timer); }
 }
+
+/** Every row of a mirror table (pages of 1000). Returns null if anything goes wrong, so callers never compare partial data. */
+export async function mirrorFetchAll(table, fetchImpl = fetch) {
+  const t = target();
+  if (!t || !['research_responses', 'prepost_submissions'].includes(table)) return null;
+  const rows = [];
+  for (let from = 0; from < 200000; from += 1000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS * 2);
+    try {
+      const res = await fetchImpl(`${t.base}/rest/v1/${table}?select=*&order=created_at.asc`, {
+        headers: { apikey: t.key, ...(t.key.startsWith('sb_') ? {} : { authorization: `Bearer ${t.key}` }), range: `${from}-${from + 999}` },
+        signal: controller.signal,
+      });
+      if (!res.ok) return null;
+      const page = await res.json();
+      if (!Array.isArray(page)) return null;
+      rows.push(...page);
+      if (page.length < 1000) return rows;
+    } catch { return null; } finally { clearTimeout(timer); }
+  }
+  return null;
+}

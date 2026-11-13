@@ -60,3 +60,19 @@ describe('supabase mirror: delete and count', () => {
     expect((await mirrorCount('auth.users', async () => ({ ok: true }))).ok).toBe(false);
   });
 });
+
+describe('supabase mirror: fetch all', () => {
+  it('pages through 1000-row ranges and returns null on any failure', async () => {
+    const { mirrorFetchAll } = await import('../api/_mirror.js');
+    process.env.SUPABASE_URL = 'https://abc.supabase.co'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'k';
+    const ranges = [];
+    const rows = await mirrorFetchAll('research_responses', async (_u, init) => {
+      ranges.push(init.headers.range);
+      return { ok: true, json: async () => (ranges.length === 1 ? Array(1000).fill({ a: 1 }) : Array(37).fill({ a: 1 })) };
+    });
+    expect(rows).toHaveLength(1037);
+    expect(ranges).toEqual(['0-999', '1000-1999']);
+    expect(await mirrorFetchAll('research_responses', async () => ({ ok: false }))).toBeNull();
+    expect(await mirrorFetchAll('auth.users', async () => ({ ok: true, json: async () => [] }))).toBeNull();
+  });
+});
