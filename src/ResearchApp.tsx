@@ -82,15 +82,16 @@ export default function ResearchApp(){
       const data=await response.json().catch(()=>({}));
       if(!response.ok||data.ok!==true){
         console.error('Research delivery failed',data);
+        const why=` (HTTP ${response.status}${typeof data?.error==='string'?' · '+data.error.slice(0,60):''})`;
         if(data?.error==='age_not_eligible')setError(T(lang,ru?'Опрос доступен только участникам от 15 лет.':'Küsitlus on mõeldud ainult vähemalt 15-aastastele.'));
         else if(data?.error==='minor_consent_required')setError(T(lang,ru?'Для участника 15–17 лет нужно подтвердить отдельное информированное согласие.':'15–17-aastane osaleja peab kinnitama eraldi teadliku nõusoleku.'));
-        else if(data?.configured?.telegram===false&&data?.configured?.sheet===false)setError(T(lang,ru?'Сервис отправки пока не настроен на сервере. Ответы не потеряны — попробуй позже.':'Saatmisteenus pole serveris veel seadistatud. Vastused ei kao — proovi hiljem uuesti.'));
-        else setError(T(lang,ru?'Не удалось подтвердить сохранение. Ответы остаются в этой вкладке — попробуй отправить ещё раз.':'Salvestamist ei õnnestunud kinnitada. Vastused jäävad sellesse vahelehte – proovi uuesti.'));
+        else if(data?.configured?.telegram===false&&data?.configured?.sheet===false)setError(T(lang,ru?'Сервис отправки пока не настроен на сервере. Ответы не потеряны — попробуй позже.':'Saatmisteenus pole serveris veel seadistatud. Vastused ei kao — proovi hiljem uuesti.')+why);
+        else setError(T(lang,ru?'Не удалось подтвердить сохранение. Ответы остаются в этой вкладке — попробуй отправить ещё раз.':'Salvestamist ei õnnestunud kinnitada. Vastused jäävad sellesse vahelehte – proovi uuesti.')+why);
         return;
       }
       setResponseId(String(data.responseId??submissionId));
       setComplete(true);window.scrollTo({top:0,behavior:'smooth'});
-    }catch(error){console.error('Research request failed',error);setError(T(lang,ru?'Нет связи с сервером. Ответы остаются на этой странице — попробуй отправить ещё раз позже.':'Serveriga ei saadud ühendust. Vastused jäävad sellele lehele — proovi hiljem uuesti saata.'));}
+    }catch(error){console.error('Research request failed',error+' (network / CORS)');setError(T(lang,ru?'Нет связи с сервером. Ответы остаются на этой странице — попробуй отправить ещё раз позже.':'Serveriga ei saadud ühendust. Vastused jäävad sellele lehele — proovi hiljem uuesti saata.'));}
     finally{setSubmitting(false);}
   };
 
