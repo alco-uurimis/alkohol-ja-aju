@@ -43,3 +43,27 @@ describe('bilingual content integrity',()=>{
     expect(questionsRu.every(q=>q.status==='verified')).toBe(true);
   });
 });
+
+import { additionalSourcesEn, knowledgeCardsEn, questionsEn, scienceEn, sourcesEn, takeawaysEn, topicsEn } from './content.en';
+import { additionalSourcesEt } from './additionalSources';
+import { science } from './content';
+
+describe('English content stays aligned with the Estonian original',()=>{
+  const same=(a:unknown,b:unknown)=>expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+  it('sources: same ids, years and links',()=>{
+    const en=[...sourcesEn,...additionalSourcesEn], et=[...sources,...additionalSourcesEt];
+    same(en.map(s=>[s.id,s.year,s.url]),et.map(s=>[s.id,s.year,s.url]));
+  });
+  it('topics, cards, takeaways: same count, ids and source references',()=>{
+    same(topicsEn.map(t=>[t.id,t.symbol,t.refs]),topics.map(t=>[t.id,t.symbol,t.refs]));
+    same(knowledgeCardsEn.map(c=>c.refs),knowledgeCards.map(c=>c.refs));
+    same(takeawaysEn.map(t=>t.refs),takeaways.map(t=>t.refs));
+  });
+  it('quiz: same ids, answers, references and status',()=>{
+    same(questionsEn.map(q=>[q.id,q.fact,q.refs,q.status]),questions.map(q=>[q.id,q.fact,q.refs,q.status]));
+  });
+  it('science notes: same keys, none empty',()=>{
+    same(Object.keys(scienceEn),Object.keys(science));
+    for(const v of Object.values(scienceEn))expect(v.length).toBeGreaterThan(20);
+  });
+});
