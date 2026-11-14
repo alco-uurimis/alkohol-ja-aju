@@ -4,27 +4,28 @@ import type { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import './account.css';
 
-type Lang = 'et' | 'ru';
+type Lang = 'et' | 'ru' | 'en';
 const t = {
-  signIn: { et: 'Logi sisse', ru: 'Войти' },
-  signUp: { et: 'Loo konto', ru: 'Создать аккаунт' },
-  signOut: { et: 'Logi välja', ru: 'Выйти' },
-  google: { et: 'Jätka Google’iga', ru: 'Продолжить с Google' },
-  or: { et: 'või e-posti teel', ru: 'или по e-mail' },
-  email: { et: 'E-post', ru: 'E-mail' },
-  password: { et: 'Parool (vähemalt 8 märki)', ru: 'Пароль (минимум 8 символов)' },
-  close: { et: 'Sulge', ru: 'Закрыть' },
-  haveAcc: { et: 'Konto on juba olemas? Logi sisse', ru: 'Уже есть аккаунт? Войти' },
-  noAcc: { et: 'Kontot pole? Loo konto', ru: 'Нет аккаунта? Создать' },
-  confirm: { et: 'Saatsime kinnituslingi. Ava e-kiri ja kinnita aadress.', ru: 'Мы отправили ссылку подтверждения. Откройте письмо и подтвердите адрес.' },
-  failed: { et: 'Ei õnnestunud. Kontrolli andmeid ja proovi uuesti.', ru: 'Не получилось. Проверьте данные и попробуйте снова.' },
+  signIn: { et: 'Logi sisse', ru: 'Войти', en: 'Log in' },
+  signUp: { et: 'Loo konto', ru: 'Создать аккаунт', en: 'Create an account' },
+  signOut: { et: 'Logi välja', ru: 'Выйти', en: 'Log out' },
+  google: { et: 'Jätka Google’iga', ru: 'Продолжить с Google', en: 'Continue with Google' },
+  or: { et: 'või e-posti teel', ru: 'или по e-mail', en: 'or by e-mail' },
+  email: { et: 'E-post', ru: 'E-mail', en: 'E-mail' },
+  password: { et: 'Parool (vähemalt 8 märki)', ru: 'Пароль (минимум 8 символов)', en: 'Password (at least 8 characters)' },
+  close: { et: 'Sulge', ru: 'Закрыть', en: 'Close' },
+  haveAcc: { et: 'Konto on juba olemas? Logi sisse', ru: 'Уже есть аккаунт? Войти', en: 'Already have an account? Log in' },
+  noAcc: { et: 'Kontot pole? Loo konto', ru: 'Нет аккаунта? Создать', en: 'No account? Create one' },
+  confirm: { et: 'Saatsime kinnituslingi. Ava e-kiri ja kinnita aadress.', ru: 'Мы отправили ссылку подтверждения. Откройте письмо и подтвердите адрес.', en: 'We sent a confirmation link. Open the e-mail and confirm the address.' },
+  failed: { et: 'Ei õnnestunud. Kontrolli andmeid ja proovi uuesti.', ru: 'Не получилось. Проверьте данные и попробуйте снова.', en: 'It did not work. Check the details and try again.' },
   privacy: {
     et: 'Konto on valikuline ega ole seotud uurimisküsitlusega: küsitluse vastuseid kontoga ei seota.',
     ru: 'Аккаунт необязателен и не связан с исследовательским опросом: ответы опроса с аккаунтом не связываются.',
+    en: 'An account is optional and is not linked to the research survey: survey answers are not linked to an account.',
   },
 } as const;
 
-const pageLang = (): Lang => (document.documentElement.lang === 'ru' ? 'ru' : 'et');
+const pageLang = (): Lang => (document.documentElement.lang === 'ru' ? 'ru' : document.documentElement.lang === 'en' ? 'en' : 'et');
 
 export default function AccountMenu() {
   const client = supabase;

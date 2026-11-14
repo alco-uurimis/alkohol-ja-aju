@@ -1,8 +1,13 @@
 import { InfoCard, Section, SourceReference } from './Shared';
+import { T } from '../data/siteT';
 
-export default function Reflection({lang}:{lang:'et'|'ru'}){
+export default function Reflection({lang}:{lang:'et'|'ru'|'en'}){
   const ru=lang==='ru';
-  const checks:[string,string][]=ru?[
+  const checks:[string,string][]=lang==='en'?[
+    ['Separate the fact from the conclusion','Which part of the claim is shown directly by the study, and where does a wider conclusion begin?'],
+    ['Name the limitation','Think about whether the data concern adults, adolescents, a laboratory task or observation in everyday life.'],
+    ['Check the applicability','Why can a mini-game result not determine health status, intoxication or the ability to drive?'],
+  ]:ru?[
     ['Отдели факт от вывода','Какая часть утверждения прямо показана исследованием, а где начинается более широкий вывод?'],
     ['Назови ограничение','Подумай, относятся ли данные к взрослым, подросткам, лабораторной задаче или наблюдению в обычной жизни.'],
     ['Проверь применимость','Почему результат мини-игры не может определить состояние здоровья, опьянение или способность управлять автомобилем?'],
@@ -11,7 +16,11 @@ export default function Reflection({lang}:{lang:'et'|'ru'}){
     ['Nimeta piirang','Mõtle, kas andmed käivad täiskasvanute, noorukite, laboriülesande või tavaelu vaatluse kohta.'],
     ['Kontrolli rakendatavust','Miks ei saa minimängu tulemus määrata terviseseisundit, joovet ega sõiduvõimet?'],
   ];
-  const prompts:[string,string,number[]][]=ru?[
+  const prompts:[string,string,number[]][]=lang==='en'?[
+    ['How to talk about risk without scaring?','Discuss why accurate information, the limits of conclusions and a respectful tone help more than scary stories.',[14]],
+    ['Which situations increase the risk?','Think about company, peer pressure, combining alcohol with driving and fast drinking. You do not need to share personal experience.',[12]],
+    ['Why do different types of study matter?','Compare what a laboratory experiment, a review of studies and observing a group of people can show.',[13]],
+  ]:ru?[
     ['Как говорить о риске без запугивания?','Обсуди, почему точная информация, границы вывода и уважительный тон помогают больше, чем страшные истории.',[14]],
     ['Какие ситуации повышают риск?','Подумай о компании, давлении сверстников, сочетании с вождением и быстром употреблении. Не нужно делиться личным опытом.',[12]],
     ['Почему важны разные виды исследований?','Сравни, что могут показать лабораторный эксперимент, обзор исследований и наблюдение за группой людей.',[13]],
@@ -21,10 +30,10 @@ export default function Reflection({lang}:{lang:'et'|'ru'}){
     ['Miks on eri tüüpi uuringud tähtsad?','Võrdle, mida võivad näidata laborikatse, uuringute ülevaade ja inimrühma jälgimine.',[13]],
   ];
   return <>
-    <Section id="samoprov" number={ru?'08 / САМОПРОВЕРКА':'08 / ENESEKONTROLL'} title={ru?'Проверь ход рассуждения':'Kontrolli oma arutluskäiku'} intro={ru?'Это не тест на здоровье и не оценка. Эти три вопроса помогают заметить, как читать научное утверждение аккуратно.':'See ei ole tervisetest ega hinnang. Need kolm küsimust aitavad teadusväidet tähelepanelikult lugeda.'} className="reflection-section">
+    <Section id="samoprov" number={T(lang,ru?'08 / САМОПРОВЕРКА':'08 / ENESEKONTROLL')} title={T(lang,ru?'Проверь ход рассуждения':'Kontrolli oma arutluskäiku')} intro={T(lang,ru?'Это не тест на здоровье и не оценка. Эти три вопроса помогают заметить, как читать научное утверждение аккуратно.':'See ei ole tervisetest ega hinnang. Need kolm küsimust aitavad teadusväidet tähelepanelikult lugeda.')} className="reflection-section">
       <div className="reflection-grid">{checks.map(([title,text],i)=><InfoCard key={title} title={title}><span className="takeaway-number" aria-hidden="true">0{i+1}</span><p>{text}</p></InfoCard>)}</div>
     </Section>
-    <Section id="obsuzhdenie" number={ru?'09 / ОБСУДИ':'09 / ARUTLE'} title={ru?'Вопросы для спокойного обсуждения':'Küsimused rahulikuks aruteluks'} intro={ru?'Их можно обсудить на уроке, дома или самостоятельно. Не нужно рассказывать о личном употреблении алкоголя.':'Neid saab arutada tunnis, kodus või iseseisvalt. Isiklikust alkoholitarvitamisest ei ole vaja rääkida.'} className="reflection-section discussion-section">
+    <Section id="obsuzhdenie" number={T(lang,ru?'09 / ОБСУДИ':'09 / ARUTLE')} title={T(lang,ru?'Вопросы для спокойного обсуждения':'Küsimused rahulikuks aruteluks')} intro={T(lang,ru?'Их можно обсудить на уроке, дома или самостоятельно. Не нужно рассказывать о личном употреблении алкоголя.':'Neid saab arutada tunnis, kodus või iseseisvalt. Isiklikust alkoholitarvitamisest ei ole vaja rääkida.')} className="reflection-section discussion-section">
       <div className="reflection-grid">{prompts.map(([title,text,refs],i)=><InfoCard key={title} title={title}><span className="takeaway-number" aria-hidden="true">0{i+1}</span><p>{text} <SourceReference ids={refs} lang={lang}/></p></InfoCard>)}</div>
     </Section>
   </>;

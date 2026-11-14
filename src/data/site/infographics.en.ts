@@ -1,0 +1,22 @@
+/** English texts for the main page (infographicsEn), keyed by the Estonian source string. */
+export const infographicsEn: Record<string, string> = {
+  "02 / INFOGRAAFIKA": "02 / INFOGRAPHICS",
+  "Kaks skeemi, mis aitavad põhilist näha": "Two diagrams that help you see the main thing",
+  "Siia on jäetud ainult kaks visualiseeringut, mis lisavad uut infot: alkoholi võimalikud mõjud ja lihtsustatud neurokeemia skeem.": "Only two visualisations that add new information are left here: the possible effects of alcohol and a simplified neurochemistry diagram.",
+  "MÕJUD": "EFFECTS",
+  "Mis võib muutuda kohe ja aja jooksul": "What can change right away and over time",
+  "Lühiajaliselt": "In the short term",
+  "Korduva rohke tarvitamise korral": "With repeated heavy drinking",
+  "Mõju sõltub kogusest, sagedusest, vanusest ja teistest teguritest.": "The effect depends on the amount, frequency, age and other factors.",
+  "NEUROKEEMIA": "NEUROCHEMISTRY",
+  "Kolm signaalisüsteemi — väga lihtsustatult": "Three signalling systems — very simplified",
+  "pidurdav signaal tugevneb": "the inhibitory signal gets stronger",
+  "Glutamaat": "Glutamate",
+  "ergastav signaal nõrgeneb": "the excitatory signal gets weaker",
+  "Dopamiin": "Dopamine",
+  "tasustamissüsteem": "reward system",
+  "sedatiivne toime": "sedative effect",
+  "õppimine ja mälu": "learning and memory",
+  "käitumise kinnistamine": "fixing of behaviour",
+  "Etanool toimib paljudele sihtmärkidele; see ei ole täielik neurokeemia ülevaade.": "Ethanol acts on many targets; this is not a complete overview of neurochemistry.",
+};

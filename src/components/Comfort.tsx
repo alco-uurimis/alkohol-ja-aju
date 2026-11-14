@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './comfort.css';
 
-type Lang = 'et' | 'ru';
+type Lang = 'et' | 'ru' | 'en';
 const T = {
   et: {
     open: 'Lugemine', title: 'Lugemise seaded', close: 'Sulge',
@@ -22,13 +22,22 @@ const T = {
     nothing: 'Не нашёл, что читать.',
     saved: 'Настройки запоминаются в этом браузере.',
   },
+  en: {
+    open: 'Reading', title: 'Reading settings', close: 'Close',
+    easy: 'Easy reading', easyHint: 'Larger type, wider lines, a calmer layout.',
+    calm: 'Calm mode', calmHint: 'Turns animations off.',
+    read: 'Read the section aloud', stop: 'Stop', readHint: 'Reads the selected text or the section on the screen.',
+    novoice: 'This device has no English voice. Try another browser or device.',
+    nothing: 'Found nothing to read.',
+    saved: 'The settings are remembered in this browser.',
+  },
 } as const;
 
 const KEY = 'alkohol-ja-aju:comfort';
 type Prefs = { easy: boolean; calm: boolean };
 const load = (): Prefs => { try { const v = JSON.parse(localStorage.getItem(KEY) || '{}'); return { easy: !!v.easy, calm: !!v.calm }; } catch { return { easy: false, calm: false }; } };
 const apply = (p: Prefs) => { const c = document.documentElement.classList; c.toggle('easy-read', p.easy); c.toggle('calm', p.calm); };
-const pageLang = (): Lang => (document.documentElement.lang === 'ru' ? 'ru' : 'et');
+const pageLang = (): Lang => (document.documentElement.lang === 'ru' ? 'ru' : document.documentElement.lang === 'en' ? 'en' : 'et');
 
 /** Text of the section that fills most of the viewport (used when nothing is selected). */
 function visibleSectionText(): string {
@@ -89,12 +98,12 @@ export default function Comfort() {
     stop(); setNote('');
     const text = (getSelection()?.toString().trim() || visibleSectionText()).replace(/\s+/g, ' ').slice(0, 6000);
     if (!text) { setNote(t.nothing); return; }
-    const code = lang === 'ru' ? 'ru' : 'et';
+    const code = lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : 'et';
     const voice = speechSynthesis.getVoices().find(v => v.lang.toLowerCase().startsWith(code));
     // Voices load lazily in some browsers; an empty list is not proof that none exists, so only warn when the list is populated.
     if (!voice && speechSynthesis.getVoices().length > 0) { setNote(t.novoice); return; }
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang === 'ru' ? 'ru-RU' : 'et-EE';
+    u.lang = lang === 'ru' ? 'ru-RU' : lang === 'en' ? 'en-GB' : 'et-EE';
     if (voice) u.voice = voice;
     u.onend = () => setSpeaking(false);
     u.onerror = () => setSpeaking(false);

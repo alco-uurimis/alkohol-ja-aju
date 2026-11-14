@@ -22,7 +22,7 @@ export function getRu(): typeof RuContent {
 export function wantsRu(): boolean {
   try {
     const q = new URLSearchParams(location.search).get('lang');
-    if (q === 'ru' || q === 'et') return q === 'ru';
+    if (q === 'ru' || q === 'et' || q === 'en') return q === 'ru';
     return localStorage.getItem('alkohol-ja-aju:language') === 'ru';
   } catch { return false; }
 }

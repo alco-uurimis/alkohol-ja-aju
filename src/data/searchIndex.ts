@@ -1,6 +1,6 @@
 import { terms } from '../components/ReferenceGlossary';
 
-export type SearchEntry = { kind: 'section' | 'page' | 'term'; ru: string; et: string; descRu?: string; descEt?: string; href: string; keys?: string };
+export type SearchEntry = { kind: 'section' | 'page' | 'term'; ru: string; et: string; en?: string; descRu?: string; descEt?: string; descEn?: string; href: string; keys?: string };
 
 // Terms without a Russian name (e.g. GABA) are also findable by their Cyrillic spelling.
 const CYR: Record<string, string> = { a: 'а', b: 'б', c: 'к', d: 'д', e: 'е', f: 'ф', g: 'г', h: 'х', i: 'и', j: 'й', k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', q: 'к', r: 'р', s: 'с', t: 'т', u: 'у', v: 'в', w: 'в', x: 'кс', y: 'ы', z: 'з' };
@@ -9,8 +9,50 @@ const translit = (v: string) => v.toLowerCase().split('').map(ch => CYR[ch] ?? c
 const s = (id: string, ru: string, et: string, keys = ''): SearchEntry => ({ kind: 'section', ru, et, href: '#' + id, keys });
 const p = (href: string, ru: string, et: string, keys = ''): SearchEntry => ({ kind: 'page', ru, et, href, keys });
 
+
+/** English titles of the entries above, keyed by the Estonian title (all of them are covered; a test checks it). */
+export const enTitles: Record<string, string> = {
+  'Vali vorm': 'Choose a format',
+  'Mõju ajule': 'Effect on the brain',
+  'Skeemid': 'Diagrams',
+  'Teadusbaas': 'Science base',
+  'Mäluharjutus': 'Memory exercise',
+  'Tähelepanuharjutus': 'Attention exercise',
+  'Minimängud': 'Mini-games',
+  'Müüt või fakt': 'Myth or fact',
+  'Enesekontroll': 'Self-check',
+  'Arutelu': 'Discussion',
+  'Mida teha olukorras': 'What to do in a situation',
+  'Tunniks': 'For the lesson',
+  'Tagasiside veebilehe kohta': 'Feedback about the website',
+  'Kokkuvõte: mida oled teinud': 'Summary: what you have done',
+  'Mõistete sõnastik': 'Glossary of terms',
+  'Allikad ja kirjandus': 'Sources and literature',
+  'Õppetükk 5 minutiga': 'A 5-minute lesson',
+  'Õppetükk 20 minutiga': 'A 20-minute lesson',
+  'Mida teha / Vajan abi': 'What to do / I need help',
+  'Õpetajale': 'For teachers',
+  'Teadusteemad': 'Science topics',
+  'Äge mõju: töömälu': 'Acute effects: working memory',
+  'Mälu ja mälulüngad': 'Memory and blackouts',
+  'Nooruki aju': 'The adolescent brain',
+  'Enesekontroll ja reaktsiooni pidurdamine': 'Self-control and response inhibition',
+  'Alkohol, uni ja hingamine': 'Alcohol, sleep and breathing',
+  'Alkohol ja autojuhtimine': 'Alcohol and driving',
+  'Tasustamissüsteem ja harjumused': 'The reward system and habits',
+  'Kognitiivsete funktsioonide taastumine': 'Recovery of cognitive functions',
+  'Vabatahtlik küsitlus 15+': 'Voluntary survey 15+',
+  'Mida näitavad Eesti andmed?': 'What does the data from Estonia show?',
+  'Küsitluse tulemused': 'Survey results',
+  'Metoodika': 'Methodology',
+  'Kuidas fakte kontrolliti': 'How the facts were checked',
+  'Andmed ja privaatsus': 'Data and privacy',
+  'Töölehed A4': 'A4 worksheets',
+  'Muudatuste ajalugu': 'Changelog',
+};
+
 /** Everything searchable on the main page. Matching runs in the browser only; queries are never sent anywhere. */
-export const searchIndex: SearchEntry[] = [
+const baseIndex: SearchEntry[] = [
   s('valik', 'Выбрать формат', 'Vali vorm', '5 минут 20 минут урок tunnik'),
   s('aju', 'Влияние на мозг', 'Mõju ajule', 'мозг память внимание реакция решения aju'),
   s('infograafika', 'Схемы', 'Skeemid', 'инфографика схема skeem infograafika'),
@@ -48,5 +90,7 @@ export const searchIndex: SearchEntry[] = [
   p('data-policy/', 'Данные и приватность', 'Andmed ja privaatsus', 'конфиденциальность privacy'),
   p('worksheet/', 'Рабочие листы A4', 'Töölehed A4', 'печать tööleht'),
   p('changelog/', 'История изменений', 'Muudatuste ajalugu', 'changelog'),
-  ...terms.map((t): SearchEntry => ({ kind: 'term', ru: (t as { ruTerm?: string }).ruTerm ?? t.term, et: t.term, descRu: t.ru, descEt: t.et, href: '#moisted', keys: `${t.term} ${translit(t.term)}` })),
+  ...terms.map((t): SearchEntry => ({ kind: 'term', ru: (t as { ruTerm?: string }).ruTerm ?? t.term, et: t.term, descRu: t.ru, descEt: t.et, href: '#moisted', keys: `${t.term} ${translit(t.term)} ${(t as { enTerm?: string }).enTerm ?? ''}`, en: (t as { enTerm?: string }).enTerm ?? t.term, descEn: (t as { en?: string }).en })),
 ];
+
+export const searchIndex: SearchEntry[] = baseIndex.map(e => (e.kind === 'term' ? e : { ...e, en: enTitles[e.et] ?? e.et }));

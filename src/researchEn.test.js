@@ -84,3 +84,27 @@ describe('English classroom kit', () => {
     expect(JSON.stringify([lessonEn, objectivesEn, promptsEn, ticketQuestionsEn, Object.values(classroomEn)])).not.toMatch(/[А-Яа-яõäöü]/);
   });
 });
+
+describe('English main page', () => {
+  const files = ['App.tsx', 'sections/LearningCenter.tsx', 'sections/Closing.tsx', 'sections/Infographics.tsx', 'sections/Brain.tsx', 'components/PathChooser.tsx', 'components/FinalSummary.tsx', 'components/FeedbackSurvey.tsx', 'components/Reflection.tsx', 'components/ReferenceGlossary.tsx', 'components/SiteEnhancements.tsx'];
+  it('has an English text for every Estonian string in the main-page components', async () => {
+    const { siteEn } = await import('./data/siteT');
+    const pairT = new RegExp(`T\\(lang,ru\\s*\\?\\s*${lit}\\s*:\\s*${lit}\\)`, 'g');
+    const missing = [];
+    for (const f of files) {
+      const src = readFileSync(new URL(`./${f}`, import.meta.url), 'utf8');
+      for (const m of src.matchAll(pairT)) { const et = m[2].slice(1, -1).replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\n/g, '\n'); if (!siteEn[et]) missing.push(f + ': ' + et); }
+    }
+    expect(missing).toEqual([]);
+  });
+  it('has no Estonian or Russian in the English values', async () => {
+    const { siteEn } = await import('./data/siteT');
+    for (const [k, v] of Object.entries(siteEn)) expect(v, k).not.toMatch(/[А-Яа-яЁё]|[õäöüÕÄÖÜ]/);
+    const en = await import('./data/content.en');
+    expect(JSON.stringify([en.topicsEn, en.knowledgeCardsEn, en.scienceEn, en.takeawaysEn, en.sourcesEn.map(s => [s.organization, s.title, s.note])])).not.toMatch(/[А-Яа-яЁё]|[õäöüÕÄÖÜ]/);
+  });
+  it('translates every search-index entry', async () => {
+    const { searchIndex } = await import('./data/searchIndex');
+    for (const e of searchIndex) if (e.kind !== 'term') expect(e.en && e.en !== e.et, e.et).toBeTruthy();
+  });
+});

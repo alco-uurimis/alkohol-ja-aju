@@ -1,0 +1,21 @@
+/** English texts for the main page (brainEn), keyed by the Estonian source string. */
+export const brainEn: Record<string, string> = {
+  "01 / MÕISTA": "01 / UNDERSTAND",
+  "Mida alkohol ajus muudab?": "What does alcohol change in the brain?",
+  "Kõigepealt neli võimet, mille muutusi on käitumises lihtne märgata. Allpool on sügavam selgitus: virgatsained, mälu, tasusüsteem, arenev aju, uni, tolerants ja taastumine.": "First, four abilities whose changes are easy to notice in behaviour. Below is a deeper explanation: neurotransmitters, memory, the reward system, the developing brain, sleep, tolerance and recovery.",
+  "Aju ja alkoholi teemad": "Brain and alcohol topics",
+  "VAHETU TOIME": "ACUTE EFFECT",
+  "Miks see juhtub?": "Why does this happen?",
+  "ÕPPESKEEM": "LEARNING DIAGRAM",
+  "Millised piirkonnad on nende funktsioonidega seotud": "Which regions are linked with these functions",
+  "Skeemil on otse märgitud, milliseid piirkondi seostatakse sagedamini mälu, tähelepanu, otsustamise ja reaktsioonikiirusega.": "The diagram marks directly which regions are more often linked with memory, attention, decision-making and reaction speed.",
+  "See on lihtsustatud õppeskeem: funktsioonid jaotuvad ajuvõrgustikes ega kuulu üheleainsale punktile.": "This is a simplified learning diagram: functions are spread across brain networks and do not belong to a single point.",
+  "Ajupiirkondade ja seotud funktsioonide skeem": "Diagram of brain regions and related functions",
+  "Tarvitamise ajal": "During drinking",
+  "Seos või põhjus?": "Association or cause?",
+  "SÜGAVAMALT": "IN MORE DEPTH",
+  "Mida veel alkoholi kohta teada": "What else to know about alcohol",
+  "Lühiselgitused psühhiaatriaõpiku, NIAAA ja WHO ülevaadete ning eelretsenseeritud teadusartiklite põhjal. Ava kaart, kui tahad näha mehhanismi või uuringu piiranguid.": "Short explanations based on a psychiatry textbook, reviews by NIAAA and the WHO and peer-reviewed scientific articles. Open a card if you want to see the mechanism or the limits of a study.",
+  "kaarti": "card",
+  "Täpsemalt ja oluline piirang": "In more detail and an important limitation",
+};

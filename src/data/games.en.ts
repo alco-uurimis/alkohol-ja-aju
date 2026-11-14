@@ -1,5 +1,3 @@
-import { science } from './content';
-
 /** English texts of the three exercises (memory, attention, game lab), keyed by the Estonian source string. */
 export const gamesEn: Record<string, string> = {
   // --- Memory
@@ -119,11 +117,4 @@ export const stroopNamesEn = { violet: 'purple', lime: 'lime', cyan: 'cyan', cor
 /** Same words as the Estonian and Russian pools: 32 common, easy-to-picture nouns. */
 export const wordsEn = ['window','book','forest','cloud','stone','flower','chair','river','pencil','bridge','clock','leaf','sun','hat','ribbon','box','snow','boat','key','bicycle','garden','door','feather','sea','lamp','apple','cup','pillow','sand','rain','tree','scarf'];
 
-/** The few science notes the exercises show. Other keys keep the Estonian text and are not used on the English page. */
-export const scienceEn: typeof science = {
-  ...science,
-  memory: 'This is a recognition task: you memorised the words, did something else in between and recognised them later. It concerns holding information briefly and recognising it afterwards; it does not measure working-memory capacity separately. The result describes only this attempt.',
-  memoryAlcohol: 'Alcohol can disrupt the storing of new memories. This cannot be proved or disproved by your result in this exercise.',
-  attention: 'Selective attention here means finding the needed character among distracting ones. The result also includes seeing the character and entering the answer, so it is not a pure measure of attention.',
-  attentionAlcohol: 'Alcohol can disrupt concentration and the sharing of attention. This exercise does not show what an intoxicated person would see or feel.',
-};
+export { scienceEn } from './content.en';

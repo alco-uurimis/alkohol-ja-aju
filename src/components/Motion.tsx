@@ -34,11 +34,11 @@ function NeuralBackdrop() {
   );
 }
 
-const FACTS: { n?: number; live?: boolean; et: string; ru: string; icon: string }[] = [
-  { n: 8, et: 'teadusteemat', ru: 'научных тем', icon: 'M4 6h16M4 12h16M4 18h10' },
-  { n: 3, et: 'minimängu', ru: 'мини-игры', icon: 'M6 12h4M8 10v4M15 11h.01M18 13h.01M4 8h16a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4a2 2 0 012-2z' },
-  { n: 10, et: 'küsimust viktoriinis', ru: 'вопросов в викторине', icon: 'M9 9a3 3 0 115 2c-1 1-2 1.5-2 3M12 18h.01' },
-  { live: true, et: 'vastust küsitlusele', ru: 'ответили на опрос', icon: 'M16 11a3 3 0 100-6 3 3 0 000 6zM8 11a3 3 0 100-6 3 3 0 000 6zM2 20c0-3 3-5 6-5s6 2 6 5M14 15c3 0 8 1 8 5' },
+const FACTS: { n?: number; live?: boolean; et: string; ru: string; en: string; icon: string }[] = [
+  { n: 8, et: 'teadusteemat', ru: 'научных тем', en: 'science topics', icon: 'M4 6h16M4 12h16M4 18h10' },
+  { n: 3, et: 'minimängu', ru: 'мини-игры', en: 'mini-games', icon: 'M6 12h4M8 10v4M15 11h.01M18 13h.01M4 8h16a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4a2 2 0 012-2z' },
+  { n: 10, et: 'küsimust viktoriinis', ru: 'вопросов в викторине', en: 'quiz questions', icon: 'M9 9a3 3 0 115 2c-1 1-2 1.5-2 3M12 18h.01' },
+  { live: true, et: 'vastust küsitlusele', ru: 'ответили на опрос', en: 'survey responses', icon: 'M16 11a3 3 0 100-6 3 3 0 000 6zM8 11a3 3 0 100-6 3 3 0 000 6zM2 20c0-3 3-5 6-5s6 2 6 5M14 15c3 0 8 1 8 5' },
 ];
 
 function CountUp({ to, run }: { to: number; run: boolean }) {
@@ -95,12 +95,12 @@ function useResponseCount(): number | null | 'failed' {
 function FactStrip() {
   const ref = useRef<HTMLDivElement>(null);
   const [run, setRun] = useState(false);
-  const [lang, setLang] = useState(() => (document.documentElement.lang === 'ru' ? 'ru' : 'et'));
+  const [lang, setLang] = useState(() => ((['ru', 'en'].includes(document.documentElement.lang) ? document.documentElement.lang : 'et')));
   const responses = useResponseCount();
   useEffect(() => {
-    const mo = new MutationObserver(() => setLang(document.documentElement.lang === 'ru' ? 'ru' : 'et'));
+    const mo = new MutationObserver(() => setLang((['ru', 'en'].includes(document.documentElement.lang) ? document.documentElement.lang : 'et')));
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
-    setLang(document.documentElement.lang === 'ru' ? 'ru' : 'et');
+    setLang((['ru', 'en'].includes(document.documentElement.lang) ? document.documentElement.lang : 'et'));
     const el = ref.current;
     if (!el || !('IntersectionObserver' in window)) { setRun(true); return () => mo.disconnect(); }
     const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setRun(true); io.disconnect(); } }, { threshold: 0.3 });
@@ -113,7 +113,7 @@ function FactStrip() {
         <div className="fact-strip__item" role="listitem" key={f.live ? 'live' : f.n} style={{ ['--i' as string]: i }}>
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={f.icon} /></svg>
           <strong>{f.live ? (typeof responses === 'number' ? <CountUp to={responses} run={run} /> : '…') : <CountUp to={f.n ?? 0} run={run} />}</strong>
-          <span>{lang === 'ru' ? f.ru : f.et}</span>
+          <span>{lang === 'ru' ? f.ru : lang === 'en' ? f.en : f.et}</span>
           {f.live && typeof responses === 'number' && <i className="fact-strip__live" aria-hidden="true" />}
         </div>
       ))}

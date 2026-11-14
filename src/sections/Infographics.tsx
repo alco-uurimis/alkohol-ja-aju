@@ -1,6 +1,7 @@
 import { Section, SourceReference } from '../components/Shared';
+import { T } from '../data/siteT';
 
-type Lang='et'|'ru';
+type Lang='et'|'ru'|'en';
 type IconType='clock'|'eye'|'balance'|'control'|'memory'|'tolerance'|'link'|'sleep';
 
 const Icon=({type}:{type:IconType})=>{
@@ -19,36 +20,36 @@ const Icon=({type}:{type:IconType})=>{
 
 export default function Infographics({lang}:{lang:Lang}){
   const ru=lang==='ru';
-  const short:[IconType,string][]=ru?[
+  const short:[IconType,string][]=lang==='en'?[['clock','Slowed reaction'],['eye','Reduced attention'],['balance','Impaired coordination'],['control','Weakened self-control']]:ru?[
     ['clock','Замедление реакции'],['eye','Снижение внимания'],['balance','Нарушение координации'],['control','Ослабление самоконтроля'],
   ]:[['clock','Reaktsiooni aeglustumine'],['eye','Tähelepanu vähenemine'],['balance','Koordinatsiooni häirumine'],['control','Enesekontrolli nõrgenemine']];
-  const long:[IconType,string][]=ru?[
+  const long:[IconType,string][]=lang==='en'?[['memory','Memory problems'],['tolerance','Tolerance'],['link','Risk of dependence'],['sleep','Disrupted sleep and mood']]:ru?[
     ['memory','Проблемы с памятью'],['tolerance','Толерантность'],['link','Риск зависимости'],['sleep','Нарушение сна и настроения'],
   ]:[['memory','Mäluprobleemid'],['tolerance','Tolerants'],['link','Sõltuvusrisk'],['sleep','Une ja meeleolu häired']];
 
-  return <Section id="infograafika" number={ru?'02 / ИНФОГРАФИКА':'02 / INFOGRAAFIKA'} title={ru?'Две схемы, которые помогают увидеть главное':'Kaks skeemi, mis aitavad põhilist näha'} intro={ru?'Здесь оставлены только две визуализации, которые добавляют новую информацию: возможные эффекты алкоголя и упрощённая схема нейрохимии.':'Siia on jäetud ainult kaks visualiseeringut, mis lisavad uut infot: alkoholi võimalikud mõjud ja lihtsustatud neurokeemia skeem.'} className="infographics-section">
+  return <Section id="infograafika" number={T(lang,ru?'02 / ИНФОГРАФИКА':'02 / INFOGRAAFIKA')} title={T(lang,ru?'Две схемы, которые помогают увидеть главное':'Kaks skeemi, mis aitavad põhilist näha')} intro={T(lang,ru?'Здесь оставлены только две визуализации, которые добавляют новую информацию: возможные эффекты алкоголя и упрощённая схема нейрохимии.':'Siia on jäetud ainult kaks visualiseeringut, mis lisavad uut infot: alkoholi võimalikud mõjud ja lihtsustatud neurokeemia skeem.')} className="infographics-section">
     <div className="infographic-grid infographic-grid-compact">
       <article className="infographic-card infographic-effects">
-        <div className="infographic-kicker"><span>{ru?'ЭФФЕКТЫ':'MÕJUD'}</span><span>01</span></div>
-        <h3>{ru?'Что может меняться сразу и со временем':'Mis võib muutuda kohe ja aja jooksul'}</h3>
+        <div className="infographic-kicker"><span>{T(lang,ru?'ЭФФЕКТЫ':'MÕJUD')}</span><span>01</span></div>
+        <h3>{T(lang,ru?'Что может меняться сразу и со временем':'Mis võib muutuda kohe ja aja jooksul')}</h3>
         <div className="effect-columns">
-          <div className="effect-column short-term"><h4>{ru?'Кратковременно':'Lühiajaliselt'}</h4>{short.map(([icon,text])=><div className="effect-row" key={text}><Icon type={icon}/><span>{text}</span></div>)}</div>
-          <div className="effect-column long-term"><h4>{ru?'При повторном тяжёлом употреблении':'Korduva rohke tarvitamise korral'}</h4>{long.map(([icon,text])=><div className="effect-row" key={text}><Icon type={icon}/><span>{text}</span></div>)}</div>
+          <div className="effect-column short-term"><h4>{T(lang,ru?'Кратковременно':'Lühiajaliselt')}</h4>{short.map(([icon,text])=><div className="effect-row" key={text}><Icon type={icon}/><span>{text}</span></div>)}</div>
+          <div className="effect-column long-term"><h4>{T(lang,ru?'При повторном тяжёлом употреблении':'Korduva rohke tarvitamise korral')}</h4>{long.map(([icon,text])=><div className="effect-row" key={text}><Icon type={icon}/><span>{text}</span></div>)}</div>
         </div>
-        <p className="infographic-note">{ru?'Эффекты зависят от количества, частоты, возраста и других факторов.':'Mõju sõltub kogusest, sagedusest, vanusest ja teistest teguritest.'} <SourceReference ids={[6,8,11]} lang={lang}/></p>
+        <p className="infographic-note">{T(lang,ru?'Эффекты зависят от количества, частоты, возраста и других факторов.':'Mõju sõltub kogusest, sagedusest, vanusest ja teistest teguritest.')} <SourceReference ids={[6,8,11]} lang={lang}/></p>
       </article>
 
       <article className="infographic-card infographic-neuro">
-        <div className="infographic-kicker"><span>{ru?'НЕЙРОХИМИЯ':'NEUROKEEMIA'}</span><span>02</span></div>
-        <h3>{ru?'Три сигнальные системы — очень упрощённо':'Kolm signaalisüsteemi — väga lihtsustatult'}</h3>
+        <div className="infographic-kicker"><span>{T(lang,ru?'НЕЙРОХИМИЯ':'NEUROKEEMIA')}</span><span>02</span></div>
+        <h3>{T(lang,ru?'Три сигнальные системы — очень упрощённо':'Kolm signaalisüsteemi — väga lihtsustatult')}</h3>
         <div className="synapse-visual" aria-hidden="true"><div className="synapse-top"><i/><i/><i/><i/><i/></div><div className="synapse-gap"><span/><span/><span/><span/><span/><span/></div><div className="synapse-bottom"><i/><i/><i/></div></div>
         <div className="neuro-grid">
-          <div className="neuro-item gaba"><strong>GABA</strong><span>{ru?'тормозный сигнал усиливается':'pidurdav signaal tugevneb'}</span></div>
-          <div className="neuro-item glutamate"><strong>{ru?'Глутамат':'Glutamaat'}</strong><span>{ru?'возбуждающий сигнал ослабевает':'ergastav signaal nõrgeneb'}</span></div>
-          <div className="neuro-item dopamine"><strong>{ru?'Дофамин':'Dopamiin'}</strong><span>{ru?'система вознаграждения':'tasustamissüsteem'}</span></div>
+          <div className="neuro-item gaba"><strong>GABA</strong><span>{T(lang,ru?'тормозный сигнал усиливается':'pidurdav signaal tugevneb')}</span></div>
+          <div className="neuro-item glutamate"><strong>{T(lang,ru?'Глутамат':'Glutamaat')}</strong><span>{T(lang,ru?'возбуждающий сигнал ослабевает':'ergastav signaal nõrgeneb')}</span></div>
+          <div className="neuro-item dopamine"><strong>{T(lang,ru?'Дофамин':'Dopamiin')}</strong><span>{T(lang,ru?'система вознаграждения':'tasustamissüsteem')}</span></div>
         </div>
-        <div className="neuro-outcomes"><span>{ru?'седативный эффект':'sedatiivne toime'}</span><span>{ru?'обучение и память':'õppimine ja mälu'}</span><span>{ru?'подкрепление поведения':'käitumise kinnistamine'}</span></div>
-        <p className="infographic-note">{ru?'Этанол действует на множество мишеней; это не полный обзор нейрохимии.':'Etanool toimib paljudele sihtmärkidele; see ei ole täielik neurokeemia ülevaade.'} <SourceReference ids={[6,9]} lang={lang}/></p>
+        <div className="neuro-outcomes"><span>{T(lang,ru?'седативный эффект':'sedatiivne toime')}</span><span>{T(lang,ru?'обучение и память':'õppimine ja mälu')}</span><span>{T(lang,ru?'подкрепление поведения':'käitumise kinnistamine')}</span></div>
+        <p className="infographic-note">{T(lang,ru?'Этанол действует на множество мишеней; это не полный обзор нейрохимии.':'Etanool toimib paljudele sihtmärkidele; see ei ole täielik neurokeemia ülevaade.')} <SourceReference ids={[6,9]} lang={lang}/></p>
       </article>
     </div>
   </Section>;

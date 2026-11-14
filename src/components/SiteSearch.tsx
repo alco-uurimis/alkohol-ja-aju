@@ -3,14 +3,15 @@ import { createPortal } from 'react-dom';
 import { searchIndex, type SearchEntry } from '../data/searchIndex';
 import './site-search.css';
 
-type Lang = 'et' | 'ru';
+type Lang = 'et' | 'ru' | 'en';
 const T = {
   et: { open: 'Otsi', title: 'Otsi saidilt', ph: 'Otsi: mälu, uni, abi, GABA…', close: 'Sulge', none: 'Midagi ei leitud. Proovi lühemat sõna.', hint: 'Päring jääb sinu brauserisse ega lähe kuhugi saatmisele.', kinds: { section: 'Jaotis', page: 'Leht', term: 'Mõiste' }, ex: ['mälu', 'uni', 'abi', 'mängud', 'allikad'] },
   ru: { open: 'Поиск', title: 'Поиск по сайту', ph: 'Поиск: память, сон, помощь, GABA…', close: 'Закрыть', none: 'Ничего не найдено. Попробуйте более короткое слово.', hint: 'Запрос остаётся в вашем браузере и никуда не отправляется.', kinds: { section: 'Раздел', page: 'Страница', term: 'Термин' }, ex: ['память', 'сон', 'помощь', 'игры', 'источники'] },
+  en: { open: 'Search', title: 'Search the site', ph: 'Search: memory, sleep, help, GABA…', close: 'Close', none: 'Nothing found. Try a shorter word.', hint: 'The query stays in your browser and is not sent anywhere.', kinds: { section: 'Section', page: 'Page', term: 'Term' }, ex: ['memory', 'sleep', 'help', 'games', 'sources'] },
 } as const;
 
 const norm = (v: string) => v.toLowerCase().replace(/ё/g, 'е').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9а-я]+/g, ' ').trim();
-const pageLang = (): Lang => (document.documentElement.lang === 'ru' ? 'ru' : 'et');
+const pageLang = (): Lang => (document.documentElement.lang === 'ru' ? 'ru' : document.documentElement.lang === 'en' ? 'en' : 'et');
 
 type Hit = { e: SearchEntry; score: number };
 function search(q: string, lang: Lang): Hit[] {
@@ -18,9 +19,9 @@ function search(q: string, lang: Lang): Hit[] {
   if (!tokens.length) return [];
   const hits: Hit[] = [];
   for (const e of searchIndex) {
-    const title = norm(lang === 'ru' ? e.ru : e.et);
-    const other = norm(`${e.ru} ${e.et} ${e.keys ?? ''}`);
-    const desc = norm(lang === 'ru' ? e.descRu ?? '' : e.descEt ?? '');
+    const title = norm(lang === 'en' ? e.en ?? e.et : lang === 'ru' ? e.ru : e.et);
+    const other = norm(`${e.ru} ${e.et} ${e.en ?? ''} ${e.keys ?? ''}`);
+    const desc = norm(lang === 'en' ? e.descEn ?? '' : lang === 'ru' ? e.descRu ?? '' : e.descEt ?? '');
     let score = 0; let ok = true;
     for (const t of tokens) {
       if (title.split(' ').some(w => w.startsWith(t))) score += 6;
@@ -129,8 +130,8 @@ export default function SiteSearch() {
           ) : (
             <ul className="site-search__list" id="site-search-list" role="listbox">
               {hits.map(({ e }, i) => {
-                const title = lang === 'ru' ? e.ru : e.et;
-                const desc = lang === 'ru' ? e.descRu : e.descEt;
+                const title = lang === 'en' ? e.en ?? e.et : lang === 'ru' ? e.ru : e.et;
+                const desc = lang === 'en' ? e.descEn : lang === 'ru' ? e.descRu : e.descEt;
                 return (
                   <li key={e.kind + e.href + title} id={'ss-' + i} role="option" aria-selected={i === active} className={i === active ? 'is-active' : ''} onMouseEnter={() => setActive(i)}>
                     <a href={e.href} tabIndex={-1} onClick={() => setOpen(false)}>
