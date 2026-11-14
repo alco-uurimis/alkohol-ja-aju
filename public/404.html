@@ -31,6 +31,9 @@ a:focus-visible{outline:3px solid #7c6ae6;outline-offset:2px}
 </main>
 <script>
 (function(){
+  // GitHub Pages serves the site under /alkohol-ja-aju/, other hosts (Vercel, local preview) at the root.
+  var base=location.pathname.indexOf('/alkohol-ja-aju/')===0?'/alkohol-ja-aju/':'/';
+  [['home',''],['topics','topics/'],['help','help/']].forEach(function(x){document.getElementById(x[0]).href=base+x[1]});
   var T={ru:['Страница не найдена','Такой страницы здесь нет. Возможно, ссылка устарела.','На главную','Научные темы','Нужна помощь'],
          en:['Page not found','There is no such page here. The link may be out of date.','To the home page','Science topics','I need help']};
   var l=null;try{l=localStorage.getItem('alkohol-ja-aju:language')}catch(e){}

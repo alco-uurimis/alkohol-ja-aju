@@ -7,6 +7,7 @@ const sectionOrder:Record<string,string>={
   malu:'04',
   tahelepanu:'05',
   labor:'06',
+  avasta:'06A',
   viktoriin:'07',
   samoprov:'08',
   obsuzhdenie:'09',

@@ -25,7 +25,7 @@ type NavItem=[string,string];
 function sectionId(hash:string){try{return decodeURIComponent(hash.slice(1));}catch{return '';}}
 
 type ReturnPoint={id:string;y:number;label:string};
-const trackedIds=['valik','aju','infograafika','teadmised','malu','tahelepanu','labor','viktoriin','samoprov','obsuzhdenie','tegevus','klassiruum'];
+const trackedIds=['valik','aju','infograafika','teadmised','malu','tahelepanu','labor','avasta','viktoriin','samoprov','obsuzhdenie','tegevus','klassiruum'];
 const progressKey='alkohol-ja-aju:visited-sections';
 const savedProgressKey='alkohol-ja-aju:saved-visited-sections';
 const savedProgressEnabledKey='alkohol-ja-aju:save-progress-on-device';
