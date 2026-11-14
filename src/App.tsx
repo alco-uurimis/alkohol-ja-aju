@@ -4,6 +4,7 @@ import Infographics from './sections/Infographics';
 import Memory from './sections/Memory';
 import Attention from './sections/Attention';
 import Lab from './sections/Lab';
+import Explore from './sections/Explore';
 import LearningCenter from './sections/LearningCenter';
 import Closing from './sections/Closing';
 import FinalSummary from './components/FinalSummary';
@@ -56,7 +57,7 @@ export default function App(){
   const navGroups:{label:string;items:NavItem[]}[]=[
     {label:T(lang,ru?'НАЧАТЬ':'ALUSTA'),items:[['valik',T(lang,ru?'Выбрать формат':'Vali vorm')],['tegevus',T(lang,ru?'Что делать в ситуации':'Mida teha olukorras')],['klassiruum',T(lang,ru?'Для урока':'Tunniks')]]},
     {label:T(lang,ru?'ИЗУЧИТЬ':'ÕPI'),items:[['aju',T(lang,ru?'Влияние на мозг':'Mõju ajule')],['infograafika',T(lang,ru?'Схемы':'Skeemid')],['teadmised',T(lang,ru?'Научная база':'Teadusbaas')]]},
-    {label:T(lang,ru?'ПОПРОБОВАТЬ':'PROOVI'),items:[['malu',T(lang,ru?'Память':'Mälu')],['tahelepanu',T(lang,ru?'Внимание':'Tähelepanu')],['labor',T(lang,ru?'Мини-игры':'Minimängud')]]},
+    {label:T(lang,ru?'ПОПРОБОВАТЬ':'PROOVI'),items:[['malu',T(lang,ru?'Память':'Mälu')],['tahelepanu',T(lang,ru?'Внимание':'Tähelepanu')],['labor',T(lang,ru?'Мини-игры':'Minimängud')],['avasta',T(lang,ru?'Графики':'Graafikud')]]},
     {label:T(lang,ru?'ПРОВЕРИТЬ':'KONTROLLI'),items:[['viktoriin',T(lang,ru?'Миф или факт':'Müüt või fakt')],['samoprov',T(lang,ru?'Самопроверка':'Enesekontroll')]]},
     {label:T(lang,ru?'ЗАВЕРШИТЬ':'LÕPETA'),items:[['obsuzhdenie',T(lang,ru?'Обсуждение':'Arutelu')],['tagasiside',T(lang,ru?'Обратная связь о сайте':'Tagasiside veebilehe kohta')],['isiklik-kokkuvote',T(lang,ru?'Итог':'Kokkuvõte')],['allikad',T(lang,ru?'Источники':'Allikad')]]}
   ];
@@ -112,7 +113,7 @@ const observer=new IntersectionObserver(entries=>{for(const entry of entries){if
 
       {stage>=1&&<><div className="phase-divider"><div><strong>{T(lang,ru?'Изучи':'Õpi')}</strong><small>{T(lang,ru?'Факты, механизмы и ограничения':'Faktid, mehhanismid ja piirangud')}</small></div></div><Brain lang={lang}/></>}
       {stage>=2&&<><Infographics lang={lang}/><LearningCenter lang={lang}/></>}
-      {stage>=3&&<><div className="phase-divider"><div><strong>{T(lang,ru?'Попробуй':'Proovi')}</strong><small>{T(lang,ru?'Учебные упражнения, не медицинские тесты':'Õppeharjutused, mitte meditsiinilised testid')}</small></div></div><Memory lang={lang}/><Attention lang={lang}/><Lab lang={lang}/></>}
+      {stage>=3&&<><div className="phase-divider"><div><strong>{T(lang,ru?'Попробуй':'Proovi')}</strong><small>{T(lang,ru?'Учебные упражнения, не медицинские тесты':'Õppeharjutused, mitte meditsiinilised testid')}</small></div></div><Memory lang={lang}/><Attention lang={lang}/><Lab lang={lang}/><Explore lang={lang}/></>}
       {stage>=4&&<><div className="phase-divider"><div><strong>{T(lang,ru?'Проверь':'Kontrolli')}</strong><small>{T(lang,ru?'Знание и уверенность в ответе':'Teadmised ja vastuse kindlus')}</small></div></div><Section id="viktoriin" number={T(lang,ru?'ПРОВЕРЬ ЗНАНИЯ':'KONTROLLI TEADMISI')} title={T(lang,ru?'Что ты запомнил(а)?':'Mida sa meelde jätsid?')} intro={T(lang,ru?'Сначала оцени свою уверенность. Затем выбери «миф» или «факт» и прочитай объяснение.':'Hinda esmalt oma kindlust. Seejärel vali „müüt“ või „fakt“ ja loe selgitust.')} className="quiz-section"><Quiz questions={lang==='en'?getEn().questionsEn:ru?getRu().questionsRu:questions} lang={lang} onComplete={handleQuizComplete}/></Section><Reflection lang={lang}/><ActionHub lang={lang}/><ClassroomKit lang={lang}/></>}
       {stage>=5&&<><div className="phase-divider"><div><strong>{T(lang,ru?'Заверши':'Lõpeta')}</strong><small>{T(lang,ru?'Выводы, обратная связь и источники':'Järeldused, tagasiside ja allikad')}</small></div></div><Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length} progressSaved={progressSaved} onSaveProgress={saveProgress} onClearSavedProgress={clearSavedProgress}/>}/></>}
     </main>

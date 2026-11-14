@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import Memory from './sections/Memory';
 import Attention from './sections/Attention';
 import Lab from './sections/Lab';
+import Explore from './sections/Explore';
 import ActionHub from './sections/ActionHub';
 import ClassroomKit from './sections/ClassroomKit';
 import { loadEn } from './data/en';
@@ -40,7 +41,7 @@ const pages: Record<PageKey, { title: string; kicker: string; h1: [string, strin
     title: 'Practice: memory, attention and games — Alcohol and the brain', kicker: 'LEARNING EXERCISES', h1: ['Try it', 'yourself'],
     lead: 'Memory, attention and reaction — learning exercises, not medical tests.',
     sub: 'The results describe only your own attempt. They do not diagnose anything and do not simulate intoxication.',
-    content: () => <><Memory lang="en" /><Attention lang="en" /><Lab lang="en" /></>,
+    content: () => <><Memory lang="en" /><Attention lang="en" /><Lab lang="en" /><Explore lang="en" /></>,
   },
   situations: {
     title: 'What to do in real life — Alcohol and the brain', kicker: 'PRACTICAL STEPS', h1: ['What to do', 'in real life'],

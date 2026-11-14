@@ -112,4 +112,5 @@ export const appEn: Record<string, string> = {
   "Ilmumisaasta puudub": "No publication year",
   "Vaadatud": "Accessed",
   "See on õppeotstarbeline allikavalik, mitte kogu teaduskirjanduse süstemaatiline ülevaade. Kaartidel tuuakse eraldi välja piirangud ning seose ja põhjuslikkuse erinevus.": "This is a source selection for teaching, not a systematic review of the whole scientific literature. The cards state the limitations separately, and the difference between association and causation.",
+  "Graafikud": "Charts",
 };
