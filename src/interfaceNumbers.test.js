@@ -16,3 +16,11 @@ describe('numbers promised in the interface match the data', () => {
     for (const t of topicPages) expect(vite).toContain(t + ':');
   });
 });
+
+import { readdirSync } from 'node:fs';
+describe('deployment limits', () => {
+  it('stays within the 12 serverless functions of the Vercel Hobby plan (files starting with _ are helpers, not functions)', () => {
+    const fns = readdirSync(new URL('../api/', import.meta.url)).filter(f => f.endsWith('.js') && !f.startsWith('_'));
+    expect(fns.length, fns.join(', ')).toBeLessThanOrEqual(12);
+  });
+});
