@@ -25,3 +25,12 @@ export async function requireAdmin(req,res){
   if(!isAdminUser(user,process.env.ADMIN_EMAILS)){res.status(403).json({ok:false,error:'forbidden'});return null;}
   return user;
 }
+
+/** Like requireAdmin, but quiet: returns the admin user or null without sending any response (for endpoints that show more to admins). */
+export async function getAdmin(req){
+  if(!process.env.ADMIN_EMAILS||!process.env.SUPABASE_URL||!process.env.SUPABASE_ANON_KEY)return null;
+  const header=String(req.headers?.authorization||'');const token=header.startsWith('Bearer ')?header.slice(7).trim():'';
+  if(!token)return null;
+  let user=null;try{user=await currentUser(token);}catch{return null;}
+  return user&&isAdminUser(user,process.env.ADMIN_EMAILS)?user:null;
+}

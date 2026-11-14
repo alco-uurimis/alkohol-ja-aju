@@ -1,5 +1,6 @@
 import {mirrorResponse} from './_mirror.js';
 import {primaryDelivery,readSource,withDeadline} from './_source.js';
+import {limited} from './_ratelimit.js';
 const ALLOWED_ORIGINS=new Set(['https://alco-uurimis.github.io','https://alkohol-ja-aju.vercel.app']);
 const LANGUAGES=new Set(['et','ru','en']);
 const YES_NO=new Set(['yes','no']);
@@ -57,6 +58,7 @@ export default async function handler(req,res){
     if(req.method==='OPTIONS')return res.status(204).end();
     if(req.method!=='POST')return res.status(405).json({ok:false,error:'method_not_allowed'});
     const origin=req.headers?.origin;if(origin&&!isAllowedOrigin(origin))return res.status(403).json({ok:false,error:'origin_not_allowed'});
+    if(limited(req,'research',150)){res.setHeader('Retry-After','600');return res.status(429).json({ok:false,error:'too_many_requests'});}
     if(Number(req.headers?.['content-length']||0)>18000)return res.status(413).json({ok:false,error:'payload_too_large'});
     let body;try{body=readBody(req);}catch{return res.status(400).json({ok:false,error:'invalid_json'});}
     if(!body||typeof body!=='object'||Array.isArray(body))return res.status(400).json({ok:false,error:'invalid_json'});

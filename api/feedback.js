@@ -1,3 +1,5 @@
+import { limited } from './_ratelimit.js';
+
 const ALLOWED_ORIGINS = new Set([
   'https://alco-uurimis.github.io',
   'https://alkohol-ja-aju.vercel.app',
@@ -8,7 +10,7 @@ const LEAST_CLEAR_VALUES = new Set(['none',...SECTION_VALUES]);
 const RECOMMEND_VALUES = new Set(['yes','maybe','no']);
 const LEARNED_VALUES = new Set(['yes','partly','no']);
 const PACE_VALUES = new Set(['too_short','balanced','too_long']);
-const LANGUAGES = new Set(['et','ru']);
+const LANGUAGES = new Set(['et','ru','en']);
 const SCALE_FIELDS = ['knowledgeBefore','knowledgeAfter','clarity','interest','navigation','visuals','memoryDifficulty','attentionDifficulty','gamesUseful','confidence'];
 
 function applyCors(req, res) {
@@ -92,6 +94,7 @@ export default async function handler(req, res) {
 
   const origin=req.headers.origin;
   if (origin && !ALLOWED_ORIGINS.has(origin)) return res.status(403).json({ok:false,error:'origin_not_allowed'});
+  if (limited(req,'feedback',60)) { res.setHeader('Retry-After','600'); return res.status(429).json({ok:false,error:'too_many_requests'}); }
   const length=Number(req.headers['content-length']||0);
   if (length>12000) return res.status(413).json({ok:false,error:'payload_too_large'});
 
@@ -118,15 +121,15 @@ export default async function handler(req, res) {
     if(useful&&!SECTION_VALUES.has(useful))return res.status(400).json({ok:false,error:'invalid_useful_section'});
     if(comment.length>500)return res.status(400).json({ok:false,error:'comment_too_long'});
 
-    const isRu=language==='ru';
+    const isRu=language==='ru';const labelLang=isRu?'ru':'et';
     const lines=[
       isRu?'Новый короткий отзыв — «Алкоголь и мозг»':'Uus lühitagasiside — „Alkohol ja aju“',
       `${isRu?'Язык':'Keel'}: ${language.toUpperCase()}`,
       `${isRu?'Понятность':'Arusaadavus'}: ${clarity}/5`,
-      `${isRu?'Узнал(а) новое':'Sai midagi uut teada'}: ${optionLabel(learned,language,'learned')}`,
-      `${isRu?'Посоветовал(а) бы':'Soovitaks'}: ${optionLabel(recommend,language,'recommend')}`,
+      `${isRu?'Узнал(а) новое':'Sai midagi uut teada'}: ${optionLabel(learned,labelLang,'learned')}`,
+      `${isRu?'Посоветовал(а) бы':'Soovitaks'}: ${optionLabel(recommend,labelLang,'recommend')}`,
     ];
-    if(useful)lines.push(`${isRu?'Самый полезный раздел':'Kõige kasulikum osa'}: ${sectionLabel(useful,language)}`);
+    if(useful)lines.push(`${isRu?'Самый полезный раздел':'Kõige kasulikum osa'}: ${sectionLabel(useful,labelLang)}`);
     if(gameMetrics.reaction||gameMetrics.stroop||gameMetrics.signal){
       lines.push('',isRu?'Результаты мини-игр':'Minimängude tulemused');
       if(gameMetrics.reaction)lines.push(`${isRu?'Реакция':'Reaktsioon'}: ${gameMetrics.reaction.latestMs} ms (${isRu?'лучший':'parim'} ${gameMetrics.reaction.bestMs} ms)`);
@@ -164,7 +167,7 @@ export default async function handler(req, res) {
   if(!RECOMMEND_VALUES.has(recommend))return res.status(400).json({ok:false,error:'invalid_recommendation'});
   if(comment.length>1000)return res.status(400).json({ok:false,error:'comment_too_long'});
 
-  const isRu=language==='ru';
+  const isRu=language==='ru';const labelLang=isRu?'ru':'et';
   const knowledgeDelta=Number(scales.knowledgeAfter)-Number(scales.knowledgeBefore);
   const deltaText=`${knowledgeDelta>=0?'+':''}${knowledgeDelta}`;
   const lines=[
@@ -175,16 +178,16 @@ export default async function handler(req, res) {
     `${isRu?'Знания':'Teadmised'}: ${scales.knowledgeBefore}/5 → ${scales.knowledgeAfter}/5 (${deltaText})`,
     `${isRu?'Понятность материала':'Materjali arusaadavus'}: ${scales.clarity}/5`,
     `${isRu?'Уверенность «миф или факт»':'Kindlus „müüt või fakt“'}: ${scales.confidence}/5`,
-    `${isRu?'Узнал(а) новое':'Sai midagi uut teada'}: ${optionLabel(learned,language,'learned')}`,
+    `${isRu?'Узнал(а) новое':'Sai midagi uut teada'}: ${optionLabel(learned,labelLang,'learned')}`,
     '',
     isRu?'🖥️ Сайт':'🖥️ Veebileht',
     `${isRu?'Интерес':'Huvi'}: ${scales.interest}/5`,
     `${isRu?'Навигация':'Navigeerimine'}: ${scales.navigation}/5`,
     `${isRu?'Дизайн':'Kujundus'}: ${scales.visuals}/5`,
-    `${isRu?'Темп материала':'Materjali tempo'}: ${optionLabel(pace,language,'pace')}`,
-    `${isRu?'Самый полезный раздел':'Kõige kasulikum osa'}: ${sectionLabel(useful,language)}`,
-    `${isRu?'Самый непонятный раздел':'Kõige ebaselgem osa'}: ${sectionLabel(leastClear,language)}`,
-    `${isRu?'Посоветовал(а) бы однокласснику':'Soovitaks klassikaaslasele'}: ${optionLabel(recommend,language,'recommend')}`,
+    `${isRu?'Темп материала':'Materjali tempo'}: ${optionLabel(pace,labelLang,'pace')}`,
+    `${isRu?'Самый полезный раздел':'Kõige kasulikum osa'}: ${sectionLabel(useful,labelLang)}`,
+    `${isRu?'Самый непонятный раздел':'Kõige ebaselgem osa'}: ${sectionLabel(leastClear,labelLang)}`,
+    `${isRu?'Посоветовал(а) бы однокласснику':'Soovitaks klassikaaslasele'}: ${optionLabel(recommend,labelLang,'recommend')}`,
     '',
     isRu?'🧩 Упражнения':'🧩 Harjutused',
     `${isRu?'Сложность задания на память':'Mäluharjutuse raskus'}: ${scales.memoryDifficulty}/5`,
