@@ -1,3 +1,4 @@
+import { releases, SITE_VERSION } from '../data/releases';
 import EstoniaData, { EstoniaDataLink } from '../components/EstoniaData';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import PeerNorm from '../components/PeerNorm';
@@ -44,7 +45,7 @@ function Shell({ page, setLang, children }: { page: EnPage; setLang: SetLang; ch
       </div>
     </header>
     <main>
-      <section className="project-hero"><p className="project-kicker">ALKOHOL JA AJU · v2.2</p><h1>{c.title}</h1><p>{c.lead}</p></section>
+      <section className="project-hero"><p className="project-kicker">ALKOHOL JA AJU · {SITE_VERSION}</p><h1>{c.title}</h1><p>{c.lead}</p></section>
       {children}
     </main>
     <footer><a href={up}>Main site</a><a href={up + 'topics/'}>Science topics</a><a href={up + 'science/?lang=en'}>Survey</a><a href={up + 'data-policy/'}>Data and privacy</a><a href={up + 'fact-check/'}>Fact-check</a><a href={up + 'changelog/'}>Changelog</a></footer>
@@ -110,12 +111,7 @@ function DataPolicy() {
 }
 
 function Changelog() {
-  const releases: [string, string, string][] = [
-    ['v2.2', '13.11.2026', 'Added an English version (start page, lesson, help, science topics, methodology, data and privacy, results) and an anonymous before-and-after knowledge check.'],
-    ['v2.1', '28.09.2026', 'Full quality audit: fixed v4/legacy analytics, localisation of service pages, responsiveness, accessibility and survey navigation.'],
-    ['v2.0', '27.09.2026', 'Added science pages, methodology, data policy, public aggregates and the updated 15+ survey.'],
-  ];
-  return <section className="project-section"><div className="timeline">{releases.map(([v, date, text]) => <article key={v}><div><strong>{v}</strong><span>{date}</span></div><p>{text}</p></article>)}</div></section>;
+  return <section className="project-section"><div className="timeline">{releases.map(r => <article key={r.v}><div><strong>{r.v}</strong><span>{r.date}</span></div><p>{r.en}</p></article>)}</div></section>;
 }
 
 // ---- Results (same privacy rules as the ET/RU page: only categories the API already approved) ----

@@ -17,6 +17,7 @@ import { questions } from './data/content';
 import { getEn, loadEn } from './data/en';
 import { getRu, loadRu } from './data/ru';
 import { T } from './data/siteT';
+import { SITE_VERSION, SITE_YEAR } from './data/releases';
 
 type Lang='et'|'ru'|'en';
 type NavItem=[string,string];
@@ -116,6 +117,6 @@ const observer=new IntersectionObserver(entries=>{for(const entry of entries){if
       {stage>=5&&<><div className="phase-divider"><div><strong>{T(lang,ru?'Заверши':'Lõpeta')}</strong><small>{T(lang,ru?'Выводы, обратная связь и источники':'Järeldused, tagasiside ja allikad')}</small></div></div><Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length} progressSaved={progressSaved} onSaveProgress={saveProgress} onClearSavedProgress={clearSavedProgress}/>}/></>}
     </main>
     {returnPoint&&<button type="button" className="reading-return" onClick={returnToReadingPlace} aria-label={(lang==='en'?`Back to: ${returnPoint.label}`:ru?`Вернуться к месту: ${returnPoint.label}`:`Naase kohta: ${returnPoint.label}`)}><span aria-hidden="true"/><b>{T(lang,ru?'Вернуться':'Tagasi')}</b><small>{returnPoint.label}</small></button>}
-    <footer className="site-footer"><div className="footer-brand"><strong>{T(lang,ru?'Алкоголь и мозг':'Alkohol ja aju')}</strong><p>{T(lang,ru?'Учебный сайт о мозге, фактах и безопасных решениях.':'Õppeveeb ajust, faktidest ja turvalistest valikutest.')}</p><span>v2.0 · 2026</span></div><nav aria-label={T(lang,ru?'Информация о проекте':'Projekti info')}><a href="methodology/">{T(lang,ru?'Методология':'Metoodika')}</a><a href="fact-check/">{T(lang,ru?'Проверка фактов':'Faktikontroll')}</a><a href="data-policy/">{T(lang,ru?'Данные и приватность':'Andmed ja privaatsus')}</a><a href="changelog/">Changelog</a></nav><div className="footer-support footer-support-static"><strong>{T(lang,ru?'Нужна помощь?':'Vajad abi?')}</strong><a href="tel:116111">Lasteabi 116 111</a><span>{T(lang,ru?'круглосуточно и бесплатно':'ööpäev läbi ja tasuta')}</span></div></footer>
+    <footer className="site-footer"><div className="footer-brand"><strong>{T(lang,ru?'Алкоголь и мозг':'Alkohol ja aju')}</strong><p>{T(lang,ru?'Учебный сайт о мозге, фактах и безопасных решениях.':'Õppeveeb ajust, faktidest ja turvalistest valikutest.')}</p><span>{SITE_VERSION} · {SITE_YEAR}</span></div><nav aria-label={T(lang,ru?'Информация о проекте':'Projekti info')}><a href="methodology/">{T(lang,ru?'Методология':'Metoodika')}</a><a href="fact-check/">{T(lang,ru?'Проверка фактов':'Faktikontroll')}</a><a href="data-policy/">{T(lang,ru?'Данные и приватность':'Andmed ja privaatsus')}</a><a href="changelog/">Changelog</a></nav><div className="footer-support footer-support-static"><strong>{T(lang,ru?'Нужна помощь?':'Vajad abi?')}</strong><a href="tel:116111">Lasteabi 116 111</a><span>{T(lang,ru?'круглосуточно и бесплатно':'ööpäev läbi ja tasuta')}</span></div></footer>
   </>;
 }
