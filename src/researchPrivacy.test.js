@@ -10,6 +10,10 @@ describe('public research summary', () => {
     expect(result).not.toHaveProperty('ageGroup');
   });
 
+  it('withholds distributions with more answers than respondents', () => {
+    expect(summarize({ n: 10, ageGroup: { '18_20': 12 }, answered: { ageGroup: 12 } }).ageGroup).toEqual({});
+  });
+
   it('publishes a complete distribution at the threshold', () => {
     expect(summarize({ n: 10, ageGroup: { '18_20': 10 } }).ageGroup).toEqual({ '18_20': 10 });
   });
@@ -153,4 +157,11 @@ describe('admin delete (Google sign-in only)', () => {
     expect(r).toEqual({ status: 200, json: { ok: true, deleted: true, mirror: 'off' } });
     expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toMatchObject({ adminAction: 'deleteResponse', responseId: ID, secret: 'secret' });
   });
+});
+
+it.each([[null, 'invalid_json'], [{ language: 'et', answers: [] }, 'invalid_answers']])('rejects invalid survey request %j', async (body, error) => {
+  const res = { setHeader: vi.fn(), status: vi.fn().mockReturnThis(), json: vi.fn() };
+  await submit({ method: 'POST', headers: {}, body: JSON.stringify(body) }, res);
+  expect(res.status).toHaveBeenCalledWith(400);
+  expect(res.json).toHaveBeenCalledWith({ ok: false, error });
 });

@@ -1,3 +1,4 @@
+import { updateLanguageUrl } from './i18n';
 import { useEffect, useMemo, useState } from 'react';
 import './articles.css';
 import { EvidenceSourceCard } from './articles/EvidenceSourceCard';
@@ -162,7 +163,7 @@ export default function ArticleApp(){
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    localStorage.setItem('alkohol-ja-aju:language', lang);
+    try { localStorage.setItem('alkohol-ja-aju:language', lang); } catch { /* storage unavailable */ }
     document.title = `${article.title[lang]} — ${T('Алкоголь и мозг', 'Alkohol ja aju', 'Alcohol and the brain')}`;
   }, [article, lang, ru]);
 
@@ -170,9 +171,9 @@ export default function ArticleApp(){
     <header className="article-header">
       <a className="article-brand" href="../"><img src="../logo-mark.svg" alt=""/>{T('алкоголь и мозг', 'alkohol ja aju', 'alcohol and the brain')}</a>
       <div className="article-language" role="group" aria-label={T('Язык', 'Keel', 'Language')}>
-        <button aria-pressed={lang === 'et'} className={lang === 'et' ? 'active' : ''} onClick={() => setLang('et')}>ET</button>
-        <button aria-pressed={lang === 'ru'} className={lang === 'ru' ? 'active' : ''} onClick={() => setLang('ru')}>RU</button>
-        <button aria-pressed={lang === 'en'} className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
+        <button aria-pressed={lang === 'et'} className={lang === 'et' ? 'active' : ''} onClick={() => { updateLanguageUrl('et'); setLang('et'); }}>ET</button>
+        <button aria-pressed={lang === 'ru'} className={lang === 'ru' ? 'active' : ''} onClick={() => { updateLanguageUrl('ru'); setLang('ru'); }}>RU</button>
+        <button aria-pressed={lang === 'en'} className={lang === 'en' ? 'active' : ''} onClick={() => { updateLanguageUrl('en'); setLang('en'); }}>EN</button>
       </div>
     </header>
     <section className="article-hero">

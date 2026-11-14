@@ -43,7 +43,7 @@ const S = {
   },
 } as const;
 
-const lessonLinks = (en: boolean) => en ? { l5: '../start/?lang=en', l20: '../start/?mode=full&lang=en', lt: '../topics/?lang=en' } : { l5: '../start/', l20: '../start/?mode=full', lt: '../topics/' };
+const lessonLinks = (lang: Lang) => ({ l5: "../start/?lang=" + lang, l20: "../start/?mode=full&lang=" + lang, lt: "../topics/?lang=" + lang });
 
 /** Technical reason of the last failed send (shown small, so a teacher can report it). */
 let lastFailure = '';
@@ -52,7 +52,7 @@ async function send(state: LocalState, phase: Phase, lang: Lang): Promise<boolea
   const record = state[phase];
   if (!record) return false;
   try {
-    const r = await fetch(PREPOST_ENDPOINT, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: state.token, phase, lang, answers: record.answers }) });
+    const r = await fetch(PREPOST_ENDPOINT, { method: 'POST', signal: AbortSignal.timeout(15000), headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: state.token, phase, lang, answers: record.answers }) });
     const body = await r.json().catch(() => null);
     const ok = r.ok && body?.ok === true;
     lastFailure = ok ? '' : `HTTP ${r.status}${body?.error ? ' · ' + String(body.error).slice(0, 60) : ''}`;
@@ -102,11 +102,11 @@ export default function CheckPage() {
   const persist = (s: LocalState) => { setState(s); writeState(s); };
   const begin = (phase: Phase) => {
     setAnswers({}); setNeedAll(false); setPhaseOpen(phase);
-    if (phase === 'pre') persist({ token: newToken(), consent, ...(state?.pre ? {} : {}) });
+    if (phase === 'pre') persist({ token: newToken(), consent });
     window.scrollTo({ top: 0 });
   };
   const submit = async () => {
-    if (!phaseOpen || !state) return;
+    if (!phaseOpen || !state || sending) return;
     if (PREPOST_ITEMS.some(id => answers[id] === undefined)) { setNeedAll(true); return; }
     const record = { answers, score: scoreOf(answers), sent: state.consent ? ('no' as const) : ('declined' as const) };
     let next: LocalState = { ...state, [phaseOpen]: record };
@@ -122,14 +122,14 @@ export default function CheckPage() {
     }
   };
   const retry = async () => {
-    if (!state) return; setSending(true);
+    if (!state || sending) return; setSending(true);
     let next = state;
     for (const phase of ['pre', 'post'] as const) if (next[phase] && next[phase]!.sent === 'no') { const ok = await send(next, phase, lang); next = { ...next, [phase]: { ...next[phase]!, sent: ok ? 'yes' : 'no' } }; }
     persist(next); setSending(false);
   };
   const reset = () => { writeState(null); setState(null); setConsent(false); setPhaseOpen(null); window.scrollTo({ top: 0 }); };
 
-  const links = lessonLinks(lang === 'en');
+  const links = lessonLinks(lang);
   const unsent = !!state && (state.pre?.sent === 'no' || state.post?.sent === 'no');
   const status = state && (
     state.consent
@@ -164,7 +164,7 @@ export default function CheckPage() {
           <h2 id="check-step" ref={heading} tabIndex={-1}>{t.betweenTitle}</h2>
           <p>{t.betweenText}</p>
           <div className="lesson-actions"><a className="button" href={links.l5}>{t.l5}</a><a className="button" href={links.l20}>{t.l20}</a><a href={links.lt}>{t.lt}</a></div>
-          <div className="lesson-actions"><button type="button" className="button primary" onClick={() => begin('post')}>{t.startPost}</button></div>
+          <div className="lesson-actions"><button type="button" className="button primary" disabled={sending} onClick={() => begin('post')}>{t.startPost}</button></div>
           {status && <p className="check-status" role="status">{status}</p>}
         </>}
         {stage === 'results' && state?.pre && state.post && <>
@@ -176,7 +176,7 @@ export default function CheckPage() {
           })}</ol>
           <p>{t.note}</p>
           {status && <p className="check-status" role="status">{status}</p>}
-          <div className="lesson-actions"><button type="button" className="button" onClick={reset}>{t.reset}</button></div>
+          <div className="lesson-actions"><button type="button" className="button" disabled={sending} onClick={reset}>{t.reset}</button></div>
         </>}
       </section>
       <a className="entry-back" href="../">{t.home}</a>
