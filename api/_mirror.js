@@ -5,7 +5,7 @@
 
 const TIMEOUT_MS = 4000;
 
-function target() {
+export function target() {
   const base = String(process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
   const key = String(process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
   if (!base || !key) return null;

@@ -2,6 +2,7 @@ import { updateLanguageUrl } from './i18n';
 import { useEffect, useMemo, useState } from 'react';
 import { getResearchSteps, type Lang, type Question } from './researchData';
 import { T, languageKey, readSurveyLang } from './data/researchT';
+import { trackOnce } from './lib/analytics';
 
 type Answers=Record<string,string|string[]>;
 const researchEndpoint='https://alkohol-ja-aju.vercel.app/api/research';
@@ -92,7 +93,7 @@ export default function ResearchApp(){
         return;
       }
       setResponseId(String(data.responseId??submissionId));
-      setComplete(true);window.scrollTo({top:0,behavior:'smooth'});
+      trackOnce('survey','sent');setComplete(true);window.scrollTo({top:0,behavior:'smooth'});
     }catch{setError(T(lang,ru?'Нет связи с сервером. Ответы остаются на этой странице — попробуй отправить ещё раз позже.':'Serveriga ei saadud ühendust. Vastused jäävad sellele lehele — proovi hiljem uuesti saata.'));}
     finally{setSubmitting(false);}
   };

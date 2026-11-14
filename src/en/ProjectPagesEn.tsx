@@ -1,6 +1,7 @@
 import { releases, SITE_VERSION } from '../data/releases';
 import EstoniaData, { EstoniaDataLink } from '../components/EstoniaData';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import StatsOptOut from '../components/StatsOptOut';
 import PeerNorm from '../components/PeerNorm';
 import ResultsChart, { type ResultItem } from '../components/ResultsChart';
 
@@ -99,6 +100,7 @@ function FactCheck() {
 function DataPolicy() {
   return <section className="project-section project-prose">
     <h2>What the learning site stores</h2><p>Exercise results and visited sections may be kept in the current tab. Longer-term saving of progress on the device is used only after the user explicitly chooses it.</p>
+    <StatsOptOut lang="en" />
     <h2>Account (optional)</h2><p>If you create an account, your e-mail (or the name and photo from your Google profile) and the registration time are stored. The data is kept with the Supabase service. An account is not needed to read the materials and is not linked to the responses of the research survey.</p>
     <h2>Anonymous before-and-after check (optional)</h2><p>The optional knowledge check stores a random code created in your browser, the answers to six statements, the score and the language. It does not ask for or store a name, e-mail, school or IP address (the hosting service may keep ordinary technical logs). It is not linked to an account or to the survey, and you can use the check without sending anything.</p>
     <h2>What “Help science” collects</h2><p>The age group and answers to questions about alcohol, people close to you and possible effects. The form does not ask for a name, e-mail, phone number, school, address or exact date of birth.</p>

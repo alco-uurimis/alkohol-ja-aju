@@ -83,6 +83,59 @@ function gapHint(diffs: string[]) {
   );
 }
 
+type StatRow = { day: string; event: string; key: string; lang: string; count: number };
+const SECTION_NAMES: Record<string, string> = { valik: 'Выбор формата', aju: 'Влияние на мозг', infograafika: 'Схемы', teadmised: 'Научная база', malu: 'Память', tahelepanu: 'Внимание', labor: 'Мини-игры', avasta: 'Графики', viktoriin: 'Миф или факт', samoprov: 'Самопроверка', obsuzhdenie: 'Обсуждение', tegevus: 'Что делать', klassiruum: 'Для урока' };
+const SECTION_ORDER = Object.keys(SECTION_NAMES);
+
+/** Cookie-free usage counters: daily totals only (see lib/analytics.ts and docs/supabase-analytics.sql). */
+function UsageStats({ token }: { token: string }) {
+  const [days, setDays] = useState(30);
+  const [st, setSt] = useState<{ configured: boolean; rows: StatRow[] } | 'err' | 'busy' | null>(null);
+  const load = (d: number) => {
+    setDays(d); setSt('busy');
+    fetch(`https://alkohol-ja-aju.vercel.app/api/admin-data?stats=${d}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+      .then(r => r.json()).then(b => setSt(b?.ok ? b : 'err'), () => setSt('err'));
+  };
+  const sum = (rows: StatRow[], f: (r: StatRow) => boolean) => rows.filter(f).reduce((a, r) => a + r.count, 0);
+  const by = (rows: StatRow[], event: string) => { const m = new Map<string, number>(); for (const r of rows) if (r.event === event) m.set(r.key, (m.get(r.key) ?? 0) + r.count); return m; };
+  const bars = (entries: [string, number][], label: (k: string) => string) => {
+    const max = Math.max(1, ...entries.map(([, n]) => n));
+    return <div className="usage-bars">{entries.map(([k, n]) => <div key={k}><span>{label(k)}</span><i style={{ width: `${(n / max) * 100}%` }} /><b>{n}</b></div>)}</div>;
+  };
+  let body = null;
+  if (st === 'err') body = <p role="alert" className="admin-error">Не удалось получить данные (деплой ещё не обновился?).</p>;
+  else if (st && st !== 'busy') {
+    if (!st.configured) body = <p className="admin-meta">Счётчики выключены: выполните <code>docs/supabase-analytics.sql</code> в Supabase (и нужен SUPABASE_SERVICE_ROLE_KEY в Vercel).</p>;
+    else if (st.rows.length === 0) body = <p className="admin-meta">За этот период данных пока нет. Счётчики начинают копиться после выполнения SQL и деплоя.</p>;
+    else {
+      const rows = st.rows;
+      const home = sum(rows, r => r.event === 'page' && r.key === 'home');
+      const pages = [...by(rows, 'page')].sort((a, b) => b[1] - a[1]).slice(0, 12);
+      const sections = SECTION_ORDER.map(k => [k, by(rows, 'section').get(k) ?? 0] as [string, number]);
+      const langs = (['et', 'ru', 'en'] as const).map(l => [l, sum(rows, r => r.event === 'page' && r.lang === l)] as [string, number]);
+      const done: [string, number][] = [['Викторина завершена', sum(rows, r => r.event === 'quiz')], ['Мини-игры (любая)', sum(rows, r => r.event === 'game')], ['Опыт «одна задача или две»', sum(rows, r => r.event === 'explore' && r.key === 'dual-task')], ['Задание «наблюдение/связь/причина»', sum(rows, r => r.event === 'explore' && r.key === 'evidence-sort')], ['Опрос отправлен', sum(rows, r => r.event === 'survey')], ['Проверка «до»', sum(rows, r => r.event === 'check' && r.key === 'pre')], ['Проверка «после»', sum(rows, r => r.event === 'check' && r.key === 'post')], ['Обратная связь', sum(rows, r => r.event === 'feedback')]];
+      body = <>
+        <p className="admin-meta">Открытий главной: <b>{home}</b> · всех страниц: <b>{sum(rows, r => r.event === 'page')}</b> (каждая страница считается не чаще раза за сеанс).</p>
+        <h4>До какого раздела главной доходят</h4>
+        {bars(sections, k => SECTION_NAMES[k])}
+        <p className="result-base">Раздел засчитывается, когда его заметная часть была на экране. Падение к концу страницы — нормально; резкий провал на одном разделе — повод его упростить.</p>
+        <h4>Страницы</h4>{bars(pages, k => k)}
+        <h4>Язык</h4>{bars(langs, k => k.toUpperCase())}
+        <h4>Завершённые действия</h4>{bars(done, k => k)}
+      </>;
+    }
+  }
+  return (
+    <div className="admin-q admin-usage">
+      <h3>Посещаемость (без cookie)</h3>
+      <p className="admin-meta">Только суммы за день: без cookie, IP-адресов и идентификаторов. Посетители с запретом отслеживания в браузере и те, кто отключил учёт на странице «Данные и приватность», не считаются.</p>
+      <div className="usage-range">{[7, 30, 90].map(d => <button key={d} type="button" className="admin-link" aria-pressed={days === d && !!st && st !== 'busy'} onClick={() => load(d)} disabled={st === 'busy'}>{d} дней</button>)}</div>
+      {st === 'busy' && <p className="admin-meta">Загрузка…</p>}
+      {body}
+    </div>
+  );
+}
+
 type Parity = { admin: string[]; public: string[] } | { error: string } | null;
 function MirrorStatus({ token }: { token: string }) {
   const [st, setSt] = useState<{ configured: boolean; responses: number | null; prepost: number | null; parity: Parity } | 'err' | 'busy' | null>(null);
@@ -204,6 +257,7 @@ export default function AdminData() {
                   );
                 })}
               </div>
+              <UsageStats token={session.access_token} />
               <DeliveryCheck token={session.access_token} />
               <MirrorStatus token={session.access_token} />
               <PrePostCard data={data.prepost} />

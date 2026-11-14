@@ -265,3 +265,5 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
 .quiz-cal__cell b{font-size:1.5rem}
 .quiz-cal__cell.ok{--c:#7bc043}.quiz-cal__cell.hidden-know{--c:#c9f574}.quiz-cal__cell.over{--c:#f08a5d;border-color:#c0562b}.quiz-cal__cell.miss{--c:#b7aef0}
 .quiz-cal__note{max-width:560px}
+
+.stats-optout{display:flex;gap:10px;align-items:flex-start;margin:8px 0 18px;font-weight:600}.stats-optout input{width:22px;height:22px;margin-top:1px;accent-color:#5a49c9;flex:none}

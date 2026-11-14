@@ -3,6 +3,7 @@ import { Section, SourceReference } from '../components/Shared';
 import { readGameMetrics } from '../utils/gameMetrics';
 import { BrainDevelopment, DualTask } from './ExploreMore';
 import './explore.css';
+import { trackOnce } from '../lib/analytics';
 
 type Lang = 'et' | 'ru' | 'en';
 
@@ -267,7 +268,7 @@ function EvidenceSort({ lang }: { lang: Lang }) {
           <p className="explore-count">{i + 1} / {items.length}</p>
           <blockquote>{items[i][0]}</blockquote>
           <div className="explore-choices">{(['obs', 'assoc', 'cause'] as const).map(k => <button key={k} type="button" disabled={!!picked} className={picked ? (k === items[i][1] ? 'right' : k === picked ? 'wrong' : '') : ''} onClick={() => choose(k)}>{labels[k]}</button>)}</div>
-          <div role="status" className="explore-feedback">{picked && <><p><b>{picked === items[i][1] ? t.right : t.wrong}</b> {items[i][2]}</p><button type="button" className="button primary" onClick={() => { setI(v => v + 1); setPicked(null); }}>{t.next}</button></>}</div>
+          <div role="status" className="explore-feedback">{picked && <><p><b>{picked === items[i][1] ? t.right : t.wrong}</b> {items[i][2]}</p><button type="button" className="button primary" onClick={() => { if (i + 1 >= items.length) trackOnce('explore', 'evidence-sort'); setI(v => v + 1); setPicked(null); }}>{t.next}</button></>}</div>
         </div>
       )}
     </article>

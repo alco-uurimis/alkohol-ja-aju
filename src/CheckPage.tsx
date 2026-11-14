@@ -6,6 +6,7 @@ import { getRu } from './data/ru';
 import { isLang, LANGUAGE_KEY, readLang, type Lang } from './i18n';
 import { newToken, PREPOST_ENDPOINT, PREPOST_ITEMS, readState, scoreOf, writeState, type Answers, type LocalState, type Phase, type PrePostId } from './prepost';
 import './entry-pages.css';
+import { trackOnce } from './lib/analytics';
 
 const S = {
   et: {
@@ -112,6 +113,7 @@ export default function CheckPage() {
     let next: LocalState = { ...state, [phaseOpen]: record };
     persist(next);
     const phase = phaseOpen;
+    trackOnce('check', phase); // that the step was completed, never the answers or the score
     setPhaseOpen(null);
     window.scrollTo({ top: 0 });
     if (state.consent) {

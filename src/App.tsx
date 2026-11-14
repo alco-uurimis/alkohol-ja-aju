@@ -19,6 +19,7 @@ import { getEn, loadEn } from './data/en';
 import { getRu, loadRu } from './data/ru';
 import { T } from './data/siteT';
 import { SITE_VERSION, SITE_YEAR } from './data/releases';
+import { trackOnce } from './lib/analytics';
 
 type Lang='et'|'ru'|'en';
 type NavItem=[string,string];
@@ -65,7 +66,8 @@ export default function App(){
   const sectionNames=Object.fromEntries([['avaleht',T(lang,ru?'Главная':'Avaleht')],...links]);
   const currentPhase=navGroups.find(g=>g.items.some(([id])=>id===active))?.label??(T(lang,ru?'НАЧАЛО':'ALGUS'));
 
-  useEffect(()=>{if(stage>=STAGES)return;const w=window as IdleWindow;const next=()=>setStage(v=>Math.min(STAGES,v+1));const id=w.requestIdleCallback?w.requestIdleCallback(next,{timeout:400}):window.setTimeout(next,60);return()=>{if(w.cancelIdleCallback)w.cancelIdleCallback(id);window.clearTimeout(id);};},[stage]);
+  useEffect(()=>{if(stage>=STAGES)return;const w=window as IdleWindow;const next=()=>setStage(v=>Math.min(STAGES,v+1));// Idle-callback ids and timer ids are separate number spaces: clearing an idle id with clearTimeout could cancel an unrelated timer.
+if(w.requestIdleCallback){const id=w.requestIdleCallback(next,{timeout:400});return()=>w.cancelIdleCallback?.(id);}const id=window.setTimeout(next,60);return()=>window.clearTimeout(id);},[stage]);
   useEffect(()=>{if(stage>=STAGES)return;const flush=(event:MouseEvent)=>{const link=(event.target as Element|null)?.closest?.('a[href*="#"]') as HTMLAnchorElement|null;if(!link)return;const url=new URL(link.href,location.href);if(url.pathname!==location.pathname||url.hash.length<2)return;const id=sectionId(url.hash);setStage(STAGES);window.setTimeout(()=>document.getElementById(id)?.scrollIntoView(),120);};document.addEventListener('click',flush,true);return()=>document.removeEventListener('click',flush,true);},[stage]);
   useEffect(()=>{window.dispatchEvent(new Event('alkohol-stage'));},[stage]);
   useEffect(()=>{if(location.hash.length<2)return;const id=sectionId(location.hash);const t=window.setTimeout(()=>document.getElementById(id)?.scrollIntoView(),150);return()=>window.clearTimeout(t);},[]);
@@ -73,7 +75,7 @@ export default function App(){
   useEffect(()=>{const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){activeSection.current=entry.target.id;setActive(entry.target.id);}}, {rootMargin:'-18% 0px -68% 0px'});links.forEach(([id])=>{const el=document.getElementById(id);if(el)observer.observe(el);});return()=>observer.disconnect();},[lang,stage]);
   useEffect(()=>{const captureJump=(event:MouseEvent)=>{const target=event.target;if(!(target instanceof Element))return;const link=target.closest('a[href]') as HTMLAnchorElement|null;if(!link)return;const destination=new URL(link.href,window.location.href);if(destination.origin!==window.location.origin||destination.pathname!==window.location.pathname||!destination.hash)return;const nextId=sectionId(destination.hash);const previousId=activeSection.current;if(!nextId||nextId===previousId)return;setReturnPoint({id:previousId,y:window.scrollY,label:sectionNames[previousId]??(T(lang,ru?'предыдущему месту':'eelmise koha'))});};document.addEventListener('click',captureJump,true);return()=>document.removeEventListener('click',captureJump,true);},[lang]);
   useEffect(()=>{// A section counts as seen when 28% of it is visible, or when it fills at least 40% of the screen (very tall sections can never reach 28% on a phone).
-const observer=new IntersectionObserver(entries=>{for(const entry of entries){if(!entry.isIntersecting)continue;if(entry.intersectionRect.height<Math.min(entry.boundingClientRect.height*.28,window.innerHeight*.4))continue;const id=entry.target.id;setVisited(current=>{if(current.has(id))return current;const next=new Set(current);next.add(id);try{const value=JSON.stringify([...next]);window.sessionStorage.setItem(progressKey,value);if(readsSavedProgress())window.localStorage.setItem(savedProgressKey,value);}catch{}return next;});}},{threshold:[0,.1,.2,.28,.4,.6]});trackedIds.forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el);});return()=>observer.disconnect();},[stage]);
+const observer=new IntersectionObserver(entries=>{for(const entry of entries){if(!entry.isIntersecting)continue;if(entry.intersectionRect.height<Math.min(entry.boundingClientRect.height*.28,window.innerHeight*.4))continue;const id=entry.target.id;trackOnce('section',id);setVisited(current=>{if(current.has(id))return current;const next=new Set(current);next.add(id);try{const value=JSON.stringify([...next]);window.sessionStorage.setItem(progressKey,value);if(readsSavedProgress())window.localStorage.setItem(savedProgressKey,value);}catch{}return next;});}},{threshold:[0,.1,.2,.28,.4,.6]});trackedIds.forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el);});return()=>observer.disconnect();},[stage]);
   useEffect(()=>{if(!menu)return;const previous=document.body.style.overflow;document.body.style.overflow='hidden';const onKey=(e:KeyboardEvent)=>{if(e.key==='Escape'){setMenu(false);requestAnimationFrame(()=>menuButton.current?.focus());}};const onResize=()=>{if(innerWidth>1100)setMenu(false);};addEventListener('keydown',onKey);addEventListener('resize',onResize,{passive:true});return()=>{document.body.style.overflow=previous;removeEventListener('keydown',onKey);removeEventListener('resize',onResize);};},[menu]);
   const switchLanguage=(next:Lang)=>{
     const url=new URL(window.location.href);
@@ -82,7 +84,7 @@ const observer=new IntersectionObserver(entries=>{for(const entry of entries){if
     setMenu(false);
     if(next==='ru')loadRu().then(()=>setLang('ru'),()=>{});else if(next==='en')loadEn().then(()=>setLang('en'),()=>{});else setLang(next);
   };
-  const handleQuizComplete=(score:number)=>{setQuizScore(score);try{sessionStorage.setItem(quizScoreKey,String(score));}catch{}};
+  const handleQuizComplete=(score:number)=>{trackOnce('quiz','done');setQuizScore(score);try{sessionStorage.setItem(quizScoreKey,String(score));}catch{}};
   const saveProgress=()=>{try{localStorage.setItem(savedProgressEnabledKey,'1');localStorage.setItem(savedProgressKey,JSON.stringify([...visited]));setProgressSaved(true);}catch{}};
   const clearSavedProgress=()=>{try{localStorage.removeItem(savedProgressEnabledKey);localStorage.removeItem(savedProgressKey);sessionStorage.removeItem(progressKey);}catch{}setVisited(new Set());setProgressSaved(false);};
   const returnToReadingPlace=()=>{if(!returnPoint)return;const {id,y}=returnPoint;setReturnPoint(null);history.replaceState(null,'','#'+id);window.scrollTo({top:y,behavior:'smooth'});};

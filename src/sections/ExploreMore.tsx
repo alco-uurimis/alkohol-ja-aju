@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { SourceReference } from '../components/Shared';
+import { trackOnce } from '../lib/analytics';
 
 type Lang = 'et' | 'ru' | 'en';
 
@@ -144,7 +145,7 @@ export function DualTask({ lang }: { lang: Lang }) {
           <label className="dual-ask">{t.howMany}
             <span><button type="button" aria-label="−1" onClick={() => setGuess(g => Math.max(0, g - 1))}>−</button><output>{guess}</output><button type="button" aria-label="+1" onClick={() => setGuess(g => Math.min(30, g + 1))}>+</button></span>
           </label>
-          <button type="button" className="button primary" onClick={() => setPhase('result')}>{t.check}</button>
+          <button type="button" className="button primary" onClick={() => { trackOnce('explore', 'dual-task'); setPhase('result'); }}>{t.check}</button>
         </div>
       )}
       {phase === 'result' && (
