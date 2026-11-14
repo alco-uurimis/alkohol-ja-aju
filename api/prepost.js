@@ -3,24 +3,14 @@
 import { ITEMS, KEY } from './_prepost-key.js';
 import { mirrorPrepost } from './_mirror.js';
 import { readSource, withDeadline } from './_source.js';
+import { limited } from './_ratelimit.js';
 
 const ALLOWED_ORIGINS = new Set(['https://alco-uurimis.github.io', 'https://alkohol-ja-aju.vercel.app']);
 function cors(req, res) { const origin = req.headers?.origin; if (origin && ALLOWED_ORIGINS.has(origin)) res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Vary', 'Origin'); res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); res.setHeader('Cache-Control', 'no-store'); }
 async function request(url, body) { const options = { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' }; const first = await fetch(url, options); if (![301, 302, 303, 307, 308].includes(first.status)) return first; const location = first.headers.get('location'); if (!location) throw new Error('missing_redirect'); const destination = new URL(location, url).toString(); return [307, 308].includes(first.status) ? fetch(destination, options) : fetch(destination, { headers: { accept: 'application/json' } }); }
 
-// Best-effort abuse brake. Counters live only in this instance's memory and are never written anywhere:
-// no IP is stored, the key is hashed-by-truncation and forgotten after the window.
-const WINDOW_MS = 10 * 60 * 1000, MAX_PER_WINDOW = 150; // a whole school class often shares one public IP
-const hits = new Map();
-export function tooMany(req, now = Date.now()) {
-  const raw = String(req.headers?.['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim();
-  const key = raw.slice(0, 64);
-  if (hits.size > 5000) { for (const [k, v] of hits) if (now - v.start > WINDOW_MS) hits.delete(k); if (hits.size > 5000) hits.clear(); }
-  const entry = hits.get(key);
-  if (!entry || now - entry.start > WINDOW_MS) { hits.set(key, { start: now, count: 1 }); return false; }
-  entry.count += 1;
-  return entry.count > MAX_PER_WINDOW;
-}
+// Best-effort abuse brake (see _ratelimit.js). 150 per 10 minutes: a whole school class often shares one public IP.
+export const tooMany = (req, now) => limited(req, 'prepost', 150, now);
 
 /** Returns a clean record or null when the body is not exactly what the check page sends. */
 export function parseSubmission(body) {

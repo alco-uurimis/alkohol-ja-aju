@@ -45,6 +45,27 @@ async function download(token: string, table: 'responses' | 'prepost') {
   } catch { alert('Не удалось связаться с сервером.'); }
 }
 
+type Health = { ok: boolean; primary?: string; telegram?: { ok: boolean; reason: string }; sheet?: { ok: boolean; reason: string }; supabase?: { ok: boolean; reason: string }; detail?: string };
+function DeliveryCheck({ token }: { token: string }) {
+  const [st, setSt] = useState<Health | 'err' | 'busy' | null>(null);
+  const check = () => {
+    setSt('busy');
+    fetch('https://alkohol-ja-aju.vercel.app/api/research-health', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+      .then(r => r.json()).then(b => setSt(b as Health), () => setSt('err'));
+  };
+  const row = (name: string, x?: { ok: boolean; reason: string }) => x && <li key={name}>{x.ok ? '✅' : '⚠️'} {name}: <code>{x.reason}</code></li>;
+  return (
+    <div className="admin-q admin-delivery">
+      <h3>Состояние сохранения ответов</h3>
+      <button type="button" className="admin-link" onClick={check} disabled={st === 'busy'}>{st === 'busy' ? 'Проверяю…' : 'Проверить Supabase, таблицу и Telegram'}</button>
+      {st === 'err' && <p role="alert" className="admin-error">Не удалось получить ответ сервера.</p>}
+      {st && st !== 'err' && st !== 'busy' && (st.detail
+        ? <p className="admin-meta">Сервер не признал вас администратором для полной проверки.</p>
+        : <><p className="admin-meta">Основное хранилище: <b>{st.primary === 'supabase' ? 'Supabase' : 'Google-таблица'}</b>. Общий результат: <b>{st.ok ? 'всё работает' : 'есть проблема'}</b>.</p><ul>{row('Supabase', st.supabase)}{row('Google-таблица', st.sheet)}{row('Telegram', st.telegram)}</ul></>)}
+    </div>
+  );
+}
+
 type Parity = { admin: string[]; public: string[] } | { error: string } | null;
 function MirrorStatus({ token }: { token: string }) {
   const [st, setSt] = useState<{ configured: boolean; responses: number | null; prepost: number | null; parity: Parity } | 'err' | 'busy' | null>(null);
@@ -166,6 +187,7 @@ export default function AdminData() {
                   );
                 })}
               </div>
+              <DeliveryCheck token={session.access_token} />
               <MirrorStatus token={session.access_token} />
               <PrePostCard data={data.prepost} />
               <div className="admin-report-toggle"><button type="button" className="admin-signin" aria-expanded={showReport} onClick={() => setShowReport(v => !v)}>{showReport ? 'Скрыть отчёт' : 'Сформировать отчёт (PDF)'}</button></div>

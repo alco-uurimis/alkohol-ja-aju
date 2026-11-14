@@ -1,4 +1,5 @@
 import {mirrorCount} from './_mirror.js';
+import {getAdmin} from './_admin-auth.js';
 import {readSource} from './_source.js';
 const ALLOWED_ORIGINS = new Set([
   'https://alco-uurimis.github.io',
@@ -10,7 +11,7 @@ function applyCors(req,res){
   if(origin&&ALLOWED_ORIGINS.has(origin))res.setHeader('Access-Control-Allow-Origin',origin);
   res.setHeader('Vary','Origin');
   res.setHeader('Access-Control-Allow-Methods','GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers','Content-Type');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
   res.setHeader('Cache-Control','no-store');
 }
 
@@ -85,6 +86,9 @@ export default async function handler(req,res){
   applyCors(req,res);
   if(req.method==='OPTIONS')return res.status(204).end();
   if(req.method!=='GET')return res.status(405).json({ok:false,error:'method_not_allowed'});
+  // The detailed check calls Telegram, the Sheet and Supabase and reveals how the server is configured: admins only.
+  // Everyone else gets a bare liveness answer, so the endpoint cannot be used to probe the setup or to hammer those services.
+  if(!(await getAdmin(req)))return res.status(200).json({ok:true,service:'research-delivery',detail:'sign in as an admin for the full check'});
   const [telegram,sheet,supabase]=await Promise.all([checkTelegram(),checkSheet(),checkSupabase()]);
   const primary=readSource()==='supabase'?supabase:sheet; // the Sheet is only a best-effort copy once Supabase is primary
   return res.status(200).json({
