@@ -82,7 +82,7 @@ export default function ResearchApp(){
       const data=await response.json().catch(()=>({}));
       if(!response.ok||data.ok!==true){
         console.error('Research delivery failed',data);
-        const why=` (HTTP ${response.status}${typeof data?.error==='string'?' · '+data.error.slice(0,60):''})`;
+        const why=` (HTTP ${response.status}${typeof data?.error==='string'?' · '+data.error.slice(0,60):''}${Array.isArray(data?.warnings)&&data.warnings[0]?' · '+String(data.warnings[0]).slice(0,60):''})`;
         if(data?.error==='age_not_eligible')setError(T(lang,ru?'Опрос доступен только участникам от 15 лет.':'Küsitlus on mõeldud ainult vähemalt 15-aastastele.'));
         else if(data?.error==='minor_consent_required')setError(T(lang,ru?'Для участника 15–17 лет нужно подтвердить отдельное информированное согласие.':'15–17-aastane osaleja peab kinnitama eraldi teadliku nõusoleku.'));
         else if(data?.configured?.telegram===false&&data?.configured?.sheet===false)setError(T(lang,ru?'Сервис отправки пока не настроен на сервере. Ответы не потеряны — попробуй позже.':'Saatmisteenus pole serveris veel seadistatud. Vastused ei kao — proovi hiljem uuesti.')+why);
