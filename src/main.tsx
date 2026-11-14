@@ -6,6 +6,7 @@ import AccountMenu from './components/AccountMenu';
 import Motion from './components/Motion';
 import SiteSearch from './components/SiteSearch';
 import Comfort from './components/Comfort';
+import ErrorBoundary from './components/ErrorBoundary';
 import './scrollProgress';
 // Base styles load first; component and responsive refinements follow.
 import './styles.css';
@@ -36,4 +37,4 @@ import './desktop-menu.css';
 import './ux-final.css';
 import './registerSW';
 import { whenReady } from './data/ru';
-whenReady(() => { ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/><SiteEnhancements/><AccountMenu/><Motion/><SiteSearch/><Comfort/></React.StrictMode>); });
+whenReady(() => { ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><ErrorBoundary><App/></ErrorBoundary><ErrorBoundary silent><SiteEnhancements/></ErrorBoundary><ErrorBoundary silent><AccountMenu/></ErrorBoundary><ErrorBoundary silent><Motion/></ErrorBoundary><ErrorBoundary silent><SiteSearch/></ErrorBoundary><ErrorBoundary silent><Comfort/></ErrorBoundary></React.StrictMode>); });
