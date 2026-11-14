@@ -242,3 +242,11 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
 
 .topic-button small{color:#5d6479!important}
 #infograafika .eyebrow,#viktoriin .eyebrow,#labor .eyebrow,.infographics-section .eyebrow{color:#b9adff!important}
+
+/* Phone menu: the utility buttons (search, sign in, reading) come first, above the PROJECT group. */
+@media (max-width:760px){
+  .site-search__host-menu,.site-search__btn--menu{order:-30!important}
+  .account__host-menu,.account-menuitem{order:-29!important}
+  .comfort__host-menu,.comfort__btn--menu{order:-28!important}
+  .site-search__btn--menu,.comfort__btn--menu{font-size:.9rem}
+}
