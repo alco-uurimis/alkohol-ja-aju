@@ -255,3 +255,13 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
 .quiz-result-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .quiz-result-actions .button{min-height:46px}
 @media (max-width:560px){.quiz-result-actions .button{width:100%}}
+
+/* quiz result: confidence x correctness matrix; cell tint grows with its share (--s = 0..1) */
+.quiz-cal{width:100%;max-width:460px;margin:18px 0 6px;border-collapse:separate;border-spacing:6px;table-layout:fixed}
+.quiz-cal caption{text-align:left;font-weight:800;margin-bottom:4px}
+.quiz-cal th{font-size:.8rem;font-weight:700;color:#4c556a;text-align:left;padding:4px}
+.quiz-cal thead th{text-align:center}
+.quiz-cal__cell{height:64px;border-radius:12px;text-align:center;border:1px solid #dfe3ed;background:color-mix(in srgb,var(--c) calc(12% + var(--s)*60%),#fff);color:#171b37}
+.quiz-cal__cell b{font-size:1.5rem}
+.quiz-cal__cell.ok{--c:#7bc043}.quiz-cal__cell.hidden-know{--c:#c9f574}.quiz-cal__cell.over{--c:#f08a5d;border-color:#c0562b}.quiz-cal__cell.miss{--c:#b7aef0}
+.quiz-cal__note{max-width:560px}
