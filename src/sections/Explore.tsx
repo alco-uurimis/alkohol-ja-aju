@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Section, SourceReference } from '../components/Shared';
 import { readGameMetrics } from '../utils/gameMetrics';
+import { BrainDevelopment, DualTask } from './ExploreMore';
 import './explore.css';
 
 type Lang = 'et' | 'ru' | 'en';
@@ -279,7 +280,7 @@ export default function Explore({ lang }: { lang: Lang }) {
   const up = typeof location !== 'undefined' && /\/en\/[^/]*$/.test(location.pathname) ? '../' : ''; // the English exercises page lives one folder down
   return (
     <Section id="avasta" number={t.number} title={t.title} intro={t.intro} className="explore-section">
-      <div className="explore-grid"><ReactionDistance lang={lang} /><SleepNight lang={lang} /><Synapse lang={lang} /><EvidenceSort lang={lang} /></div>
+      <div className="explore-grid"><ReactionDistance lang={lang} /><SleepNight lang={lang} /><Synapse lang={lang} /><BrainDevelopment lang={lang} /><DualTask lang={lang} /><EvidenceSort lang={lang} /></div>
       <nav className="explore-more" aria-label={t.more.title}>
         <a href={`${up}science/results/?lang=${lang}#estonia-data`}><strong>{t.more.est}</strong><span>{t.more.estSub}</span></a>
         <a href={`${up}help/?lang=${lang}#what-would-you-do`}><strong>{t.more.ride}</strong><span>{t.more.rideSub}</span></a>
