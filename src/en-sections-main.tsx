@@ -5,6 +5,7 @@ import Attention from './sections/Attention';
 import Lab from './sections/Lab';
 import ActionHub from './sections/ActionHub';
 import ClassroomKit from './sections/ClassroomKit';
+import { loadEn } from './data/en';
 import './styles.css';
 import './features.css';
 import './visuals.css';
@@ -83,4 +84,4 @@ function Page() {
       <nav aria-label="Project information"><a href="./">English home</a><a href="practice.html">Exercises</a><a href="situations.html">What to do</a><a href="classroom.html">Classroom kit</a><a href="../topics/">Science topics</a><a href="../help/?lang=en">Need help</a></nav></footer>
   </>;
 }
-ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><Page /></React.StrictMode>);
+loadEn().then(() => ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><Page /></React.StrictMode>));

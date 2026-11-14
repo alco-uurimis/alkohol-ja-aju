@@ -38,7 +38,7 @@ export const lessonEn = [
   { minutes: '2–5', title: 'Find the mechanism', description: 'Open the interactive diagram and ask pairs to name one brain function and explain it in their own words.', links: [{ href: '../start/?mode=full&lang=en', label: 'Diagram of functions' }] },
   { minutes: '5–8', title: 'Test an assumption', description: 'Choose one learning exercise. Before starting, the class predicts what it measures and what it cannot measure.', links: [{ href: 'practice.html#labor', label: 'Mini-games' }] },
   { minutes: '8–12', title: 'Look at the evidence', description: 'Read a study card: question, design, result and limitation. Discuss separately where the limit of the conclusion lies.', links: [{ href: '../acute-effects/', label: 'Acute effects' }] },
-  { minutes: '12–16', title: 'Make a safe decision', description: 'Discuss a fictional situation: a group has to get home after an event. Put the plan into words before the event, and one way to support a friend.', links: [{ href: '#obsuzhdenie', label: 'Discussion questions' }] },
+  { minutes: '12–16', title: 'Make a safe decision', description: 'Discuss a fictional situation: a group has to get home after an event. Put the plan into words before the event, and one way to support a friend.', links: [{ href: '#klassiruum', label: 'Discussion questions' }] },
   { minutes: '16–20', title: 'Put the conclusion into words', description: 'Fill in the short exit ticket: one piece of evidence, one limitation and one safe action. Then open the knowledge check.', links: [{ href: '../start/?mode=full&lang=en', label: 'Knowledge check' }] },
 ];
 export const objectivesEn = [

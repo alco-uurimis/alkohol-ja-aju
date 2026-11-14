@@ -117,4 +117,3 @@ export const stroopNamesEn = { violet: 'purple', lime: 'lime', cyan: 'cyan', cor
 /** Same words as the Estonian and Russian pools: 32 common, easy-to-picture nouns. */
 export const wordsEn = ['window','book','forest','cloud','stone','flower','chair','river','pencil','bridge','clock','leaf','sun','hat','ribbon','box','snow','boat','key','bicycle','garden','door','feather','sea','lamp','apple','cup','pillow','sand','rain','tree','scarf'];
 
-export { scienceEn } from './content.en';

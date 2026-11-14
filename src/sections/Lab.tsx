@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ExerciseNote, Section } from '../components/Shared';
 import { T } from '../data/gamesT';
-import { stroopNamesEn } from '../data/games.en';
+import { getEn } from '../data/en';
 import { recordReaction, recordSignal, recordStroop } from '../utils/gameMetrics';
 
 type Lang = 'et' | 'ru' | 'en';
@@ -97,7 +97,7 @@ function buildStroopRounds() {
 
 function StroopGame({ lang }: { lang: Lang }) {
   const ru = lang === 'ru';
-  const names: Record<Ink, string> = lang === 'en' ? stroopNamesEn : ru
+  const names: Record<Ink, string> = lang === 'en' ? getEn().stroopNamesEn : ru
     ? { violet: 'фиолетовый', lime: 'лаймовый', cyan: 'голубой', coral: 'коралловый' }
     : { violet: 'lilla', lime: 'laim', cyan: 'tsüaan', coral: 'korall' };
   const [rounds, setRounds] = useState(buildStroopRounds);

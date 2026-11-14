@@ -88,7 +88,7 @@ describe('English classroom kit', () => {
 describe('English main page', () => {
   const files = ['App.tsx', 'sections/LearningCenter.tsx', 'sections/Closing.tsx', 'sections/Infographics.tsx', 'sections/Brain.tsx', 'components/PathChooser.tsx', 'components/FinalSummary.tsx', 'components/FeedbackSurvey.tsx', 'components/Reflection.tsx', 'components/ReferenceGlossary.tsx', 'components/SiteEnhancements.tsx'];
   it('has an English text for every Estonian string in the main-page components', async () => {
-    const { siteEn } = await import('./data/siteT');
+    const { siteEn } = await import('./data/siteDict');
     const pairT = new RegExp(`T\\(lang,ru\\s*\\?\\s*${lit}\\s*:\\s*${lit}\\)`, 'g');
     const missing = [];
     for (const f of files) {
@@ -98,7 +98,7 @@ describe('English main page', () => {
     expect(missing).toEqual([]);
   });
   it('has no Estonian or Russian in the English values', async () => {
-    const { siteEn } = await import('./data/siteT');
+    const { siteEn } = await import('./data/siteDict');
     for (const [k, v] of Object.entries(siteEn)) expect(v, k).not.toMatch(/[А-Яа-яЁё]|[õäöüÕÄÖÜ]/);
     const en = await import('./data/content.en');
     expect(JSON.stringify([en.topicsEn, en.knowledgeCardsEn, en.scienceEn, en.takeawaysEn, en.sourcesEn.map(s => [s.organization, s.title, s.note])])).not.toMatch(/[А-Яа-яЁё]|[õäöüÕÄÖÜ]/);

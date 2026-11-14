@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { Section } from '../components/Shared';
 import './ClassroomKit.css';
 import { T } from '../data/classroomT';
-import { lessonEn, objectivesEn, promptsEn, ticketQuestionsEn } from '../data/classroom.en';
+import { getEn } from '../data/en';
 
 type Lang='et'|'ru'|'en';
 type CopyState='idle'|'copied'|'manual';
@@ -37,7 +37,7 @@ export default function ClassroomKit({lang}:{lang:Lang}){
   const ru=lang==='ru';
   const [copyState,setCopyState]=useState<CopyState>('idle');
 
-  const lesson=useMemo<LessonStep[]>(()=>lang==='en'?lessonEn:ru?[
+  const lesson=useMemo<LessonStep[]>(()=>lang==='en'?getEn().lessonEn:ru?[
     {
       minutes:'0–2',
       title:'Открой вопрос',
@@ -113,7 +113,7 @@ export default function ClassroomKit({lang}:{lang:Lang}){
     },
   ],[ru,lang]);
 
-  const objectives=lang==='en'?objectivesEn:ru?[
+  const objectives=lang==='en'?getEn().objectivesEn:ru?[
     'отделить наблюдение, связь и причинный вывод;',
     'назвать ограничение одного упражнения или исследования;',
     'предложить безопасное действие в вымышленной ситуации.',
@@ -123,7 +123,7 @@ export default function ClassroomKit({lang}:{lang:Lang}){
     'pakkuda väljamõeldud olukorras turvalist tegevust.',
   ];
 
-  const prompts=lang==='en'?promptsEn:ru?[
+  const prompts=lang==='en'?getEn().promptsEn:ru?[
     'Какой вывод поддерживает этот источник — и какого вывода он не поддерживает?',
     'Почему результат мини-игры нельзя считать измерением опьянения или здоровья?',
     'Какие условия, кроме алкоголя, могут влиять на реакцию, память или решение?',
@@ -159,7 +159,7 @@ export default function ClassroomKit({lang}:{lang:Lang}){
     window.print();
   };
 
-  const ticketQuestions=lang==='en'?ticketQuestionsEn:ru?[
+  const ticketQuestions=lang==='en'?getEn().ticketQuestionsEn:ru?[
     'Один факт или вывод, который я могу объяснить:',
     'Какой источник или раздел сайта помог мне это понять:',
     'Ограничение: чего этот факт или упражнение НЕ доказывает:',

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Section } from '../components/Shared';
 import { T } from '../data/actionT';
-import { scenariosEn } from '../data/action.en';
+import { getEn } from '../data/en';
 import './action-hub.css';
 
 type Lang = 'et' | 'ru' | 'en';
@@ -192,7 +192,7 @@ function HelpLinks({ lang }: { lang: Lang }) {
 
 export default function ActionHub({ lang }: { lang: Lang }) {
   const ru = lang === 'ru';
-  const localized: Scenario[] = lang === 'en' ? scenariosEn : scenarios[lang];
+  const localized: Scenario[] = lang === 'en' ? getEn().scenariosEn : scenarios[lang];
   const [active, setActive] = useState<ScenarioId>('friend');
   const activeScenario = localized.find((scenario) => scenario.id === active) ?? localized[0];
 

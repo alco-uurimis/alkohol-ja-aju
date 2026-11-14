@@ -1,4 +1,4 @@
-import { classroomEn } from './classroom.en';
+import { getEn } from './en';
 
 /** `s` is the ET/RU string the caller chose; English maps the ET source string and falls back to it. */
-export const T = (lang: 'et' | 'ru' | 'en', s: string): string => (lang === 'en' ? (classroomEn[s] ?? s) : s);
+export const T = (lang: 'et' | 'ru' | 'en', s: string): string => (lang === 'en' ? (getEn().classroomEn[s] ?? s) : s);

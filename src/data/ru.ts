@@ -1,4 +1,5 @@
 import type * as RuContent from './content.ru';
+import { loadEn, wantsEn } from './en';
 
 /**
  * The Russian lesson content is a separate chunk that Estonian readers never need.
@@ -29,6 +30,7 @@ export function wantsRu(): boolean {
 
 /** Run `render` once the content the first screen needs is available. */
 export function whenReady(render: () => void): void {
+  if (wantsEn()) { loadEn().then(render, () => { try { localStorage.setItem('alkohol-ja-aju:language', 'et'); const url = new URL(location.href); url.searchParams.delete('lang'); history.replaceState(null, '', url); } catch { /* ignore */ } render(); }); return; }
   if (!wantsRu()) { render(); return; }
   loadRu().then(render, () => {
     // Russian content could not be fetched (offline on a first visit): fall back to Estonian instead of a broken page.
