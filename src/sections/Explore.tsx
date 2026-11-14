@@ -7,6 +7,7 @@ type Lang = 'et' | 'ru' | 'en';
 
 const text = {
   et: {
+    more: { title: 'Veel uurimiseks', est: 'Eesti andmed: graafik ja tõlgendamisülesanne', estSub: 'Kooliõpilaste uuringu kolm lainet ja küsimus, mida neist järeldada saab.', ride: 'Mida sina teeksid?', rideSub: 'Hargnev olukord: valid sammu ja näed, mis edasi juhtub.' },
     number: '06A / AVASTA', title: 'Graafikud ja lisaülesanne',
     intro: 'Neli lühikest lisa: mida tähendab reaktsiooniaeg meetrites, kuidas võib öö skemaatiliselt välja näha, kuidas muutub signaal sünapsis ja kuidas eristada vaatlust, seost ja põhjuslikku järeldust.',
     d: {
@@ -49,6 +50,7 @@ const text = {
     },
   },
   ru: {
+    more: { title: 'Ещё для исследования', est: 'Данные Эстонии: график и задание на интерпретацию', estSub: 'Три волны школьного опроса и вопрос, какой вывод из них можно сделать.', ride: 'Что бы ты сделал(а)?', rideSub: 'Ветвящаяся ситуация: выбираешь шаг и видишь, что происходит дальше.' },
     number: '06A / ИССЛЕДУЙ', title: 'Графики и новое задание',
     intro: 'Четыре коротких дополнения: что значит время реакции в метрах, как схематично может выглядеть ночь, как меняется сигнал в синапсе и как отличать наблюдение, связь и причинный вывод.',
     d: {
@@ -91,6 +93,7 @@ const text = {
     },
   },
   en: {
+    more: { title: 'More to explore', est: 'Data from Estonia: a chart and an interpretation task', estSub: 'Three waves of the school survey and the question of what can be concluded from them.', ride: 'What would you do?', rideSub: 'A branching situation: you choose a step and see what happens next.' },
     number: '06A / EXPLORE', title: 'Charts and an extra task',
     intro: 'Four short additions: what reaction time means in metres, what a night can look like as a schematic, how the signal changes at a synapse, and how to tell observation, association and causal conclusion apart.',
     d: {
@@ -273,9 +276,14 @@ function EvidenceSort({ lang }: { lang: Lang }) {
 /** Extra visual material after the game lab: a distance calculator, a schematic sleep chart, an animated synapse and a classification task. */
 export default function Explore({ lang }: { lang: Lang }) {
   const t = text[lang];
+  const up = typeof location !== 'undefined' && /\/en\/[^/]*$/.test(location.pathname) ? '../' : ''; // the English exercises page lives one folder down
   return (
     <Section id="avasta" number={t.number} title={t.title} intro={t.intro} className="explore-section">
       <div className="explore-grid"><ReactionDistance lang={lang} /><SleepNight lang={lang} /><Synapse lang={lang} /><EvidenceSort lang={lang} /></div>
+      <nav className="explore-more" aria-label={t.more.title}>
+        <a href={`${up}science/results/?lang=${lang}#estonia-data`}><strong>{t.more.est}</strong><span>{t.more.estSub}</span></a>
+        <a href={`${up}help/?lang=${lang}#what-would-you-do`}><strong>{t.more.ride}</strong><span>{t.more.rideSub}</span></a>
+      </nav>
     </Section>
   );
 }

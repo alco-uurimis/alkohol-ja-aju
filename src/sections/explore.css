@@ -60,3 +60,7 @@ html.calm .explore-sleep .line{animation:none;stroke-dashoffset:0}
 @media (prefers-reduced-motion:reduce){.syn-dot,.syn-glow{animation:none}.explore-meters i{transition:none}}
 html.calm .syn-dot,html.calm .syn-glow{animation:none}
 .syn-paused .syn-dot,.syn-paused .syn-glow{animation-play-state:paused}
+.explore-more{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}
+.explore-more a{display:grid;gap:4px;padding:16px 18px;border:1px solid #d9d4f7;border-radius:16px;background:#f6f4ff;color:#171b37;text-decoration:none}
+.explore-more a:hover{border-color:#7c6ae6}.explore-more span{color:#4c556a;font-size:.9rem}
+@media (max-width:700px){.explore-more{grid-template-columns:1fr}}
