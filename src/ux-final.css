@@ -250,3 +250,8 @@ a.guide-card[href^="recovery-and-brain"]{--card-accent:#3fa35f}
   .comfort__host-menu,.comfort__btn--menu{order:-28!important}
   .site-search__btn--menu,.comfort__btn--menu{font-size:.9rem}
 }
+
+/* quiz result: retry-missed / all-again / finish */
+.quiz-result-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.quiz-result-actions .button{min-height:46px}
+@media (max-width:560px){.quiz-result-actions .button{width:100%}}

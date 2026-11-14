@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Lehte ei leitud · Page not found · Страница не найдена</title>
+<style>
+:root{font-family:Inter,system-ui,Arial,sans-serif;color:#171b37;background:#f7f8fb}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px}
+main{max-width:560px}
+.code{margin:0;color:#6150c8;font-size:.8rem;font-weight:800;letter-spacing:.14em}
+h1{margin:10px 0 6px;font-size:clamp(1.8rem,6vw,2.6rem);line-height:1.05;letter-spacing:-.03em}
+p{margin:0 0 6px;color:#4c556a;line-height:1.5}
+nav{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+a{display:inline-flex;align-items:center;min-height:46px;padding:0 18px;border:1px solid #d5dbe7;border-radius:12px;background:#fff;color:#171b37;font-weight:700;text-decoration:none}
+a.primary{background:#171b37;border-color:#171b37;color:#fff}
+a:focus-visible{outline:3px solid #7c6ae6;outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+<p class="code">404 · ALKOHOL JA AJU</p>
+<h1 id="t">Lehte ei leitud</h1>
+<p id="d">Sellist lehte siin ei ole. Võib-olla on link vananenud.</p>
+<nav>
+<a class="primary" id="home" href="/alkohol-ja-aju/">Avalehele</a>
+<a id="topics" href="/alkohol-ja-aju/topics/">Teadusteemad</a>
+<a id="help" href="/alkohol-ja-aju/help/">Vajan abi</a>
+</nav>
+</main>
+<script>
+(function(){
+  var T={ru:['Страница не найдена','Такой страницы здесь нет. Возможно, ссылка устарела.','На главную','Научные темы','Нужна помощь'],
+         en:['Page not found','There is no such page here. The link may be out of date.','To the home page','Science topics','I need help']};
+  var l=null;try{l=localStorage.getItem('alkohol-ja-aju:language')}catch(e){}
+  if(!T[l]){var n=(navigator.language||'').slice(0,2);l=T[n]?n:null}
+  if(!T[l])return;
+  document.documentElement.lang=l;var t=T[l];
+  document.getElementById('t').textContent=t[0];document.getElementById('d').textContent=t[1];
+  [['home',2],['topics',3],['help',4]].forEach(function(x){var a=document.getElementById(x[0]);a.textContent=t[x[1]];a.href+='?lang='+l});
+})();
+</script>
+</body>
+</html>

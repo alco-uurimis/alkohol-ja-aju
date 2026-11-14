@@ -1,7 +1,6 @@
 import BrainDiagram from '../components/BrainDiagram';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ProgressBar, Section, SourceReference } from '../components/Shared';
-import { readGameMetrics, type GameMetrics } from '../utils/gameMetrics';
 import { T } from '../data/siteT';
 
 type Lang='et'|'ru'|'en';
@@ -9,19 +8,6 @@ type Depth='quick'|'deeper'|'science';
 type RegionId='prefrontal'|'hippocampus'|'reward'|'cerebellum'|'brainstem';
 
 const regionOrder:RegionId[]=['prefrontal','hippocampus','reward','cerebellum','brainstem'];
-
-const glossary=[
-  {term:'GABA',enTerm:'GABA',en:'The main inhibitory neurotransmitter in the brain. Alcohol can strengthen the inhibitory signal linked with GABA-A receptors.',et:'Peamine pidurdav virgatsaine ajus. Alkohol võib võimendada GABA-A retseptoritega seotud pidurdavat signaali.',ru:'Главный тормозный медиатор мозга. Алкоголь может усиливать тормозные сигналы, связанные с GABA-A-рецепторами.',refs:[6,9]},
-  {term:'Glutamaat',enTerm:'Glutamate',en:'An important excitatory neurotransmitter. Alcohol can reduce the activity of NMDA-type glutamate receptors.',ruTerm:'Глутамат',et:'Oluline ergastav virgatsaine. Alkohol võib vähendada NMDA-tüüpi glutamaadiretseptorite aktiivsust.',ru:'Важный возбуждающий медиатор. Алкоголь может снижать активность NMDA-рецепторов глутамата.',refs:[6,9]},
-  {term:'Dopamiin',enTerm:'Dopamine',en:'A signalling molecule linked with reward, learning and motivation. Alcohol can change dopamine signalling in the reward pathways.',ruTerm:'Дофамин',et:'Tasustamise, õppimise ja motivatsiooniga seotud signaalmolekul. Alkohol võib muuta tasuradade dopamiinisignaali.',ru:'Сигнальная молекула, связанная с вознаграждением, обучением и мотивацией. Алкоголь может менять дофаминовую передачу в системе вознаграждения.',refs:[6]},
-  {term:'Hipokampus',enTerm:'Hippocampus',en:'A brain structure involved in forming new episodic memories.',ruTerm:'Гиппокамп',et:'Ajustruktuur, mis osaleb uute episoodiliste mälestuste kujunemises.',ru:'Структура мозга, участвующая в формировании новых эпизодических воспоминаний.',refs:[2]},
-  {term:'Prefrontaalne ajukoor',enTerm:'Prefrontal cortex',en:'The part of the cortex involved in planning, decision-making and impulse control.',ruTerm:'Префронтальная кора',et:'Ajukoore osa, mis osaleb planeerimises, otsustamises ja impulsside kontrollis.',ru:'Область коры, участвующая в планировании, принятии решений и контроле импульсов.',refs:[1,10]},
-  {term:'Mälulünk',enTerm:'Memory blackout',en:'A period whose events are not remembered later, although the person may have been awake and acting at the time.',ruTerm:'Провал памяти',et:'Periood, mille sündmusi hiljem ei mäletata, kuigi inimene võis sel ajal olla ärkvel ja tegutseda.',ru:'Период, события которого позже не вспоминаются, хотя человек мог оставаться в сознании и действовать.',refs:[2]},
-  {term:'Tolerants',enTerm:'Tolerance',en:'An adaptation in which more alcohol may be needed to reach the same subjective effect.',ruTerm:'Толерантность',et:'Kohanemine, mille korral sama subjektiivse toime saavutamiseks võib vaja minna suuremat kogust alkoholi.',ru:'Адаптация, при которой для того же субъективного эффекта может потребоваться больше алкоголя.',refs:[6,7]},
-  {term:'Alkoholi tarvitamise häire',enTerm:'Alcohol use disorder',en:'A clinical disorder assessed by symptoms and functioning; it is not diagnosed from a web game.',ruTerm:'Расстройство, связанное с употреблением алкоголя',et:'Kliiniline häire, mida hinnatakse sümptomite ja funktsioneerimise järgi; seda ei diagnoosita veebimängu põhjal.',ru:'Клиническое расстройство, которое оценивают по симптомам и нарушениям функционирования; его нельзя диагностировать по веб-игре.',refs:[7]},
-  {term:'Täidesaatvad funktsioonid',enTerm:'Executive functions',en:'Mental processes linked with planning, directing attention, working memory and impulse control.',ruTerm:'Исполнительные функции',et:'Planeerimise, tähelepanu juhtimise, töömälu ja impulsside kontrolliga seotud vaimsed protsessid.',ru:'Когнитивные процессы, связанные с планированием, управлением вниманием, рабочей памятью и контролем импульсов.',refs:[10]},
-  {term:'Korrelatsioon',enTerm:'Correlation',en:'A statistical association between two phenomena. Correlation alone does not prove that one phenomenon causes the other.',ruTerm:'Корреляция',et:'Statistiline seos kahe nähtuse vahel. Korrelatsioon üksi ei tõesta, et üks nähtus põhjustab teist.',ru:'Статистическая связь между явлениями. Сама по себе корреляция не доказывает, что одно явление вызывает другое.',refs:[10]},
-];
 
 const brainRegions={
   prefrontal:{
@@ -97,51 +83,6 @@ function BrainMap({lang}:{lang:Lang}){
   const [selected,setSelected]=useState<RegionId>('prefrontal');
   const data=brainRegions[selected][lang];
   return <div className="brain-map-wrap"><div className="brain-map-visual" aria-label={T(lang,ru?'Интерактивная схема мозга':'Interaktiivne ajuskeem')}><BrainDiagram selected={selected} onSelect={setSelected}/>{regionOrder.map((id,i)=><button key={id} className={`brain-point point-${id} ${selected===id?'active':''}`} onClick={()=>setSelected(id)} aria-pressed={selected===id}><span>{i+1}</span><b>{brainRegions[id][lang].name}</b></button>)}</div><article className="brain-map-panel" aria-live="polite"><span className="pill">{T(lang,ru?'ОБЛАСТЬ МОЗГА':'AJUPIIRKOND')}</span><h3>{data.name}</h3><dl><div><dt>{T(lang,ru?'Что делает':'Mida teeb')}</dt><dd>{data.role}</dd></div><div><dt>{T(lang,ru?'Связь с алкоголем':'Seos alkoholiga')}</dt><dd>{data.effect} <SourceReference ids={data.refs} lang={lang}/></dd></div></dl><p className="small">{T(lang,ru?'Схема упрощена: функции мозга распределены по сетям и не ограничиваются одной точкой.':'Skeem on lihtsustatud: ajufunktsioonid jaotuvad võrgustikesse ega piirdu ühe punktiga.')}</p></article></div>;
-}
-
-function Glossary({lang}:{lang:Lang}){
-  const ru=lang==='ru';
-  const [query,setQuery]=useState('');
-  const filtered=useMemo(()=>glossary.filter(item=>`${item.term} ${item.ruTerm??''} ${item.enTerm??''} ${lang==='en'?item.en:ru?item.ru:item.et}`.toLowerCase().includes(query.toLowerCase())),[query,ru,lang]);
-  return <div className="glossary"><div className="glossary-tools"><div><span className="pill">{T(lang,ru?'ГЛОССАРИЙ':'SÕNASTIK')}</span><h3>{T(lang,ru?'Термины без лишнего жаргона':'Mõisted ilma liigse žargoonita')}</h3></div><label><span className="sr-only">{T(lang,ru?'Поиск термина':'Otsi mõistet')}</span><input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder={T(lang,ru?'Поиск: GABA, память…':'Otsi: GABA, mälu…')}/></label></div><div className="glossary-grid">{filtered.map(item=><details key={item.term}><summary>{lang==='en'?item.enTerm:ru?(item.ruTerm??item.term):item.term}</summary><p>{lang==='en'?item.en:ru?item.ru:item.et} <SourceReference ids={item.refs} lang={lang}/></p></details>)}{filtered.length===0&&<p className="empty-state">{T(lang,ru?'Ничего не найдено. Попробуй другое слово.':'Midagi ei leitud. Proovi teist sõna.')}</p>}</div></div>;
-}
-
-function MemoryPath({lang}:{lang:Lang}){
-  const ru=lang==='ru';
-  const steps=lang==='en'?['Event / signal','Encoding the information','Consolidating the memory','Recalling it later']:ru?['Сигнал / событие','Кодирование информации','Закрепление воспоминания','Позднее воспроизведение']:['Sündmus / signaal','Info kodeerimine','Mälestuse kinnistumine','Hilisem meenutamine'];
-  const [chosen,setChosen]=useState<number[]>([]);
-  const [message,setMessage]=useState('');
-  const pick=(index:number)=>{
-    if(chosen.includes(index))return;
-    if(index!==chosen.length){setMessage(T(lang,ru?'Не совсем: выбери следующий этап по порядку.':'Mitte päris: vali järgmine etapp õiges järjekorras.'));return;}
-    const next=[...chosen,index];
-    setChosen(next);
-    if(next.length===steps.length)setMessage(T(lang,ru?'Готово. Чтобы воспоминание можно было позже вызвать, информация сначала должна быть закодирована и закреплена.':'Valmis. Et mälestust hiljem meenutada, peab info esmalt kodeeruma ja kinnistuma.'));else setMessage('');
-  };
-  const reset=()=>{setChosen([]);setMessage('');};
-  return <article className="science-game"><span className="pill">{T(lang,ru?'МИНИ-ИНТЕРАКТИВ':'MINIINTERAKTIIV')}</span><h3>{T(lang,ru?'Собери путь воспоминания':'Pane kokku mälestuse teekond')}</h3><p>{T(lang,ru?'Нажимай этапы в логическом порядке — от события до воспроизведения.':'Vali etapid loogilises järjekorras sündmusest meenutamiseni.')}</p><div className="path-options">{steps.map((step,i)=><button key={step} className={chosen.includes(i)?'used':''} disabled={chosen.includes(i)} onClick={()=>pick(i)}><span>{chosen.indexOf(i)>=0?chosen.indexOf(i)+1:'·'}</span>{step}</button>)}</div>{message&&<p className="science-game-feedback" role="status">{message} <SourceReference ids={[2]} lang={lang}/></p>}<button className="text-button" onClick={reset}>{T(lang,ru?'Начать заново':'Alusta uuesti')}</button></article>;
-}
-
-function NeuroMatch({lang}:{lang:Lang}){
-  const ru=lang==='ru';
-  const items=lang==='en'?[
-    {q:'Which neurotransmitter is linked mainly with inhibition in this simplified model?',a:'GABA',opts:['GABA','Glutamate','Dopamine']},
-    {q:'Which neurotransmitter is linked with excitatory NMDA transmission?',a:'Glutamate',opts:['Dopamine','Glutamate','GABA']},
-    {q:'Which signal is especially important in learning from reward?',a:'Dopamine',opts:['Glutamate','GABA','Dopamine']},
-  ]:ru?[
-    {q:'Какой медиатор в этой упрощённой модели связан прежде всего с торможением?',a:'GABA',opts:['GABA','Глутамат','Дофамин']},
-    {q:'Какой медиатор связан с возбуждающей NMDA-передачей?',a:'Глутамат',opts:['Дофамин','Глутамат','GABA']},
-    {q:'Какой сигнал особенно важен для обучения на вознаграждении?',a:'Дофамин',opts:['Глутамат','GABA','Дофамин']},
-  ]:[
-    {q:'Milline virgatsaine seostub selles lihtsustatud mudelis eeskätt pidurdusega?',a:'GABA',opts:['GABA','Glutamaat','Dopamiin']},
-    {q:'Milline virgatsaine seostub ergastava NMDA-ülekandega?',a:'Glutamaat',opts:['Dopamiin','Glutamaat','GABA']},
-    {q:'Milline signaal on eriti oluline tasupõhises õppimises?',a:'Dopamiin',opts:['Glutamaat','GABA','Dopamiin']},
-  ];
-  const [index,setIndex]=useState(0);const [score,setScore]=useState(0);const [done,setDone]=useState(false);const [picked,setPicked]=useState<string|null>(null);
-  const choose=(value:string)=>{if(picked)return;setPicked(value);if(value===items[index].a)setScore(v=>v+1);};
-  const next=()=>{if(index===items.length-1){setDone(true);}else{setIndex(v=>v+1);setPicked(null);}};
-  const restart=()=>{setIndex(0);setScore(0);setDone(false);setPicked(null);};
-  return <article className="science-game"><span className="pill">{T(lang,ru?'МИНИ-ИНТЕРАКТИВ':'MINIINTERAKTIIV')}</span><h3>{T(lang,ru?'Сопоставь систему сигналов':'Sobita signaalisüsteem')}</h3>{done?<div className="science-mini-result"><strong>{score} / {items.length}</strong><p>{T(lang,ru?'Это проверка терминов, а не оценка мозга или здоровья.':'See kontrollib mõisteid, mitte aju ega tervist.')}</p><button className="button" onClick={restart}>{T(lang,ru?'Ещё раз':'Proovi uuesti')}</button></div>:<><p>{items[index].q}</p><div className="neuro-options">{items[index].opts.map(opt=><button key={opt} disabled={picked!==null} className={picked===opt?(opt===items[index].a?'correct':'incorrect'):''} onClick={()=>choose(opt)}>{opt}</button>)}</div>{picked&&<div className="science-game-feedback" role="status"><strong>{picked===items[index].a?(T(lang,ru?'Верно.':'Õige.')):((lang==='en'?`Correct answer: ${items[index].a}.`:ru?`Правильный ответ: ${items[index].a}.`:`Õige vastus: ${items[index].a}.`))}</strong> <SourceReference ids={[6,9]} lang={lang}/><br/><button className="text-button" onClick={next}>{index===items.length-1?(T(lang,ru?'Показать результат':'Vaata tulemust')):(T(lang,ru?'Следующий':'Järgmine'))}</button></div>}</>}</article>;
 }
 
 function ResearchLimits({lang}:{lang:Lang}){
@@ -236,20 +177,7 @@ export default function LearningCenter({lang}:{lang:Lang}){
     <DepthExplainer lang={lang}/>
     <div className="learning-subhead"><span className="eyebrow">{T(lang,ru?'ИНТЕРАКТИВНАЯ КАРТА':'INTERAKTIIVNE KAART')}</span><h3>{T(lang,ru?'Нажми на область мозга':'Vali ajupiirkond')}</h3><p>{T(lang,ru?'Это учебная схема, а не анатомический атлас. Она показывает, с какими функциями чаще связывают разные области.':'See on õppemudel, mitte anatoomiline atlas. See näitab, milliste funktsioonidega eri piirkondi sageli seostatakse.')}</p></div>
     <BrainMap lang={lang}/>
-    <Glossary lang={lang}/>
     <div className="science-games-grid"><MemoryPathPlus lang={lang}/><NeuroMatchPlus lang={lang}/></div>
     <ResearchLimits lang={lang}/>
   </Section>;
 }
-
-export function FinalSummary({lang,quizScore,visited,totalSections}:{lang:Lang;quizScore:number|null;visited:number;totalSections:number}){
-  const ru=lang==='ru';
-  const [metrics,setMetrics]=useState<GameMetrics>(()=>readGameMetrics());
-  useEffect(()=>{const sync=()=>setMetrics(readGameMetrics());window.addEventListener('alkohol-game-metrics',sync);window.addEventListener('focus',sync);return()=>{window.removeEventListener('alkohol-game-metrics',sync);window.removeEventListener('focus',sync);};},[]);
-  const games=[metrics.reaction,metrics.stroop,metrics.signal].filter(Boolean).length;
-  return <Section id="isiklik-kokkuvote" number={T(lang,ru?'05A / ТВОЙ ИТОГ':'05A / SINU KOKKUVÕTE')} title={T(lang,ru?'Что ты уже прошёл(а)':'Mida oled juba teinud')} intro={T(lang,ru?'Итог существует только в этой вкладке и не является медицинской оценкой.':'Kokkuvõte eksisteerib ainult selles vahelehes ega ole tervisehinnang.')} className="personal-summary">
-    <div className="summary-stats"><article><span>{T(lang,ru?'Разделы':'Osad')}</span><strong>{visited} / {totalSections}</strong><p>{T(lang,ru?'Открыто в этой сессии':'Avatud selles seansis')}</p></article><article><span>{T(lang,ru?'Мини-игры':'Minimängud')}</span><strong>{games} / 3</strong><p>{T(lang,ru?'Есть сохранённый результат':'Tulemus on salvestatud')}</p></article><article><span>{T(lang,ru?'Викторина':'Viktoriin')}</span><strong>{quizScore===null?'—':`${quizScore} / 10`}</strong><p>{quizScore===null?(T(lang,ru?'Ещё не завершена':'Veel lõpetamata')):(T(lang,ru?'Последняя попытка':'Viimane katse'))}</p></article></div>
-    <div className="summary-detail"><div><h3>{T(lang,ru?'Результаты игр':'Mängude tulemused')}</h3>{games===0?<p>{T(lang,ru?'Пока нет результатов. Сыграй хотя бы в одну игру в лаборатории.':'Tulemusi veel pole. Proovi vähemalt üht mängu mängulaboris.')}</p>:<ul>{metrics.reaction&&<li>{T(lang,ru?'Реакция':'Reaktsioon')}: <strong>{metrics.reaction.latestMs} ms</strong> · {T(lang,ru?'лучшее':'parim')} {metrics.reaction.bestMs} ms</li>}{metrics.stroop&&<li>Stroop: <strong>{metrics.stroop.score}/{metrics.stroop.rounds}</strong> · {T(lang,ru?'среднее':'keskmine')} {metrics.stroop.averageMs} ms</li>}{metrics.signal&&<li>{T(lang,ru?'Цепочка':'Signaalirada')}: <strong>{T(lang,ru?'уровень':'tase')} {metrics.signal.reachedLength}</strong> · {metrics.signal.completed?(T(lang,ru?'завершено':'läbitud')):(T(lang,ru?'не завершено':'pooleli'))}</li>}</ul>}</div><div className="summary-next"><h3>{T(lang,ru?'Что дальше?':'Mis edasi?')}</h3><p>{quizScore===null?(T(lang,ru?'Пройди «Миф или факт», затем вернись сюда — итог обновится автоматически.':'Tee „Müüt või fakt“ läbi ja tule siia tagasi — kokkuvõte uueneb automaatselt.')):(T(lang,ru?'Просмотри объяснения к ошибкам и источники. Если хочешь, затем заполни анонимный опрос.':'Vaata üle vigade selgitused ja allikad. Soovi korral täida seejärel anonüümne küsitlus.'))}</p><a className="button" href={quizScore===null?'#viktoriin':'#tagasiside'}>{quizScore===null?(T(lang,ru?'К викторине':'Viktoriini juurde')):(T(lang,ru?'К опросу':'Küsitluse juurde'))}</a></div></div>
-  </Section>;
-}
-
