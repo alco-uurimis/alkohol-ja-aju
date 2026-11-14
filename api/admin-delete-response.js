@@ -1,7 +1,7 @@
 // Permanently deletes one response row by ID. Signed-in admins only (see _admin-auth.js).
 import {requireAdmin} from './_admin-auth.js';
 import {mirrorDelete} from './_mirror.js';
-import {readSource} from './_source.js';
+import {readSource,resetSnapshotCache} from './_source.js';
 
 const ALLOWED_ORIGINS=new Set(['https://alco-uurimis.github.io','https://alkohol-ja-aju.vercel.app']);
 function cors(req,res){const origin=req.headers?.origin;if(origin&&ALLOWED_ORIGINS.has(origin))res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Authorization, Content-Type');res.setHeader('Cache-Control','no-store');}
@@ -17,7 +17,7 @@ export default async function handler(req,res){
   if(!/^research_[a-z0-9_-]{8,90}$/i.test(responseId))return res.status(400).json({ok:false,error:'invalid_response_id'});
   const url=process.env.SHEET_WEBHOOK_URL,secret=process.env.SHEET_WEBHOOK_SECRET;
   const fromSupabase=readSource()==='supabase';
-  if(fromSupabase&&(!url||!secret)){const m=await mirrorDelete(responseId);if(!m.configured||!m.ok)return res.status(502).json({ok:false,error:'delete_unreachable'});return res.status(200).json({ok:true,deleted:m.deleted===true,mirror:'ok',sheet:'off'});}
+  if(fromSupabase&&(!url||!secret)){const m=await mirrorDelete(responseId);if(!m.configured||!m.ok)return res.status(502).json({ok:false,error:'delete_unreachable'});resetSnapshotCache();return res.status(200).json({ok:true,deleted:m.deleted===true,mirror:'ok',sheet:'off'});}
   if(!url||!secret)return res.status(503).json({ok:false,error:'summary_not_configured'});
   try{
     const parsed=new URL(String(url).trim());if(parsed.protocol!=='https:'||parsed.hostname!=='script.google.com')return res.status(503).json({ok:false,error:'summary_url_invalid'});
@@ -26,8 +26,9 @@ export default async function handler(req,res){
     const sheetOk=response.ok&&data?.ok===true;
     const mirrorState=!mirror.configured?'off':mirror.ok?'ok':'failed';
     // With Supabase as the read source a Sheet outage must not block erasure: the row is gone where the numbers come from.
-    if(!sheetOk&&fromSupabase&&mirror.ok)return res.status(200).json({ok:true,deleted:mirror.deleted===true,mirror:'ok',sheet:'failed'});
+    if(!sheetOk&&fromSupabase&&mirror.ok){resetSnapshotCache();return res.status(200).json({ok:true,deleted:mirror.deleted===true,mirror:'ok',sheet:'failed'});}
     if(!sheetOk)return res.status(502).json({ok:false,error:'delete_upstream_failed_or_script_outdated'});
+    resetSnapshotCache();
     return res.status(200).json({ok:true,deleted:fromSupabase?(data.deleted===true||mirror.deleted===true):data.deleted===true,mirror:mirrorState});
   }catch{return res.status(502).json({ok:false,error:'delete_unreachable'});}
 }

@@ -120,6 +120,7 @@ export default function SiteSearch() {
                 if (e.key === 'ArrowDown') { e.preventDefault(); setActive(i => Math.min(hits.length - 1, i + 1)); }
                 else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(i => Math.max(0, i - 1)); }
                 else if (e.key === 'Enter' && hits[active]) { e.preventDefault(); go(active); }
+                else if (e.key === 'Escape') { e.preventDefault(); setOpen(false); } // a search field would otherwise just clear itself first
               }} />
             <button type="button" className="site-search__close" aria-label={t.close} onClick={() => setOpen(false)}>×</button>
           </div>
