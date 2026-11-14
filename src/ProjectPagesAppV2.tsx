@@ -1,3 +1,4 @@
+import { readLang, updateLanguageUrl } from './i18n';
 import EstoniaData, { EstoniaDataLink } from './components/EstoniaData';
 import PeerNorm from './components/PeerNorm';
 import ResultsChart,{type ResultItem} from './components/ResultsChart';
@@ -10,7 +11,6 @@ type TopicKind='meta'|'systematic'|'official'|'review'|'longitudinal';
 type Summary={ok?:boolean;n?:number;publishable?:boolean;minimumGroupSize?:number;lastUpdated?:string;ageGroup?:Record<string,number>;ownUse?:Record<string,number>;overallImpact?:Record<string,number>;helpKnowledge?:Record<string,number>;answered?:Partial<Record<'ageGroup'|'ownUse'|'overallImpact'|'helpKnowledge',number>>};
 
 const languageKey='alkohol-ja-aju:language';
-const readLang=():'et'|'ru'|'en'=>{try{const q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='ru'||q==='et')return q;const v=localStorage.getItem(languageKey);return v==='ru'?'ru':v==='en'?'en':'et';}catch{return'et';}};
 const pageFromPath=():PageId=>{const p=location.pathname;if(p.includes('/methodology'))return'methodology';if(p.includes('/fact-check'))return'fact-check';if(p.includes('/data-policy'))return'data-policy';if(p.includes('/science/results'))return'results';if(p.includes('/changelog'))return'changelog';return'topics';};
 
 const topics:{href:string;cat:string;ru:string;et:string;kind:TopicKind}[]=[
@@ -72,6 +72,6 @@ function Changelog({lang}:{lang:Lang}){const ru=lang==='ru';const releases=[
   ['v2.0','27.09.2026',ru?'Добавлены научные страницы, методология, политика данных, публичные агрегаты и обновлённый опрос 15+.':'Lisati teaduslehed, metoodika, andmepoliitika, avalikud koondnäitajad ja uuendatud 15+ küsitlus.']
 ];return <section className="project-section"><div className="timeline">{releases.map(([v,date,text])=><article key={v}><div><strong>{v}</strong><span>{date}</span></div><p>{text}</p></article>)}</div></section>}
 
-export default function ProjectPagesAppV2(){const [langAll,setLangAll]=useState<'et'|'ru'|'en'>(readLang);const lang:Lang=langAll==='ru'?'ru':'et';const setLang=(l:'et'|'ru')=>setLangAll(l);const page=pageFromPath();useEffect(()=>{if(langAll==='en')return;document.documentElement.lang=lang;try{localStorage.setItem(languageKey,lang);}catch{}const copy=pageCopy[page];document.title=`${copy.title[lang]} — ${lang==='ru'?'Алкоголь и мозг':'Alkohol ja aju'}`;},[lang,langAll,page]);if(langAll==='en')return <ProjectPagesEn page={page} setLang={setLangAll}/>;let content:React.ReactNode;switch(page){case'methodology':content=<Methodology lang={lang}/>;break;case'fact-check':content=<FactCheck lang={lang}/>;break;case'data-policy':content=<DataPolicy lang={lang}/>;break;case'results':content=<><Results lang={lang}/><EstoniaData lang={lang}/></>;break;case'changelog':content=<Changelog lang={lang}/>;break;default:content=<Topics lang={lang}/>;}return <Shell lang={lang} setLang={setLang} toEnglish={()=>setLangAll('en')} page={page}>{content}</Shell>;
+export default function ProjectPagesAppV2(){const [langAll,setLangAll]=useState<'et'|'ru'|'en'>(readLang);const lang:Lang=langAll==='ru'?'ru':'et';const setLang=(l:'et'|'ru'|'en')=>{updateLanguageUrl(l);setLangAll(l);};const page=pageFromPath();useEffect(()=>{if(langAll==='en')return;document.documentElement.lang=lang;try{localStorage.setItem(languageKey,lang);}catch{}const copy=pageCopy[page];document.title=`${copy.title[lang]} — ${lang==='ru'?'Алкоголь и мозг':'Alkohol ja aju'}`;},[lang,langAll,page]);if(langAll==='en')return <ProjectPagesEn page={page} setLang={setLang}/>;let content:React.ReactNode;switch(page){case'methodology':content=<Methodology lang={lang}/>;break;case'fact-check':content=<FactCheck lang={lang}/>;break;case'data-policy':content=<DataPolicy lang={lang}/>;break;case'results':content=<><Results lang={lang}/><EstoniaData lang={lang}/></>;break;case'changelog':content=<Changelog lang={lang}/>;break;default:content=<Topics lang={lang}/>;}return <Shell lang={lang} setLang={setLang} toEnglish={()=>setLang('en')} page={page}>{content}</Shell>;
 }
 

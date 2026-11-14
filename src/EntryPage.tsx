@@ -1,3 +1,4 @@
+import { readState } from './prepost';
 import RideScenario from './components/RideScenario';
 import { useEffect, useState } from 'react';
 import { Quiz } from './components/Quiz';
@@ -69,6 +70,7 @@ function Lesson({ lang, full }: { lang: Lang; full: boolean }) {
   const [exerciseDone, setExerciseDone] = useState(false);
   const heading = useStageFocus(step);
   const done = step === stages.length;
+  const check = done ? readState() : null;
   const quiz = step === stages.length - 1;
   const quizIds = full ? ['blackout', 'attention', 'reaction', 'decisions'] : ['blackout', 'attention'];
   const quizItems = (ru ? getRu().questionsRu : questions).filter(question => quizIds.includes(question.id));
@@ -78,12 +80,13 @@ function Lesson({ lang, full }: { lang: Lang; full: boolean }) {
   };
   const progress = ru ? 'Выполнено шагов' : 'Tehtud sammud';
   return <section className="lesson-panel" aria-labelledby="lesson-step">
+    {step === 0 && !readState()?.pre && <p><a href={"../check/?lang=" + lang}>{ru ? "Проверить знания до урока (по желанию)" : "Kontrolli oma teadmisi enne õppetundi (soovi korral)"}</a></p>}
     <ProgressBar value={step} max={stages.length} label={progress + ' ' + step + '/' + stages.length} />
     <h2 id="lesson-step" ref={heading} tabIndex={-1}>{done ? (ru ? 'Урок завершён' : 'Õpe on läbitud') : stages[step]}</h2>
     {done ? <>
       <p>{ru ? 'Сформулируй своими словами один факт, который можешь объяснить, и одно ограничение исследования.' : 'Sõnasta oma sõnadega üks fakt, mida oskad selgitada, ja üks uuringu piirang.'}</p>
       <details><summary>{ru ? 'Посмотреть пример' : 'Vaata näidet'}</summary><p>{ru ? 'В лаборатории рабочая память взрослых после алкоголя в среднем ухудшалась. По этому результату нельзя оценить состояние одного подростка.' : 'Laboris halvenes täiskasvanute töömälu pärast alkoholi keskmiselt. Selle põhjal ei saa hinnata ühe nooruki seisundit.'}</p></details>
-      <div className="lesson-actions"><a className="button primary" href={full ? '../topics/' : '?mode=full'}>{full ? (ru ? 'Посмотреть научные темы' : 'Vaata teadusteemasid') : (ru ? 'Изучить подробнее за 20 минут' : 'Õpi põhjalikumalt 20 minutiga')}</a><a href="../check/">{ru ? 'По желанию: анонимная проверка знаний до и после' : 'Soovi korral: anonüümne teadmiste kontroll enne ja pärast'}</a><a href="../#tagasiside">{ru ? 'Оставить отзыв (по желанию)' : 'Anna soovi korral tagasisidet'}</a></div>
+      <div className="lesson-actions"><a className="button primary" href={full ? '../topics/' : '?mode=full'}>{full ? (ru ? 'Посмотреть научные темы' : 'Vaata teadusteemasid') : (ru ? 'Изучить подробнее за 20 минут' : 'Õpi põhjalikumalt 20 minutiga')}</a>{check?.pre && !check.post && <a href={"../check/?lang=" + lang}>{ru ? "Пройти проверку после урока" : "Tee kontroll pärast õppetundi"}</a>}<a href="../#tagasiside">{ru ? 'Оставить отзыв (по желанию)' : 'Anna soovi korral tagasisidet'}</a></div>
     </> : quiz ? <>
       <p>{ru ? 'Сначала оцени уверенность. Затем выбери «миф» или «факт» и прочитай объяснение.' : 'Hinda esmalt kindlust. Seejärel vali „müüt“ või „fakt“ ja loe selgitust.'}</p>
       <Quiz questions={quizItems} sourceBase="../" lang={lang} onContinue={advance} />

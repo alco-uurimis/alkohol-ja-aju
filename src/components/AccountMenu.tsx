@@ -90,7 +90,19 @@ export default function AccountMenu() {
     if (!d) return;
     if (open && !d.open) d.showModal();
     if (!open && d.open) d.close();
-  }, [open]);
+  }, [open, host]);
+
+  useEffect(() => {
+    if (!client) return;
+    const url = new URL(location.href);
+    const fragment = new URLSearchParams(url.hash.slice(1));
+    if (!url.searchParams.has("error") && !url.searchParams.has("error_code") && !fragment.has("error") && !fragment.has("error_code")) return;
+    for (const key of ["error", "error_code", "error_description", "code"]) url.searchParams.delete(key);
+    if (fragment.has("error") || fragment.has("error_code")) url.hash = "";
+    history.replaceState(history.state, "", url);
+    setMsg({ ok: false, text: t.failed[pageLang()] });
+    setOpen(true);
+  }, [client]);
 
   if (!authEnabled || !host) return null;
   if (startsWithClient && !client) return null; // avoids a flash of "Log in" for signed-in readers
@@ -102,23 +114,35 @@ export default function AccountMenu() {
   const redirectTo = location.origin + location.pathname;
 
   const google = async () => {
+    if (!client || busy) return;
     setBusy(true); setMsg(null);
-    const { error } = await client!.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
-    if (error) { setMsg({ ok: false, text: L('failed') }); setBusy(false); }
+    try {
+      const { error } = await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
+      if (error) throw error;
+    } catch {
+      setMsg({ ok: false, text: L('failed') });
+      setBusy(false);
+    }
   };
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!client || busy) return;
     setBusy(true); setMsg(null);
-    const { data, error } = mode === 'up'
-      ? await client!.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo, data: { language: lang } } })
-      : await client!.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) return setMsg({ ok: false, text: L('failed') });
-    if (mode === 'up' && !data.session) setMsg({ ok: true, text: L('confirm') });
+    try {
+      const { data, error } = mode === 'up'
+        ? await client.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo, data: { language: lang } } })
+        : await client.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      setPassword('');
+      if (mode === 'up' && !data.session) setMsg({ ok: true, text: L('confirm') });
+    } catch {
+      setMsg({ ok: false, text: L('failed') });
+    } finally { setBusy(false); }
   };
 
-  const name = (session?.user.user_metadata?.full_name as string | undefined) ?? session?.user.email ?? '';
+  const fullName = session?.user.user_metadata?.full_name;
+  const name = (typeof fullName === 'string' && fullName.trim()) || session?.user.email || L('signOut');
   const trigger = session
     ? <div className="account account--bar">
         <button type="button" className="account__avatar" aria-expanded={menu} aria-label={name} onClick={() => setMenu(v => !v)}>{name.charAt(0).toUpperCase()}</button>
@@ -147,7 +171,7 @@ export default function AccountMenu() {
         <p className="account-dialog__or">{L('or')}</p>
         <form onSubmit={submit}>
           <label>{L('email')}<input type="email" required autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} /></label>
-          <label>{L('password')}<input type="password" required minLength={8} autoComplete={mode === 'up' ? 'new-password' : 'current-password'} value={password} onChange={e => setPassword(e.target.value)} /></label>
+          <label>{L('password')}<input type="password" required minLength={mode === 'up' ? 8 : undefined} autoComplete={mode === 'up' ? 'new-password' : 'current-password'} value={password} onChange={e => setPassword(e.target.value)} /></label>
           <button type="submit" className="account-dialog__submit" disabled={busy}>{L(mode === 'up' ? 'signUp' : 'signIn')}</button>
         </form>
         {msg && <p role="status" className={msg.ok ? 'account-dialog__msg' : 'account-dialog__msg account-dialog__msg--err'}>{msg.text}</p>}
