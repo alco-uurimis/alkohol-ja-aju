@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Section, SourceReference } from '../components/Shared';
 import { readGameMetrics } from '../utils/gameMetrics';
 import './explore.css';
@@ -8,7 +8,7 @@ type Lang = 'et' | 'ru' | 'en';
 const text = {
   et: {
     number: '06A / AVASTA', title: 'Graafikud ja lisaülesanne',
-    intro: 'Kolm lühikest lisa: mida tähendab reaktsiooniaeg meetrites, kuidas võib öö skemaatiliselt välja näha ja kuidas eristada vaatlust, seost ja põhjuslikku järeldust.',
+    intro: 'Neli lühikest lisa: mida tähendab reaktsiooniaeg meetrites, kuidas võib öö skemaatiliselt välja näha, kuidas muutub signaal sünapsis ja kuidas eristada vaatlust, seost ja põhjuslikku järeldust.',
     d: {
       pill: 'ARVUTUS', title: 'Reaktsiooniaeg meetrites',
       lead: 'Enne kui inimene jõuab reageerida, liigub sõiduk edasi. See on puhas füüsika: teepikkus = kiirus × aeg.',
@@ -24,6 +24,14 @@ const text = {
       normal: 'Tavaline öö', alcohol: 'Öö pärast alkoholi', awake: 'ärkvel', deep: 'sügav uni', hours: 'tunnid',
       points: ['Uinumine võib tulla kiiremini.', 'Öö teises pooles võib uni olla katkendlikum.', 'Ärkamine võib tulla varem.'],
       aria: (n: string) => `Skemaatiline unegraafik: ${n}`,
+    },
+    y: {
+      pill: 'ANIMATSIOON', title: 'Sünaps: pidurdus ja ergastus',
+      lead: 'Lihtsustatud mudel kahest signaalisüsteemist. Virgatsaine liigub ühest rakust teise; alkohol muudab seda, kui tugevalt vastuvõttev rakk reageerib.',
+      off: 'Ilma alkoholita', on: 'Alkoholi mõjul', gaba: 'GABA · pidurdav', glu: 'Glutamaat · ergastav',
+      inh: 'Pidurdav vastus', exc: 'Ergastav vastus', stronger: 'tugevam', weaker: 'nõrgem', base: 'tavaline',
+      note: 'Mudel on skemaatiline: tulpade pikkus ei ole mõõtmistulemus. Etanool toimib paljudele sihtmärkidele ning mõju sõltub annusest ja inimesest.',
+      aria: (m: string) => `Animeeritud sünapsi skeem: ${m}`,
     },
     q: {
       pill: 'ÜLESANNE', title: 'Vaatlus, seos või põhjuslik järeldus?',
@@ -42,7 +50,7 @@ const text = {
   },
   ru: {
     number: '06A / ИССЛЕДУЙ', title: 'Графики и новое задание',
-    intro: 'Три коротких дополнения: что значит время реакции в метрах, как схематично может выглядеть ночь и как отличать наблюдение, связь и причинный вывод.',
+    intro: 'Четыре коротких дополнения: что значит время реакции в метрах, как схематично может выглядеть ночь, как меняется сигнал в синапсе и как отличать наблюдение, связь и причинный вывод.',
     d: {
       pill: 'РАСЧЁТ', title: 'Время реакции в метрах',
       lead: 'Пока человек не успел отреагировать, транспорт продолжает ехать. Это чистая физика: путь = скорость × время.',
@@ -58,6 +66,14 @@ const text = {
       normal: 'Обычная ночь', alcohol: 'Ночь после алкоголя', awake: 'бодрствование', deep: 'глубокий сон', hours: 'часы',
       points: ['Засыпание может наступить быстрее.', 'Во второй половине ночи сон может быть более прерывистым.', 'Пробуждение может наступить раньше.'],
       aria: (n: string) => `Схематичный график сна: ${n}`,
+    },
+    y: {
+      pill: 'АНИМАЦИЯ', title: 'Синапс: торможение и возбуждение',
+      lead: 'Упрощённая модель двух сигнальных систем. Медиатор переходит от одной клетки к другой; алкоголь меняет то, насколько сильно отвечает принимающая клетка.',
+      off: 'Без алкоголя', on: 'Под действием алкоголя', gaba: 'GABA · тормозный', glu: 'Глутамат · возбуждающий',
+      inh: 'Тормозный ответ', exc: 'Возбуждающий ответ', stronger: 'сильнее', weaker: 'слабее', base: 'обычный',
+      note: 'Модель схематична: длина полос не является результатом измерений. Этанол действует на многие мишени, а эффект зависит от дозы и человека.',
+      aria: (m: string) => `Анимированная схема синапса: ${m}`,
     },
     q: {
       pill: 'ЗАДАНИЕ', title: 'Наблюдение, связь или причинный вывод?',
@@ -76,7 +92,7 @@ const text = {
   },
   en: {
     number: '06A / EXPLORE', title: 'Charts and an extra task',
-    intro: 'Three short additions: what reaction time means in metres, what a night can look like as a schematic, and how to tell observation, association and causal conclusion apart.',
+    intro: 'Four short additions: what reaction time means in metres, what a night can look like as a schematic, how the signal changes at a synapse, and how to tell observation, association and causal conclusion apart.',
     d: {
       pill: 'CALCULATION', title: 'Reaction time in metres',
       lead: 'Until a person has reacted, the vehicle keeps moving. This is plain physics: distance = speed × time.',
@@ -92,6 +108,14 @@ const text = {
       normal: 'An ordinary night', alcohol: 'A night after alcohol', awake: 'awake', deep: 'deep sleep', hours: 'hours',
       points: ['Falling asleep can come sooner.', 'In the second half of the night sleep can be more broken.', 'Waking can come earlier.'],
       aria: (n: string) => `Schematic sleep chart: ${n}`,
+    },
+    y: {
+      pill: 'ANIMATION', title: 'The synapse: inhibition and excitation',
+      lead: 'A simplified model of two signalling systems. A neurotransmitter passes from one cell to the next; alcohol changes how strongly the receiving cell responds.',
+      off: 'Without alcohol', on: 'Under the influence of alcohol', gaba: 'GABA · inhibitory', glu: 'Glutamate · excitatory',
+      inh: 'Inhibitory response', exc: 'Excitatory response', stronger: 'stronger', weaker: 'weaker', base: 'usual',
+      note: 'The model is schematic: the length of the bars is not measured data. Ethanol acts on many targets, and the effect depends on the dose and the person.',
+      aria: (m: string) => `Animated synapse diagram: ${m}`,
     },
     q: {
       pill: 'TASK', title: 'Observation, association or causal conclusion?',
@@ -172,6 +196,51 @@ function SleepNight({ lang }: { lang: Lang }) {
   );
 }
 
+function SynapseHalf({ x, kind, on }: { x: number; kind: 'gaba' | 'glu'; on: boolean }) {
+  return (
+    <g transform={`translate(${x} 0)`} className={`syn ${kind} ${on ? 'on' : ''}`}>
+      <path className="syn-pre" d="M40,8 h120 a14,14 0 0 1 14,14 v36 a40,40 0 0 1 -40,40 h-68 a40,40 0 0 1 -40,-40 v-36 a14,14 0 0 1 14,-14 z" />
+      {[0, 1, 2, 3, 4].map(i => <circle key={i} className="syn-dot" cx={62 + i * 19} cy="104" r="5" style={{ animationDelay: `${i * 0.28}s` }} />)}
+      <path className="syn-post" d="M26,150 h148 v40 a14,14 0 0 1 -14,14 h-120 a14,14 0 0 1 -14,-14 z" />
+      <rect className="syn-glow" x="26" y="150" width="148" height="54" rx="12" />
+      {[0, 1, 2, 3].map(i => <path key={i} className="syn-rec" d={`M${52 + i * 30},150 v-9 m12,9 v-9`} />)}
+    </g>
+  );
+}
+
+function Synapse({ lang }: { lang: Lang }) {
+  const t = text[lang].y;
+  const [on, setOn] = useState(false);
+  // The dots loop forever, so they only run while the card is on screen (no repaint work while the reader is elsewhere).
+  const ref = useRef<HTMLElement>(null);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !('IntersectionObserver' in window)) { setSeen(true); return; }
+    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { rootMargin: '80px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <article className={'explore-card' + (seen ? '' : ' syn-paused')} ref={ref}>
+      <span className="pill">{t.pill}</span><h3>{t.title}</h3><p>{t.lead} <SourceReference ids={[6, 9]} lang={lang} /></p>
+      <div role="group" aria-label={t.title} className="explore-seg">
+        <button type="button" aria-pressed={!on} className={!on ? 'active' : ''} onClick={() => setOn(false)}>{t.off}</button>
+        <button type="button" aria-pressed={on} className={on ? 'active' : ''} onClick={() => setOn(true)}>{t.on}</button>
+      </div>
+      <svg className="explore-synapse" viewBox="0 0 420 212" role="img" aria-label={t.aria(on ? t.on : t.off)}>
+        <SynapseHalf x={0} kind="gaba" on={on} /><SynapseHalf x={220} kind="glu" on={on} />
+      </svg>
+      <div className="explore-syn-labels" aria-hidden="true"><span className="gaba">{t.gaba}</span><span className="glu">{t.glu}</span></div>
+      <div className="explore-meters" role="status">
+        <div className="gaba"><span>{t.inh}: <b>{on ? t.stronger : t.base}</b></span><i style={{ width: on ? '82%' : '50%' }} /></div>
+        <div className="glu"><span>{t.exc}: <b>{on ? t.weaker : t.base}</b></span><i style={{ width: on ? '26%' : '50%' }} /></div>
+      </div>
+      <p className="small">{t.note}</p>
+    </article>
+  );
+}
+
 const shuffled = (n: number) => { const a = Array.from({ length: n }, (_, k) => k); for (let k = n - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; };
 
 function EvidenceSort({ lang }: { lang: Lang }) {
@@ -201,12 +270,12 @@ function EvidenceSort({ lang }: { lang: Lang }) {
   );
 }
 
-/** Extra visual material after the game lab: a distance calculator, a schematic sleep chart and a classification task. */
+/** Extra visual material after the game lab: a distance calculator, a schematic sleep chart, an animated synapse and a classification task. */
 export default function Explore({ lang }: { lang: Lang }) {
   const t = text[lang];
   return (
     <Section id="avasta" number={t.number} title={t.title} intro={t.intro} className="explore-section">
-      <div className="explore-grid"><ReactionDistance lang={lang} /><SleepNight lang={lang} /><EvidenceSort lang={lang} /></div>
+      <div className="explore-grid"><ReactionDistance lang={lang} /><SleepNight lang={lang} /><Synapse lang={lang} /><EvidenceSort lang={lang} /></div>
     </Section>
   );
 }
