@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 import type { Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { authEnabled, authNeededAtStart, loadSupabase } from '../lib/supabaseLazy';
 import './account.css';
 
 type Lang = 'et' | 'ru' | 'en';
@@ -28,7 +29,9 @@ const t = {
 const pageLang = (): Lang => (document.documentElement.lang === 'ru' ? 'ru' : document.documentElement.lang === 'en' ? 'en' : 'et');
 
 export default function AccountMenu() {
-  const client = supabase;
+  // The Supabase client (~60 KB) is fetched only when needed: a stored session, the OAuth redirect, or the first click on "Log in".
+  const [client, setClient] = useState<SupabaseClient | null>(null);
+  const startsWithClient = authNeededAtStart();
   const [lang, setLang] = useState<Lang>(pageLang);
   const [session, setSession] = useState<Session | null>(null);
   const [open, setOpen] = useState(false);
@@ -61,6 +64,10 @@ export default function AccountMenu() {
   }, []);
 
   useEffect(() => {
+    if (startsWithClient) loadSupabase().then(setClient, () => { /* offline: the account UI just stays out of the way */ });
+  }, [startsWithClient]);
+
+  useEffect(() => {
     if (!client) return;
     client.auth.getSession().then(({ data }) => setSession(data.session));
     const { data } = client.auth.onAuthStateChange((event, next) => {
@@ -85,13 +92,18 @@ export default function AccountMenu() {
     if (!open && d.open) d.close();
   }, [open]);
 
-  if (!client || !host) return null;
+  if (!authEnabled || !host) return null;
+  if (startsWithClient && !client) return null; // avoids a flash of "Log in" for signed-in readers
+  const openDialog = async () => {
+    try { const c = client ?? await loadSupabase(); if (!c) return; setClient(c); setMode('up'); setMsg(null); setOpen(true); } catch { /* offline */ }
+  };
+
   const L = (k: keyof typeof t) => t[k][lang];
   const redirectTo = location.origin + location.pathname;
 
   const google = async () => {
     setBusy(true); setMsg(null);
-    const { error } = await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
+    const { error } = await client!.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
     if (error) { setMsg({ ok: false, text: L('failed') }); setBusy(false); }
   };
 
@@ -99,8 +111,8 @@ export default function AccountMenu() {
     e.preventDefault();
     setBusy(true); setMsg(null);
     const { data, error } = mode === 'up'
-      ? await client.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo, data: { language: lang } } })
-      : await client.auth.signInWithPassword({ email, password });
+      ? await client!.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo, data: { language: lang } } })
+      : await client!.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) return setMsg({ ok: false, text: L('failed') });
     if (mode === 'up' && !data.session) setMsg({ ok: true, text: L('confirm') });
@@ -112,17 +124,17 @@ export default function AccountMenu() {
         <button type="button" className="account__avatar" aria-expanded={menu} aria-label={name} onClick={() => setMenu(v => !v)}>{name.charAt(0).toUpperCase()}</button>
         {menu && <div className="account__menu" role="menu">
           <span className="account__email">{session.user.email}</span>
-          <button type="button" role="menuitem" onClick={() => { setMenu(false); void client.auth.signOut(); }}>{L('signOut')}</button>
+          <button type="button" role="menuitem" onClick={() => { setMenu(false); void client?.auth.signOut(); }}>{L('signOut')}</button>
         </div>}
       </div>
-    : <button type="button" className="account__signin account__signin--bar" onClick={() => { setMode('up'); setMsg(null); setOpen(true); }}>{L('signIn')}</button>;
+    : <button type="button" className="account__signin account__signin--bar" onClick={() => void openDialog()}>{L('signIn')}</button>;
 
   const menuItem = session
     ? <div className="account-menuitem">
         <span className="account-menuitem__email">{session.user.email}</span>
-        <button type="button" onClick={() => void client.auth.signOut()}>{L('signOut')}</button>
+        <button type="button" onClick={() => void client?.auth.signOut()}>{L('signOut')}</button>
       </div>
-    : <button type="button" className="account-menuitem account-menuitem__signin" onClick={() => { setMode('up'); setMsg(null); setOpen(true); }}>{L('signIn')}</button>;
+    : <button type="button" className="account-menuitem account-menuitem__signin" onClick={() => void openDialog()}>{L('signIn')}</button>;
 
   return <>
     {createPortal(trigger, host, 'account')}
