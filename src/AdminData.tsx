@@ -66,6 +66,23 @@ function DeliveryCheck({ token }: { token: string }) {
   );
 }
 
+/** Turns the raw field-by-field list into one sentence when the cause is simply missing rows. */
+function gapHint(diffs: string[]) {
+  const n = diffs.find(d => d.startsWith('n: '))?.match(/sheet=(\d+) supabase=(\d+)/);
+  if (!n) return null;
+  const gap = Number(n[1]) - Number(n[2]);
+  const en = diffs.find(d => d.startsWith('fields.language.en: '))?.match(/sheet=(\d+) supabase=(\d+)/);
+  const enGap = en ? Number(en[1]) - Number(en[2]) : 0;
+  if (gap <= 0) return <p className="admin-meta">В Supabase на {-gap} ответ(а) больше, чем в таблице: скорее всего, в таблице удалили строку вручную. Сверьте и удалите лишнее в Supabase через «Удалить ответ».</p>;
+  return (
+    <div className="admin-gap" role="note">
+      <p><b>В таблице на {gap} ответ(а) больше, чем в Supabase.</b> Остальные расхождения ниже — это те же {gap} ответ(а), разложенные по вопросам.
+        {enGap === gap ? ' Все недостающие ответы — на английском: они пришли, когда база ещё не принимала язык «en» (до SQL-миграции), и сохранились только в таблице.' : ' Обычно это ответы, пришедшие до включения копии или до SQL-миграции.'}</p>
+      <p>Как исправить: скачайте лист Responses из Google-таблицы в CSV и снова запустите <code>scripts/backfill-supabase.mjs … --apply</code>. Скрипт добавит только недостающие строки, повторы база пропустит.</p>
+    </div>
+  );
+}
+
 type Parity = { admin: string[]; public: string[] } | { error: string } | null;
 function MirrorStatus({ token }: { token: string }) {
   const [st, setSt] = useState<{ configured: boolean; responses: number | null; prepost: number | null; parity: Parity } | 'err' | 'busy' | null>(null);
@@ -94,7 +111,7 @@ function MirrorStatus({ token }: { token: string }) {
               <p className="admin-meta">Строк в Supabase: ответов <b>{st.responses}</b>, проверок «до/после» <b>{st.prepost}</b>.</p>
               {st.parity && 'error' in st.parity
                 ? <p className="admin-meta">Сравнить с таблицей не удалось: {st.parity.error === 'sheet_unavailable_or_script_outdated' ? 'таблица не ответила или Apps Script не обновлён до версии 13.' : st.parity.error}</p>
-                : st.parity && <>{line('Сводка для админа', st.parity.admin)}{line('Публичная сводка', st.parity.public)}</>}
+                : st.parity && <>{gapHint(st.parity.admin)}{line('Сводка для админа', st.parity.admin)}{line('Публичная сводка', st.parity.public)}</>}
             </>)}
     </div>
   );
