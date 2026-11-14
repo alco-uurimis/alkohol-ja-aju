@@ -18,3 +18,10 @@ export function readLang(): Lang {
 
 /** Pick a string by language. */
 export const pick = <T,>(lang: Lang, v: { et: T; ru: T; en: T }): T => v[lang];
+
+/** Keep language links shareable and preserve other query parameters and anchors. */
+export function updateLanguageUrl(lang: Lang) {
+  const url = new URL(location.href);
+  url.searchParams.set("lang", lang);
+  history.replaceState(history.state, "", url);
+}

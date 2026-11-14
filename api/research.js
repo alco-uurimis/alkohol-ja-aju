@@ -61,16 +61,18 @@ export default async function handler(req,res){
     if(limited(req,'research',150)){res.setHeader('Retry-After','600');return res.status(429).json({ok:false,error:'too_many_requests'});}
     if(Number(req.headers?.['content-length']||0)>18000)return res.status(413).json({ok:false,error:'payload_too_large'});
     let body;try{body=readBody(req);}catch{return res.status(400).json({ok:false,error:'invalid_json'});}
+    if(!body||typeof body!=='object'||Array.isArray(body))return res.status(400).json({ok:false,error:'invalid_json'});
     const language=String(body.language??'');if(!LANGUAGES.has(language))return res.status(400).json({ok:false,error:'invalid_language'});
     const requestedVersion=Number(body.schemaVersion||2);const schemaVersion=requestedVersion>=4?4:requestedVersion>=3?3:2;
-    const input={...(body.answers)};
+    if(!body.answers||typeof body.answers!=='object'||Array.isArray(body.answers))return res.status(400).json({ok:false,error:'invalid_answers'});
+    const input={...body.answers};
     if(input.ageGroup!=="15_17")delete input.minorConsent;
     if(["never","prefer_not"].includes(input.ownUse)){
       delete input.typicalUnits; delete input.sixPlus; delete input.contexts;
     }
     if(["never","prefer_not"].includes(input.closeExposure)){
       delete input.closeRelations; delete input.closeHousehold;
-    }if(!input||typeof input!=='object'||Array.isArray(input))return res.status(400).json({ok:false,error:'invalid_answers'});
+    }
 
     const ageEligible15Plus=scalar(input.ageEligible15Plus??input.adult,YES_NO);
     const answers={

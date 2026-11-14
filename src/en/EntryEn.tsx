@@ -1,3 +1,4 @@
+import { readState } from '../prepost';
 import RideScenario from '../components/RideScenario';
 import { useState } from 'react';
 import { Quiz } from '../components/Quiz';
@@ -53,17 +54,19 @@ export function LessonEn({ full }: { full: boolean }) {
   const [exerciseDone, setExerciseDone] = useState(false);
   const heading = useStageFocus(step);
   const done = step === stages.length;
+  const check = done ? readState() : null;
   const quiz = step === stages.length - 1;
   const quizIds = full ? ['blackout', 'attention', 'reaction', 'decisions'] : ['blackout', 'attention'];
   const quizItems = questionsEn.filter(q => quizIds.includes(q.id));
   const advance = () => { setStep(c => c + 1); window.scrollTo({ top: 0 }); };
   return <section className="lesson-panel" aria-labelledby="lesson-step">
+    {step === 0 && !readState()?.pre && <p><a href="../check/?lang=en">Optional: check your knowledge before the lesson</a></p>}
     <ProgressBar value={step} max={stages.length} label={`Steps completed ${step}/${stages.length}`} />
     <h2 id="lesson-step" ref={heading} tabIndex={-1}>{done ? 'Lesson complete' : stages[step]}</h2>
     {done ? <>
       <p>In your own words, state one fact you can explain and one limitation of the study.</p>
       <details><summary>See an example</summary><p>In the laboratory, adults’ working memory worsened on average after alcohol. This result cannot be used to assess the state of one teenager.</p></details>
-      <div className="lesson-actions"><a className="button primary" href={full ? '../topics/' : '?mode=full'}>{full ? 'See the science topics' : 'Go deeper in 20 minutes'}</a><a href="../check/">Optional: anonymous before-and-after check</a></div>
+      <div className="lesson-actions"><a className="button primary" href={full ? '../topics/' : '?mode=full'}>{full ? 'See the science topics' : 'Go deeper in 20 minutes'}</a>{check?.pre && !check.post && <a href="../check/?lang=en">Take the after-lesson check</a>}</div>
     </> : quiz ? <>
       <p>First rate how sure you are. Then choose “myth” or “fact” and read the explanation.</p>
       <Quiz questions={quizItems} sourceBase="../" lang="en" onContinue={advance} />
