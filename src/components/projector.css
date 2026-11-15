@@ -1,6 +1,7 @@
 /* Projector mode: only the current section, large type, no site chrome. */
 html.projector{font-size:clamp(17px,1.25vw,26px)}
 html.projector body{padding-bottom:110px}
+html.projector #root{padding-top:0!important}
 html.projector .header,html.projector .site-footer,html.projector .reading-return,html.projector .skip,html.projector .comfort__stop,
 html.projector .scroll-progress,html.projector .reading-progress,html.projector #reading-progress{display:none!important}
 html.projector main>*{display:none!important}

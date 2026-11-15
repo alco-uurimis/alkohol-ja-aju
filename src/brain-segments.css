@@ -68,7 +68,10 @@
 button[aria-label*='вверх'],button[aria-label*='Вверх'],button[aria-label*='üles'],button[aria-label*='Üles']{display:none!important}
 
 /* Remove any site-owned white gap above the header and match the iOS safe-area to the header surface. */
-html,body,#root{margin:0!important;padding:0!important;background:#f8f9fc!important}
+/* #root padding-top is owned by sticky-header.css (room for the fixed header); never zero it here:
+   Vite can emit this file's chunk after sticky-header's, and the later !important rule would win. */
+html,body{margin:0!important;padding:0!important;background:#f8f9fc!important}
+#root{margin:0!important;background:#f8f9fc!important}
 body{min-height:100%;}
 .header{top:0!important;margin-top:0!important}
 @supports(padding-top:env(safe-area-inset-top)){
