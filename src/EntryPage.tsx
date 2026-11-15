@@ -120,7 +120,7 @@ function Teacher({ ru }: { ru: boolean }) {
     <h2>{ru ? 'План на 45 минут' : '45 minuti tunnikava'}</h2>
     <p>{ru ? 'Цель урока — объяснить один научный вывод, назвать его ограничение и выбрать безопасное действие в вымышленной ситуации.' : 'Tunni eesmärk on selgitada üht teadusjäreldust, nimetada selle piirang ja valida väljamõeldud olukorras turvaline tegevus.'}</p>
     <ol className="teacher-plan">{plan.map(([time, title, description], index) => <li key={time}><span>{time} min</span><div><h3><a href={links[index]}>{title}</a></h3><p>{description}</p></div></li>)}</ol>
-    <div className="lesson-actions"><a className="button primary" href={links[5]}>{ru ? 'Рабочий лист A4 · RU' : 'Tööleht A4 · ET'}</a><a href={ru ? '../worksheet/et/' : '../worksheet/ru/'}>{ru ? 'Рабочий лист · ET' : 'Tööleht · RU'}</a><a href="../#klassiruum">{ru ? 'Короткий план на 15–20 минут' : 'Lühikava 15–20 minutiks'}</a><a href="../check/">{ru ? 'Проверка знаний до и после для класса' : 'Teadmiste kontroll enne ja pärast klassile'}</a></div>
+    <div className="lesson-actions"><a className="button primary" href={links[5]}>{ru ? 'Рабочий лист A4 · RU' : 'Tööleht A4 · ET'}</a><a href={ru ? '../worksheet/et/' : '../worksheet/ru/'}>{ru ? 'Рабочий лист · ET' : 'Tööleht · RU'}</a><a href="../#klassiruum">{ru ? 'Короткий план на 15–20 минут' : 'Lühikava 15–20 minutiks'}</a><a href={`../?present=1&lang=${ru ? 'ru' : 'et'}`}>{ru ? 'Режим проектора для класса' : 'Projektori režiim klassile'}</a><a href="../check/">{ru ? 'Проверка знаний до и после для класса' : 'Teadmiste kontroll enne ja pärast klassile'}</a></div>
   </section>;
 }
 

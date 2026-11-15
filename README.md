@@ -94,3 +94,7 @@ The main page now runs in English (`/?lang=en`, the EN button) with the same des
 ### Cookie-free usage counters
 
 `src/lib/analytics.ts` sends one beacon per page, per main-page section reached and per completed activity (quiz, games, explore tasks, survey sent, before/after step, feedback) — each at most once per browser session, with only `{event, key, language}`. `api/track.js` adds 1 to a daily total in Supabase (`site_events`, created by `docs/supabase-analytics.sql`); no cookie, IP address or identifier is stored. Nothing is sent when the browser sends Global Privacy Control or Do Not Track, after the opt-out on the data page, or on localhost. Admins see the totals in the admin page ("Посещаемость"), served by `api/admin-data?stats=N` so the Vercel Hobby function limit (12) is not exceeded.
+
+### Projector mode and the Estonian admin page
+
+`/?present=1` (menu → PROJECT → “Projector mode”, the classroom kit, or the teacher page) shows one main-page section at a time in large type; arrows, PageUp/PageDown (presentation clickers), Home/End, F (full screen) and Esc (exit). Implemented in `src/components/Projector.tsx` purely with CSS on the existing sections. The admin page has an RU/ET switch: Russian is the source text, wrapped in `A()` (`src/adminI18n.ts`), Estonian is in `src/adminEt.ts`; `src/adminEt.test.js` and `src/adminReportEt.test.ts` fail if a string is missing or the printed report shows Russian.

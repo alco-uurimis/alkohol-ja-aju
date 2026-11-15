@@ -200,7 +200,7 @@ export default function ClassroomKit({lang}:{lang:Lang}){
       </div>
 
       <div className="classroom-kit__plan-actions">
-        <button type="button" className="text-button" onClick={handlePrintPlan}>{T(lang,ru?'Распечатать план урока (PDF)':'Prindi tunnikava (PDF)')}</button>
+        <button type="button" className="text-button" onClick={handlePrintPlan}>{T(lang,ru?'Распечатать план урока (PDF)':'Prindi tunnikava (PDF)')}</button><a className="text-button" href={`${lang==='en'&&/\/en\/[^/]*$/.test(location.pathname)?'../':''}?present=1&lang=${lang}#valik`}>{T(lang,ru?'Показать на проекторе':'Näita projektoril')}</a>
         <small>{T(lang,ru?'В окне печати выберите «Сохранить как PDF».':'Prindiaknas vali „Salvesta PDF-ina“.')}</small>
       </div>
 

@@ -5,6 +5,7 @@ import Memory from './sections/Memory';
 import Attention from './sections/Attention';
 import Lab from './sections/Lab';
 import Explore from './sections/Explore';
+import Projector from './components/Projector';
 import LearningCenter from './sections/LearningCenter';
 import Closing from './sections/Closing';
 import FinalSummary from './components/FinalSummary';
@@ -49,6 +50,7 @@ export default function App(){
   const [active,setActive]=useState('avaleht');
   const [returnPoint,setReturnPoint]=useState<ReturnPoint|null>(null);
   const [lang,setLang]=useState<Lang>(readLanguage);
+  const [present,setPresent]=useState(()=>typeof location!=='undefined'&&new URLSearchParams(location.search).has('present'));
   const [visited,setVisited]=useState<Set<string>>(readVisited);
   const [quizScore,setQuizScore]=useState<number|null>(readQuizScore);
   const [progressSaved,setProgressSaved]=useState(readsSavedProgress);
@@ -70,6 +72,9 @@ export default function App(){
 if(w.requestIdleCallback){const id=w.requestIdleCallback(next,{timeout:400});return()=>w.cancelIdleCallback?.(id);}const id=window.setTimeout(next,60);return()=>window.clearTimeout(id);},[stage]);
   useEffect(()=>{if(stage>=STAGES)return;const flush=(event:MouseEvent)=>{const link=(event.target as Element|null)?.closest?.('a[href*="#"]') as HTMLAnchorElement|null;if(!link)return;const url=new URL(link.href,location.href);if(url.pathname!==location.pathname||url.hash.length<2)return;const id=sectionId(url.hash);setStage(STAGES);window.setTimeout(()=>document.getElementById(id)?.scrollIntoView(),120);};document.addEventListener('click',flush,true);return()=>document.removeEventListener('click',flush,true);},[stage]);
   useEffect(()=>{window.dispatchEvent(new Event('alkohol-stage'));},[stage]);
+  useEffect(()=>{if(present)setStage(STAGES);},[present]);
+  const exitProjector=(lastId:string)=>{setPresent(false);const url=new URL(location.href);url.searchParams.delete('present');history.replaceState(null,'',url.pathname+url.search+(lastId?'#'+lastId:''));requestAnimationFrame(()=>{if(lastId)document.getElementById(lastId)?.scrollIntoView();});};
+  const enterProjector=()=>{setMenu(false);const url=new URL(location.href);url.searchParams.set('present','1');history.replaceState(null,'',url.pathname+url.search+url.hash);setPresent(true);};
   useEffect(()=>{if(location.hash.length<2)return;const id=sectionId(location.hash);const t=window.setTimeout(()=>document.getElementById(id)?.scrollIntoView(),150);return()=>window.clearTimeout(t);},[]);
   useEffect(()=>{document.documentElement.lang=lang;try{window.localStorage.setItem(languageKey,lang);}catch{}document.title=T(lang,ru?'Алкоголь и мозг — научный учебный сайт':'Alkohol ja aju — teaduspõhine õppeveeb');const d=T(lang,ru?'Учебный сайт о влиянии алкоголя на мозг: научные источники, упражнения, мини-игры и исследовательский опрос.':'Teaduspõhine õppematerjal alkoholi mõjust ajule: allikad, harjutused, minimängud ja uurimisküsitlus.');document.querySelector('meta[name="description"]')?.setAttribute('content',d);},[lang,ru]);
   useEffect(()=>{const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){activeSection.current=entry.target.id;setActive(entry.target.id);}}, {rootMargin:'-18% 0px -68% 0px'});links.forEach(([id])=>{const el=document.getElementById(id);if(el)observer.observe(el);});return()=>observer.disconnect();},[lang,stage]);
@@ -97,7 +102,7 @@ const observer=new IntersectionObserver(entries=>{for(const entry of entries){if
       <div className="header-actions"><div className="language-switch" role="group" aria-label={T(lang,ru?'Язык':'Keel')}><button type="button" className={lang==='et'?'active':''} aria-pressed={lang==='et'} onClick={()=>switchLanguage('et')}>ET</button><button type="button" className={lang==='ru'?'active':''} aria-pressed={lang==='ru'} onClick={()=>switchLanguage('ru')}>RU</button><button type="button" className={lang==='en'?'active':''} aria-pressed={lang==='en'} onClick={()=>switchLanguage('en')}>EN</button></div><button ref={menuButton} type="button" className="menu-toggle" aria-expanded={menu} aria-controls="navigation" onClick={()=>setMenu(v=>!v)}>{menu?(T(lang,ru?'Закрыть':'Sulge')):(T(lang,ru?'Меню':'Menüü'))}</button></div>
       <nav id="navigation" className={menu?'open':''} aria-label={T(lang,ru?'Главное меню':'Peamenüü')}><div className="nav-groups">
         {navGroups.map(group=><div className="nav-group" key={group.label}><span className="nav-group-label">{group.label}</span>{group.items.map(([id,name])=><a key={id} href={'#'+id} aria-current={active===id?'location':undefined} onClick={()=>setMenu(false)}>{name}</a>)}</div>)}
-        <div className="nav-group nav-project"><span className="nav-group-label">{T(lang,ru?'ПРОЕКТ':'PROJEKT')}</span><a href="start/">{T(lang,ru?"Урок за 5 минут":"Õppetükk 5 minutiga")}</a><a href="start/?mode=full">{T(lang,ru?"Урок за 20 минут":"Õppetükk 20 minutiga")}</a><a href="help/">{T(lang,ru?"Что делать / Нужна помощь":"Mida teha / Vajan abi")}</a><a href="teacher/">{T(lang,ru?'Для учителя':'Õpetajale')}</a><a href="topics/">{T(lang,ru?'Научные темы':'Teadusteemad')}</a><a href="science/">{T(lang,ru?'Добровольный опрос 15+':'Vabatahtlik küsitlus 15+')}</a><a href="methodology/">{T(lang,ru?'Методология':'Metoodika')}</a><a href="fact-check/">{T(lang,ru?'Как проверялись факты':'Kuidas fakte kontrolliti')}</a><a href="data-policy/">{T(lang,ru?'Данные и приватность':'Andmed ja privaatsus')}</a></div>
+        <div className="nav-group nav-project"><span className="nav-group-label">{T(lang,ru?'ПРОЕКТ':'PROJEKT')}</span><a href="start/">{T(lang,ru?"Урок за 5 минут":"Õppetükk 5 minutiga")}</a><a href="start/?mode=full">{T(lang,ru?"Урок за 20 минут":"Õppetükk 20 minutiga")}</a><a href="help/">{T(lang,ru?"Что делать / Нужна помощь":"Mida teha / Vajan abi")}</a><a href="teacher/">{T(lang,ru?'Для учителя':'Õpetajale')}</a><button type="button" className="nav-projector" onClick={enterProjector}>{T(lang,ru?'Режим проектора':'Projektori režiim')}</button><a href="topics/">{T(lang,ru?'Научные темы':'Teadusteemad')}</a><a href="science/">{T(lang,ru?'Добровольный опрос 15+':'Vabatahtlik küsitlus 15+')}</a><a href="methodology/">{T(lang,ru?'Методология':'Metoodika')}</a><a href="fact-check/">{T(lang,ru?'Как проверялись факты':'Kuidas fakte kontrolliti')}</a><a href="data-policy/">{T(lang,ru?'Данные и приватность':'Andmed ja privaatsus')}</a></div>
       </div></nav>
     </header>
 
@@ -120,6 +125,7 @@ const observer=new IntersectionObserver(entries=>{for(const entry of entries){if
       {stage>=5&&<><div className="phase-divider"><div><strong>{T(lang,ru?'Заверши':'Lõpeta')}</strong><small>{T(lang,ru?'Выводы, обратная связь и источники':'Järeldused, tagasiside ja allikad')}</small></div></div><Closing lang={lang} summary={<FinalSummary lang={lang} quizScore={quizScore} visitedIds={[...visited]} totalSections={trackedIds.length} progressSaved={progressSaved} onSaveProgress={saveProgress} onClearSavedProgress={clearSavedProgress}/>}/></>}
     </main>
     {returnPoint&&<button type="button" className="reading-return" onClick={returnToReadingPlace} aria-label={(lang==='en'?`Back to: ${returnPoint.label}`:ru?`Вернуться к месту: ${returnPoint.label}`:`Naase kohta: ${returnPoint.label}`)}><span aria-hidden="true"/><b>{T(lang,ru?'Вернуться':'Tagasi')}</b><small>{returnPoint.label}</small></button>}
+    {present&&<Projector lang={lang} onExit={exitProjector}/>}
     <footer className="site-footer"><div className="footer-brand"><strong>{T(lang,ru?'Алкоголь и мозг':'Alkohol ja aju')}</strong><p>{T(lang,ru?'Учебный сайт о мозге, фактах и безопасных решениях.':'Õppeveeb ajust, faktidest ja turvalistest valikutest.')}</p><span>{SITE_VERSION} · {SITE_YEAR}</span></div><nav aria-label={T(lang,ru?'Информация о проекте':'Projekti info')}><a href="methodology/">{T(lang,ru?'Методология':'Metoodika')}</a><a href="fact-check/">{T(lang,ru?'Проверка фактов':'Faktikontroll')}</a><a href="data-policy/">{T(lang,ru?'Данные и приватность':'Andmed ja privaatsus')}</a><a href="changelog/">Changelog</a></nav><div className="footer-support footer-support-static"><strong>{T(lang,ru?'Нужна помощь?':'Vajad abi?')}</strong><a href="tel:116111">Lasteabi 116 111</a><span>{T(lang,ru?'круглосуточно и бесплатно':'ööpäev läbi ja tasuta')}</span></div></footer>
   </>;
 }

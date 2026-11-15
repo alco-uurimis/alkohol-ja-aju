@@ -1,0 +1,28 @@
+/* Projector mode: only the current section, large type, no site chrome. */
+html.projector{font-size:clamp(17px,1.25vw,26px)}
+html.projector body{padding-bottom:110px}
+html.projector .header,html.projector .site-footer,html.projector .reading-return,html.projector .skip,html.projector .comfort__stop,
+html.projector .scroll-progress,html.projector .reading-progress,html.projector #reading-progress{display:none!important}
+html.projector main>*{display:none!important}
+html.projector main>.projector-current{display:block!important;min-height:calc(100vh - 110px);padding-top:clamp(24px,4vh,60px)!important;animation:projector-in .35s ease both}
+html.projector main>.projector-current .section-heading{max-width:none}
+html.projector main>.projector-current h2{font-size:clamp(2rem,3.4vw,4rem)!important;line-height:1.05}
+html.projector .inline-takeaway{font-size:1.05rem}
+@keyframes projector-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){html.projector main>.projector-current{animation:none}}
+.projector-bar{position:fixed;left:0;right:0;bottom:0;z-index:2147482000;display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:12px;padding:12px max(16px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-bottom));background:rgba(23,27,55,.96);color:#fff;font-size:16px;box-shadow:0 -10px 30px rgba(0,0,0,.18)}
+.projector-bar button{min-height:52px;padding:0 20px;border:0;border-radius:14px;background:#c9f574;color:#171b37;font:inherit;font-weight:800;cursor:pointer}
+.projector-bar button:disabled{opacity:.35;cursor:default}
+.projector-bar .projector-small{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35);min-height:44px;padding:0 14px;font-size:14px}
+.projector-bar button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.projector-mid{display:grid;gap:4px;min-width:0;text-align:center}
+.projector-mid strong{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.projector-mid span{font-size:13px;opacity:.85}
+.projector-dots{display:flex;justify-content:center;gap:5px;flex-wrap:wrap}
+.projector-dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3)}.projector-dots i.done{background:rgba(201,245,116,.6)}.projector-dots i.on{background:#c9f574;transform:scale(1.3)}
+@media (max-width:760px){.projector-bar{grid-template-columns:auto 1fr auto;font-size:14px}.projector-bar .projector-small{grid-row:2}.projector-mid small{display:none}.projector-bar button b{display:none}}
+@media print{.projector-bar{display:none}}
+
+/* menu entry (a button styled like the menu links) */
+#navigation .nav-projector{display:flex;align-items:center;width:100%;min-height:44px;padding:9px 12px;border:0;border-radius:10px;background:transparent;color:inherit;font:inherit;font-weight:700;text-align:left;cursor:pointer}
+#navigation .nav-projector:hover{background:rgba(90,73,201,.08)}

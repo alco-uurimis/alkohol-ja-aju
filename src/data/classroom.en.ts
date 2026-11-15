@@ -13,6 +13,7 @@ export const classroomEn: Record<string, string> = {
   'Kuidas arutelu juhtida': 'How to lead the discussion',
   'Rääkige väljamõeldud olukordadest ja allikates toodud faktidest. Luba vastamata jätta ning ära palu jagada tarvitamiskogemust, terviseandmeid ega teiste inimeste infot.': 'Talk about fictional situations and the facts given in the sources. Allow students to pass, and do not ask anyone to share drinking experience, health information or information about other people.',
   'Prindi tunnikava (PDF)': 'Print the lesson plan (PDF)',
+  'Näita projektoril': 'Show on a projector',
   'Prindiaknas vali „Salvesta PDF-ina“.': 'In the print window choose “Save as PDF”.',
   'kava, küsimused, väljumispilet': 'plan, questions, exit ticket',
   'Tunni kava': 'Lesson plan',

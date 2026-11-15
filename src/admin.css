@@ -53,3 +53,8 @@
 .usage-bars{display:grid;gap:6px}.usage-bars div{display:grid;grid-template-columns:minmax(120px,240px) 1fr 56px;gap:10px;align-items:center;font-size:.88rem}
 .usage-bars i{display:block;height:12px;min-width:2px;border-radius:6px;background:#7c6ae6}.usage-bars b{text-align:right}
 @media (max-width:600px){.usage-bars div{grid-template-columns:110px 1fr 44px}}
+.admin-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.admin-lang{display:inline-flex;border:1px solid #d5dbe7;border-radius:999px;padding:3px;background:#fff}
+.admin-lang button{min-width:44px;min-height:36px;border:0;border-radius:999px;background:transparent;font:inherit;font-weight:800;cursor:pointer;color:#171b37}
+.admin-lang button[aria-pressed=true]{background:#171b37;color:#fff}
+@media print{.admin-top{display:none}}
