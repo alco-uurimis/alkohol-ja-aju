@@ -29,7 +29,7 @@ const text = {
       aria: (n: string) => `Skemaatiline unegraafik: ${n}`,
     },
     y: {
-      pill: 'ANIMATSIOON', title: 'Sünaps: pidurdus ja ergastus',
+      pill: 'ANIMATSIOON', title: 'Sünaps: pidurdus ja ergastus', play: 'Käivita animatsioon', pause: 'Peata animatsioon',
       lead: 'Lihtsustatud mudel kahest signaalisüsteemist. Virgatsaine liigub ühest rakust teise; alkohol muudab seda, kui tugevalt vastuvõttev rakk reageerib.',
       off: 'Ilma alkoholita', on: 'Alkoholi mõjul', gaba: 'GABA · pidurdav', glu: 'Glutamaat · ergastav',
       inh: 'Pidurdav vastus', exc: 'Ergastav vastus', stronger: 'tugevam', weaker: 'nõrgem', base: 'tavaline',
@@ -72,7 +72,7 @@ const text = {
       aria: (n: string) => `Схематичный график сна: ${n}`,
     },
     y: {
-      pill: 'АНИМАЦИЯ', title: 'Синапс: торможение и возбуждение',
+      pill: 'АНИМАЦИЯ', title: 'Синапс: торможение и возбуждение', play: 'Запустить анимацию', pause: 'Остановить анимацию',
       lead: 'Упрощённая модель двух сигнальных систем. Медиатор переходит от одной клетки к другой; алкоголь меняет то, насколько сильно отвечает принимающая клетка.',
       off: 'Без алкоголя', on: 'Под действием алкоголя', gaba: 'GABA · тормозный', glu: 'Глутамат · возбуждающий',
       inh: 'Тормозный ответ', exc: 'Возбуждающий ответ', stronger: 'сильнее', weaker: 'слабее', base: 'обычный',
@@ -115,7 +115,7 @@ const text = {
       aria: (n: string) => `Schematic sleep chart: ${n}`,
     },
     y: {
-      pill: 'ANIMATION', title: 'The synapse: inhibition and excitation',
+      pill: 'ANIMATION', title: 'The synapse: inhibition and excitation', play: 'Play the animation', pause: 'Pause the animation',
       lead: 'A simplified model of two signalling systems. A neurotransmitter passes from one cell to the next; alcohol changes how strongly the receiving cell responds.',
       off: 'Without alcohol', on: 'Under the influence of alcohol', gaba: 'GABA · inhibitory', glu: 'Glutamate · excitatory',
       inh: 'Inhibitory response', exc: 'Excitatory response', stronger: 'stronger', weaker: 'weaker', base: 'usual',
@@ -213,12 +213,17 @@ function SynapseHalf({ x, kind, on }: { x: number; kind: 'gaba' | 'glu'; on: boo
   );
 }
 
+const calmStored = () => { try { return !!JSON.parse(localStorage.getItem('alkohol-ja-aju:comfort') || '{}').calm; } catch { return false; } };
+
 function Synapse({ lang }: { lang: Lang }) {
   const t = text[lang].y;
   const [on, setOn] = useState(false);
   // The dots loop forever, so they only run while the card is on screen (no repaint work while the reader is elsewhere).
   const ref = useRef<HTMLElement>(null);
   const [seen, setSeen] = useState(false);
+  // With "reduce motion" (e.g. Windows animation effects off) or the calm reading mode it starts paused,
+  // but the reader can still start it: here the motion is the content, not decoration.
+  const [play, setPlay] = useState(() => !(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('calm') || calmStored()));
   useEffect(() => {
     const el = ref.current;
     if (!el || !('IntersectionObserver' in window)) { setSeen(true); return; }
@@ -227,7 +232,7 @@ function Synapse({ lang }: { lang: Lang }) {
     return () => io.disconnect();
   }, []);
   return (
-    <article className={'explore-card' + (seen ? '' : ' syn-paused')} ref={ref}>
+    <article className={'explore-card syn-card' + (seen && play ? ' syn-playing' : ' syn-paused')} ref={ref}>
       <span className="pill">{t.pill}</span><h3>{t.title}</h3><p>{t.lead} <SourceReference ids={[6, 9]} lang={lang} /></p>
       <div role="group" aria-label={t.title} className="explore-seg">
         <button type="button" aria-pressed={!on} className={!on ? 'active' : ''} onClick={() => setOn(false)}>{t.off}</button>
@@ -237,6 +242,7 @@ function Synapse({ lang }: { lang: Lang }) {
         <SynapseHalf x={0} kind="gaba" on={on} /><SynapseHalf x={220} kind="glu" on={on} />
       </svg>
       <div className="explore-syn-labels" aria-hidden="true"><span className="gaba">{t.gaba}</span><span className="glu">{t.glu}</span></div>
+      <button type="button" className="syn-play" aria-pressed={play} onClick={() => setPlay(v => !v)}><span aria-hidden="true">{play ? '❚❚' : '▶'}</span> {play ? t.pause : t.play}</button>
       <div className="explore-meters" role="status">
         <div className="gaba"><span>{t.inh}: <b>{on ? t.stronger : t.base}</b></span><i style={{ width: on ? '82%' : '50%' }} /></div>
         <div className="glu"><span>{t.exc}: <b>{on ? t.weaker : t.base}</b></span><i style={{ width: on ? '26%' : '50%' }} /></div>

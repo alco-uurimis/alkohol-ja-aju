@@ -57,9 +57,18 @@ html.calm .explore-sleep .line{animation:none;stroke-dashoffset:0}
 .explore-meters div{display:grid;gap:5px;font-size:.9rem}
 .explore-meters i{display:block;height:12px;border-radius:6px;transition:width .6s cubic-bezier(.22,.8,.24,1)}
 .explore-meters .gaba i{background:#7bc043}.explore-meters .glu i{background:#8f7fe8}
-@media (prefers-reduced-motion:reduce){.syn-dot,.syn-glow{animation:none}.explore-meters i{transition:none}}
-html.calm .syn-dot,html.calm .syn-glow{animation:none}
-.syn-paused .syn-dot,.syn-paused .syn-glow{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.explore-meters i{transition:none}}
+/* Motion runs only when the reader allows it (button) and the card is on screen; paused = a still frame
+   with the transmitter dots visible in the gap. Global reduce/calm rules must not switch it off. */
+.syn-card .syn-dot{animation:syn-cross 1.4s linear infinite!important;animation-play-state:paused!important}
+.syn-card .syn-glow{animation:syn-pulse 1.4s ease-in-out infinite!important;animation-play-state:paused!important}
+.syn-card.syn-playing .syn-dot,.syn-card.syn-playing .syn-glow{animation-play-state:running!important}
+.syn-card .syn.gaba.on .syn-dot{animation-duration:.9s!important}
+.syn-card .syn.glu.on .syn-dot{animation-duration:2.4s!important}
+.syn-card .syn.glu.on .syn-dot:nth-of-type(2n){visibility:hidden}
+.syn-paused .syn-dot{animation-delay:-.7s!important}
+.syn-play{display:inline-flex;align-items:center;gap:8px;margin:8px 0 4px;min-height:44px;padding:0 16px;border:1px solid #c9cfe0;border-radius:999px;background:#fff;color:#2b2f45;font:inherit;font-weight:700;cursor:pointer}
+.syn-play:hover{background:#f1efff}.syn-play:focus-visible{outline:3px solid #6b58d8;outline-offset:2px}
 .explore-more{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}
 .explore-more a{display:grid;gap:4px;padding:16px 18px;border:1px solid #d9d4f7;border-radius:16px;background:#f6f4ff;color:#171b37;text-decoration:none}
 .explore-more a:hover{border-color:#7c6ae6}.explore-more span{color:#4c556a;font-size:.9rem}
