@@ -20,6 +20,12 @@ describe('feedback API', () => {
     expect(text).toContain('Mäluharjutus'); // labels stay readable for the Estonian/Russian-speaking owner, not the raw code
     expect(text).not.toContain(': memory');
   });
+  it('answers 400 instead of crashing when the body is the JSON literal null', async () => {
+    vi.stubEnv('BOT_TOKEN', 't'); vi.stubEnv('CHAT_ID', 'c');
+    const r = await run('null');
+    expect(r.status).toBe(400);
+    expect(r.json.error).toBe('invalid_json');
+  });
   it('still rejects an unknown language', async () => {
     vi.stubEnv('BOT_TOKEN', 't'); vi.stubEnv('CHAT_ID', 'c');
     expect((await run(quick('de'))).json.error).toBe('invalid_language');

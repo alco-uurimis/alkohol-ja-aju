@@ -5,7 +5,8 @@ import {readSource,resetSnapshotCache} from './_source.js';
 
 const ALLOWED_ORIGINS=new Set(['https://alco-uurimis.github.io','https://alkohol-ja-aju.vercel.app']);
 function cors(req,res){const origin=req.headers?.origin;if(origin&&ALLOWED_ORIGINS.has(origin))res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Authorization, Content-Type');res.setHeader('Cache-Control','no-store');}
-async function request(url,body){const options={method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),redirect:'manual'};const first=await fetch(url,options);if(![301,302,303,307,308].includes(first.status))return first;const location=first.headers.get('location');if(!location)throw new Error('missing_redirect');const destination=new URL(location,url).toString();return [307,308].includes(first.status)?fetch(destination,options):fetch(destination,{headers:{accept:'application/json'}});}
+// One deadline for both hops (POST + Apps Script redirect).
+async function request(url,body){const signal=AbortSignal.timeout(25000);const options={method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),redirect:'manual',signal};const first=await fetch(url,options);if(![301,302,303,307,308].includes(first.status))return first;const location=first.headers.get('location');if(!location)throw new Error('missing_redirect');const destination=new URL(location,url).toString();return [307,308].includes(first.status)?fetch(destination,options):fetch(destination,{headers:{accept:'application/json'},signal});}
 
 export default async function handler(req,res){
   cors(req,res);

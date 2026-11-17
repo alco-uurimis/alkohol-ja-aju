@@ -45,6 +45,22 @@ describe('api/prepost', () => {
     expect(Object.keys(sent.prepost).sort()).toEqual(['correct', 'lang', 'phase', 'score', 'token', 'total']);
     vi.unstubAllEnvs(); vi.unstubAllGlobals();
   });
+  it('accepts a body sent as a JSON string and gives the Sheet request a deadline', async () => {
+    vi.stubEnv('SHEET_WEBHOOK_URL', 'https://script.google.com/macros/s/test/exec');
+    vi.stubEnv('SHEET_WEBHOOK_SECRET', 's');
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ ok: true })));
+    vi.stubGlobal('fetch', fetchMock);
+    const res = { setHeader: vi.fn(), status: vi.fn().mockReturnThis(), json: vi.fn(), end: vi.fn() };
+    await handler({ method: 'POST', headers: { origin: 'https://alco-uurimis.github.io' }, body: JSON.stringify(good()) }, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(fetchMock.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal);
+    vi.unstubAllEnvs(); vi.unstubAllGlobals();
+  });
+  it('rejects an oversized body before parsing it', async () => {
+    const res = { setHeader: vi.fn(), status: vi.fn().mockReturnThis(), json: vi.fn(), end: vi.fn() };
+    await handler({ method: 'POST', headers: { origin: 'https://alco-uurimis.github.io', 'content-length': '50000' }, body: good() }, res);
+    expect(res.status).toHaveBeenCalledWith(413);
+  });
 });
 
 describe('prepost rate limit', () => {

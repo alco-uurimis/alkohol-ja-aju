@@ -18,7 +18,7 @@
   .header nav{top:100%!important;max-height:calc(100dvh - 60px - env(safe-area-inset-top,0px))!important;padding:12px 13px max(24px,env(safe-area-inset-bottom,0px))!important;background:#fff!important;box-shadow:0 12px 28px rgba(23,27,55,.09)!important}
   .nav-groups{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}
   .nav-group{padding:0!important;border:0!important;background:transparent!important}
-  .nav-group-label{margin:0 0 4px!important;font-size:.62rem!important;letter-spacing:.09em!important;color:#858b9c!important}
+  .nav-group-label{margin:0 0 4px!important;font-size:.62rem!important;letter-spacing:.09em!important;color:#646c80!important}
   .nav-group a{min-height:40px!important;padding:9px 10px!important;border-radius:9px!important;font-size:.88rem!important;line-height:1.22!important}
   .nav-group a[aria-current="location"]{background:#f0edff!important;color:#4f3db6!important}
 

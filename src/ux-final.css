@@ -47,6 +47,8 @@ body{animation:ux-fade .5s ease both}
 .js-motion .reveal:not(.in-view){opacity:0;transform:translateY(26px)}
 .js-motion .reveal{transition:opacity .7s var(--ux-ease) var(--d,0ms),transform .7s var(--ux-ease) var(--d,0ms)}
 .js-motion .reveal.in-view{opacity:1;transform:none}
+/* A keyboard user can tab onto a card before it has scrolled into the reveal zone: show it at once instead of focusing an invisible element. */
+.js-motion .reveal:focus-within{opacity:1;transform:none;transition:none}
 @media print{.js-motion .reveal:not(.in-view){opacity:1;transform:none}}
 
 /* ---------- Hover / press feedback ---------- */

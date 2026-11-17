@@ -74,7 +74,9 @@ export default function ResearchApp(){
   };
   const download=()=>{
     const blob=new Blob([JSON.stringify({version:4,language:lang,responseId:responseId||submissionId,answers},null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${responseId||submissionId}.json`;a.click();URL.revokeObjectURL(url);
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${responseId||submissionId}.json`;document.body.appendChild(a);a.click();a.remove();
+    // Revoking in the same tick can cancel the download in Firefox and Safari before it has started.
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
   };
   const submit=async()=>{
     if(submitting)return;

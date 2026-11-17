@@ -104,6 +104,7 @@ export default async function handler(req, res) {
 
   let body;
   try{body=readBody(req);}catch{return res.status(400).json({ok:false,error:'invalid_json'});}
+  if(!body||typeof body!=='object'||Array.isArray(body))return res.status(400).json({ok:false,error:'invalid_json'});
 
   const language=String(body.language??'');
   if(!LANGUAGES.has(language))return res.status(400).json({ok:false,error:'invalid_language'});
@@ -139,7 +140,7 @@ export default async function handler(req, res) {
     if(comment)lines.push('',isRu?'Комментарий':'Kommentaar',comment);
     lines.push('',`${isRu?'Отправлено':'Saadetud'}: ${localTimestamp()} (Tallinn)`);
     try{
-      const telegram=await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:chatId,text:lines.join('\n'),disable_web_page_preview:true})});
+      const telegram=await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{signal:AbortSignal.timeout(15000),method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:chatId,text:lines.join('\n'),disable_web_page_preview:true})});
       if(!telegram.ok)return res.status(502).json({ok:false,error:'telegram_delivery_failed'});
       return res.status(200).json({ok:true});
     }catch{return res.status(502).json({ok:false,error:'telegram_unreachable'});}
@@ -206,7 +207,7 @@ export default async function handler(req, res) {
   lines.push('',`🕒 ${isRu?'Отправлено':'Saadetud'}: ${localTimestamp()} (Tallinn)`);
 
   try{
-    const telegram=await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:chatId,text:lines.join('\n'),disable_web_page_preview:true})});
+    const telegram=await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{signal:AbortSignal.timeout(15000),method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:chatId,text:lines.join('\n'),disable_web_page_preview:true})});
     if(!telegram.ok)return res.status(502).json({ok:false,error:'telegram_delivery_failed'});
     return res.status(200).json({ok:true});
   }catch{return res.status(502).json({ok:false,error:'telegram_unreachable'});}

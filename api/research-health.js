@@ -22,11 +22,11 @@ async function checkTelegram(){
     return {ok:false,configured:false,reason:!token&&!chatId?'missing_bot_token_and_chat_id':!token?'missing_bot_token':'missing_chat_id'};
   }
   try{
-    const me=await fetch(`https://api.telegram.org/bot${token}/getMe`);
+    const me=await fetch(`https://api.telegram.org/bot${token}/getMe`,{signal:AbortSignal.timeout(10000)});
     const meBody=await me.json().catch(()=>({}));
     if(!me.ok||meBody.ok!==true)return {ok:false,configured:true,reason:'bot_token_invalid'};
 
-    const chat=await fetch(`https://api.telegram.org/bot${token}/getChat?chat_id=${encodeURIComponent(chatId)}`);
+    const chat=await fetch(`https://api.telegram.org/bot${token}/getChat?chat_id=${encodeURIComponent(chatId)}`,{signal:AbortSignal.timeout(10000)});
     const chatBody=await chat.json().catch(()=>({}));
     if(!chat.ok||chatBody.ok!==true)return {ok:false,configured:true,reason:'chat_id_invalid_or_bot_has_no_access'};
 
@@ -62,6 +62,7 @@ async function checkSheet(){
       method:'POST',
       headers:{'content-type':'application/json'},
       body:JSON.stringify({secret,health:true}),
+      signal:AbortSignal.timeout(25000),
     });
     const text=await response.text();
     let data={};

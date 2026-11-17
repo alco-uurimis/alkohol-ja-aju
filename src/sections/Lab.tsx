@@ -77,7 +77,9 @@ function ReactionGame({ lang }: { lang: Lang }) {
     <h3>{T(lang,ru ? 'Поймай зелёный сигнал' : 'Püüa roheline signaal')}</h3>
     <p>{T(lang,ru ? 'Нажми «Старт», дождись смены поля и кликни как можно быстрее.' : 'Vajuta „Start“, oota välja muutumist ja reageeri nii kiiresti kui saad.')}</p>
     <GameMeaning lang={lang}>{T(lang,ru?'Скорость твоей реакции именно в этой попытке. Это не тест трезвости и не медицинское измерение.':'Sinu reaktsioonikiirus just selles katses. See ei ole kainuse test ega meditsiiniline mõõtmine.')}</GameMeaning>
-    <button className={`reaction-pad state-${state}`} onClick={tap} disabled={state === 'idle' || state === 'result' || state === 'false-start'} aria-live="polite">
+    {/* Measured on press, not on release: a click fires only when the finger or mouse button comes up, which added the
+        80–150 ms hold time to every result. Keyboard activation (click with detail 0) still works. */}
+    <button className={`reaction-pad state-${state}`} onPointerDown={e => { if (e.button === 0) tap(); }} onClick={e => { if (e.detail === 0) tap(); }} disabled={state === 'idle' || state === 'result' || state === 'false-start'} aria-live="polite">
       <span className="reaction-dot" aria-hidden="true" />
       <strong>{label}</strong>
       <small>{state === 'idle' ? (T(lang,ru ? 'Сначала нажми яркую кнопку «Начать игру» ниже' : 'Esmalt vajuta all olevat eredat nuppu „Alusta mängu“')) : state === 'waiting' ? (T(lang,ru ? 'Не нажимай заранее' : 'Ära vajuta enne signaali')) : (T(lang,ru ? 'мс = миллисекунды' : 'ms = millisekundid'))}</small>

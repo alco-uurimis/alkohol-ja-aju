@@ -2,7 +2,7 @@
    - Navigations: network first (always fresh when online), cached copy when offline.
    - Same-origin static files (hashed JS/CSS, images): cache first, refreshed in the background.
    - Never cached: admin pages, API calls, other origins (Supabase, Google Fonts), non-GET requests. */
-const CACHE = 'alkohol-ja-aju-v2';
+const CACHE = 'alkohol-ja-aju-v3';
 const AUTH_PARAMS = ['code', 'error', 'error_code', 'error_description', 'access_token', 'refresh_token', 'token_hash'];
 const scope = new URL(self.registration.scope);
 
@@ -16,6 +16,14 @@ self.addEventListener('activate', (event) => {
   })());
 });
 
+// Every deploy brings new hashed file names, so without a cap the cache would only ever grow. Keep the newest entries.
+const MAX_ENTRIES = 160;
+async function trim(cache) {
+  const keys = await cache.keys();
+  for (let i = 0; i < keys.length - MAX_ENTRIES; i++) await cache.delete(keys[i]);
+}
+const put = (cache, req, res) => cache.put(req, res).then(() => trim(cache)).catch(() => {});
+
 const cacheable = (url) => url.origin === scope.origin && url.pathname.startsWith(scope.pathname) && !url.pathname.includes('/admin/') && !url.pathname.includes('/api/') && !AUTH_PARAMS.some(key => url.searchParams.has(key));
 
 self.addEventListener('fetch', (event) => {
@@ -28,7 +36,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith((async () => {
       try {
         const fresh = await fetch(req);
-        if (fresh.ok && !fresh.redirected) await (await caches.open(CACHE)).put(req, fresh.clone()).catch(() => {});
+        if (fresh.ok && !fresh.redirected) await put(await caches.open(CACHE), req, fresh.clone());
         return fresh;
       } catch {
         const cache = await caches.open(CACHE);
@@ -41,7 +49,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const cached = await cache.match(req);
-    const refresh = fetch(req).then((res) => { if (res.ok && !res.redirected) return cache.put(req, res.clone()).catch(() => {}).then(() => res); return res; }).catch(() => null);
+    const refresh = fetch(req).then((res) => { if (res.ok && !res.redirected) return put(cache, req, res.clone()).then(() => res); return res; }).catch(() => null);
     event.waitUntil(refresh);
     return cached || (await refresh) || Response.error();
   })());

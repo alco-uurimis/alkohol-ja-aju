@@ -114,7 +114,7 @@ export default function SiteSearch() {
         <dialog ref={dialog} className="sitesearch-dialog" aria-label={t.title} onClose={() => setOpen(false)} onClick={e => { if (e.target === dialog.current) setOpen(false); }}>
           <div className="site-search__head">
             <Icon />
-            <input ref={input} id="site-search-input" type="search" role="combobox" aria-expanded="true" aria-controls="site-search-list" aria-activedescendant={hits[active] ? 'ss-' + active : undefined} autoComplete="off" spellCheck={false} placeholder={t.ph} value={q}
+            <input ref={input} id="site-search-input" type="search" role="combobox" aria-expanded={q.trim() !== '' && hits.length > 0} aria-controls={q.trim() !== '' && hits.length > 0 ? 'site-search-list' : undefined} aria-activedescendant={hits[active] ? 'ss-' + active : undefined} autoComplete="off" spellCheck={false} placeholder={t.ph} value={q}
               onChange={e => setQ(e.target.value)}
               onKeyDown={e => {
                 if (e.key === 'ArrowDown') { e.preventDefault(); setActive(i => Math.min(hits.length - 1, i + 1)); }

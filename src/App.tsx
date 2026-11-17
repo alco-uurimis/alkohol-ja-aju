@@ -21,6 +21,7 @@ import { getRu, loadRu } from './data/ru';
 import { T } from './data/siteT';
 import { SITE_VERSION, SITE_YEAR } from './data/releases';
 import { trackOnce } from './lib/analytics';
+import { readLang } from './i18n';
 
 type Lang='et'|'ru'|'en';
 type NavItem=[string,string];
@@ -36,7 +37,8 @@ const quizScoreKey='alkohol-ja-aju:quiz-score';
 
 function readVisited(){if(typeof window==='undefined')return new Set<string>();try{const saved=window.localStorage.getItem(savedProgressEnabledKey)==='1';const raw=(saved?window.localStorage.getItem(savedProgressKey):null)??window.sessionStorage.getItem(progressKey)??'[]';return new Set<string>((JSON.parse(raw) as string[]).filter(id=>trackedIds.includes(id)));}catch{return new Set<string>();}}
 function readsSavedProgress(){if(typeof window==='undefined')return false;try{return window.localStorage.getItem(savedProgressEnabledKey)==='1';}catch{return false;}}
-function readLanguage():Lang{if(typeof window==='undefined')return'et';try{const v=new URLSearchParams(window.location.search).get('lang')??window.localStorage.getItem(languageKey);return v==='ru'||v==='en'?v:'et';}catch{return'et';}}
+// Same rule as every other page (i18n.readLang): a valid ?lang= wins, otherwise the saved choice, otherwise Estonian.
+function readLanguage():Lang{if(typeof window==='undefined')return'et';return readLang();}
 function readQuizScore(){if(typeof window==='undefined')return null;try{const raw=window.sessionStorage.getItem(quizScoreKey);if(raw===null)return null;const value=Number(raw);return Number.isInteger(value)&&value>=0&&value<=10?value:null;}catch{return null;}}
 
 // The page is long (15 sections). Mounting it all in one go blocked the main thread for >1.5 s on phones, so the sections below the
@@ -56,6 +58,7 @@ export default function App(){
   const [progressSaved,setProgressSaved]=useState(readsSavedProgress);
   const menuButton=useRef<HTMLButtonElement>(null);
   const activeSection=useRef('avaleht');
+  const languageTicket=useRef(0);
   const ru=lang==='ru';
   const navGroups:{label:string;items:NavItem[]}[]=[
     {label:T(lang,ru?'НАЧАТЬ':'ALUSTA'),items:[['valik',T(lang,ru?'Выбрать формат':'Vali vorm')],['tegevus',T(lang,ru?'Что делать в ситуации':'Mida teha olukorras')],['klassiruum',T(lang,ru?'Для урока':'Tunniks')]]},
@@ -87,7 +90,11 @@ const observer=new IntersectionObserver(entries=>{for(const entry of entries){if
     url.searchParams.set('lang',next);
     history.replaceState(null,'',url);
     setMenu(false);
-    if(next==='ru')loadRu().then(()=>setLang('ru'),()=>{});else if(next==='en')loadEn().then(()=>setLang('en'),()=>{});else setLang(next);
+    // RU and EN load their text first. Remember the latest click so a slow chunk cannot switch back to a language the
+    // reader has already left (RU clicked, then ET before the Russian text arrived).
+    const ticket=++languageTicket.current;
+    const apply=()=>{if(ticket===languageTicket.current)setLang(next);};
+    if(next==='ru')loadRu().then(apply,()=>{});else if(next==='en')loadEn().then(apply,()=>{});else apply();
   };
   const handleQuizComplete=(score:number)=>{trackOnce('quiz','done');setQuizScore(score);try{sessionStorage.setItem(quizScoreKey,String(score));}catch{}};
   const saveProgress=()=>{try{localStorage.setItem(savedProgressEnabledKey,'1');localStorage.setItem(savedProgressKey,JSON.stringify([...visited]));setProgressSaved(true);}catch{}};

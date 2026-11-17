@@ -46,6 +46,9 @@ const S = {
 
 const lessonLinks = (lang: Lang) => ({ l5: "../start/?lang=" + lang, l20: "../start/?mode=full&lang=" + lang, lt: "../topics/?lang=" + lang });
 
+/** Latest language click; a slow Russian chunk must not switch back after the reader picked another language. */
+let languageTicket = 0;
+
 /** Technical reason of the last failed send (shown small, so a teacher can report it). */
 let lastFailure = '';
 
@@ -143,7 +146,7 @@ export default function CheckPage() {
     <header className="entry-header">
       <a href="../" className="entry-brand"><img src="../logo-mark.svg" alt="" /><span>{t.brand}</span></a>
       <div className="entry-language" role="group" aria-label={t.lang}>
-        {(['et', 'ru', 'en'] as const).map(l => <button key={l} type="button" aria-pressed={lang === l} className={lang === l ? 'active' : ''} onClick={() => { if (isLang(l)) { if (l === 'ru') import('./data/ru').then(m => m.loadRu()).then(() => setLang('ru')); else setLang(l); } }}>{l.toUpperCase()}</button>)}
+        {(['et', 'ru', 'en'] as const).map(l => <button key={l} type="button" aria-pressed={lang === l} className={lang === l ? 'active' : ''} onClick={() => { if (isLang(l)) { const ticket = ++languageTicket; if (l === 'ru') import('./data/ru').then(m => m.loadRu()).then(() => { if (ticket === languageTicket) setLang('ru'); }, () => { /* stay in the current language */ }); else setLang(l); } }}>{l.toUpperCase()}</button>)}
       </div>
     </header>
     <main>

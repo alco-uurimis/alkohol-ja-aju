@@ -7,7 +7,8 @@ import { limited } from './_ratelimit.js';
 
 const ALLOWED_ORIGINS = new Set(['https://alco-uurimis.github.io', 'https://alkohol-ja-aju.vercel.app']);
 function cors(req, res) { const origin = req.headers?.origin; if (origin && ALLOWED_ORIGINS.has(origin)) res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Vary', 'Origin'); res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); res.setHeader('Cache-Control', 'no-store'); }
-async function request(url, body) { const options = { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' }; const first = await fetch(url, options); if (![301, 302, 303, 307, 308].includes(first.status)) return first; const location = first.headers.get('location'); if (!location) throw new Error('missing_redirect'); const destination = new URL(location, url).toString(); return [307, 308].includes(first.status) ? fetch(destination, options) : fetch(destination, { headers: { accept: 'application/json' } }); }
+// One deadline for both hops (POST + Apps Script redirect), so a hanging script cannot keep the function busy until the platform kills it.
+async function request(url, body) { const signal = AbortSignal.timeout(25000); const options = { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual', signal }; const first = await fetch(url, options); if (![301, 302, 303, 307, 308].includes(first.status)) return first; const location = first.headers.get('location'); if (!location) throw new Error('missing_redirect'); const destination = new URL(location, url).toString(); return [307, 308].includes(first.status) ? fetch(destination, options) : fetch(destination, { headers: { accept: 'application/json' }, signal }); }
 
 // Best-effort abuse brake (see _ratelimit.js). 150 per 10 minutes: a whole school class often shares one public IP.
 export const tooMany = (req, now) => limited(req, 'prepost', 150, now);
@@ -33,7 +34,10 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ ok: false, error: 'method_not_allowed' });
   const origin = req.headers?.origin; if (origin && !ALLOWED_ORIGINS.has(origin)) return res.status(403).json({ ok: false, error: 'origin_not_allowed' });
   if (tooMany(req)) { res.setHeader('Retry-After', '600'); return res.status(429).json({ ok: false, error: 'too_many_requests' }); }
-  const record = parseSubmission(req.body);
+  if (Number(req.headers?.['content-length'] || 0) > 4000) return res.status(413).json({ ok: false, error: 'payload_too_large' });
+  let body = req.body;
+  if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = null; } }
+  const record = parseSubmission(body);
   if (!record) return res.status(400).json({ ok: false, error: 'invalid_submission' });
   const fromSupabase = readSource() === 'supabase';
   const url = process.env.SHEET_WEBHOOK_URL, secret = process.env.SHEET_WEBHOOK_SECRET;

@@ -7,6 +7,8 @@ import { ProgressBar } from './components/Shared';
 import { questions } from './data/content';
 import { getRu, loadRu } from './data/ru';
 import { useStageFocus } from './hooks/useStageFocus';
+
+let languageTicket = 0;
 import './entry-pages.css';
 
 type Lang = 'et' | 'ru' | 'en';
@@ -162,7 +164,9 @@ export default function EntryPage({ page }: { page: Page }) {
     const url = new URL(location.href);
     url.searchParams.set('lang', next);
     history.replaceState(null, '', url);
-    if (next === 'ru') loadRu().then(() => setLang('ru'), () => { /* stay in the current language */ }); else setLang(next);
+    // Only the latest click counts: a slow Russian chunk must not switch back after the reader picked another language.
+    const ticket = ++languageTicket;
+    if (next === 'ru') loadRu().then(() => { if (ticket === languageTicket) setLang('ru'); }, () => { /* stay in the current language */ }); else setLang(next);
   }
   return <div className="entry-page">
     <header className="entry-header">
